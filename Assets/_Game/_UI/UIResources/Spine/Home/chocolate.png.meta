@@ -1,0 +1,1014 @@
+fileFormatVersion: 2
+guid: eb6486cf78fa0e5459702b0afd71bda7
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5209720356119618007
+    second: chocolate_0
+  - first:
+      213: -7692801499134545714
+    second: chocolate_1
+  - first:
+      213: -3817842652456256374
+    second: chocolate_2
+  - first:
+      213: -6828608559573175569
+    second: chocolate_3
+  - first:
+      213: 6050747989495449622
+    second: chocolate_4
+  - first:
+      213: -8213183050339170486
+    second: chocolate_5
+  - first:
+      213: 6884757968405919360
+    second: chocolate_6
+  - first:
+      213: -5985533798702531976
+    second: chocolate_7
+  - first:
+      213: 3759609735082270166
+    second: chocolate_8
+  - first:
+      213: -3621808403317097308
+    second: chocolate_9
+  - first:
+      213: -4985258025767578863
+    second: chocolate_10
+  - first:
+      213: -3646532425186429355
+    second: chocolate_11
+  - first:
+      213: -8112792447557040579
+    second: chocolate_12
+  - first:
+      213: -1560137237835665548
+    second: chocolate_13
+  - first:
+      213: -8942433186898034701
+    second: chocolate_14
+  - first:
+      213: -4987479730130621450
+    second: chocolate_15
+  - first:
+      213: -1774149976750216077
+    second: chocolate_16
+  - first:
+      213: 3763834595797168293
+    second: chocolate_17
+  - first:
+      213: 1924106581027364311
+    second: chocolate_18
+  - first:
+      213: -7566332608762015606
+    second: chocolate_19
+  - first:
+      213: -7195459779535647672
+    second: chocolate_20
+  - first:
+      213: 8665744508322227140
+    second: chocolate_21
+  - first:
+      213: -2642870363708414820
+    second: chocolate_22
+  - first:
+      213: -4961307311303652876
+    second: chocolate_23
+  - first:
+      213: -1777116779183319104
+    second: chocolate_24
+  - first:
+      213: 5006831174053151242
+    second: chocolate_25
+  - first:
+      213: -5745380627931326122
+    second: chocolate_26
+  - first:
+      213: 8846773232499767660
+    second: chocolate_27
+  - first:
+      213: 4213051467839591079
+    second: chocolate_28
+  - first:
+      213: 7067095112289391873
+    second: chocolate_29
+  - first:
+      213: 4387949714642858272
+    second: chocolate_30
+  - first:
+      213: -990770525840984100
+    second: chocolate_31
+  - first:
+      213: -2960039156134962659
+    second: chocolate_32
+  - first:
+      213: -3395724909229164101
+    second: chocolate_33
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 0
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 50
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: chocolate_0
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 9
+        width: 450
+        height: 229
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92e5e5a30fa53b7b0800000000000000
+      internalID: -5209720356119618007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_1
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 162
+        width: 110
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec03e747bcdad3590800000000000000
+      internalID: -7692801499134545714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_2
+      rect:
+        serializedVersion: 2
+        x: 1042
+        y: 220
+        width: 31
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8c720cd55c440bc0800000000000000
+      internalID: -3817842652456256374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_3
+      rect:
+        serializedVersion: 2
+        x: 1396
+        y: 138
+        width: 83
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe2f270d1b8eb31a0800000000000000
+      internalID: -6828608559573175569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_4
+      rect:
+        serializedVersion: 2
+        x: 1487
+        y: 138
+        width: 80
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 618094bfc3398f350800000000000000
+      internalID: 6050747989495449622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_5
+      rect:
+        serializedVersion: 2
+        x: 1575
+        y: 233
+        width: 23
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a474641f789e40e80800000000000000
+      internalID: -8213183050339170486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_6
+      rect:
+        serializedVersion: 2
+        x: 1847
+        y: 221
+        width: 25
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 086ff5f25e29b8f50800000000000000
+      internalID: 6884757968405919360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_7
+      rect:
+        serializedVersion: 2
+        x: 1880
+        y: 221
+        width: 25
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87abd3909bc1feca0800000000000000
+      internalID: -5985533798702531976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_8
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 9
+        width: 449
+        height: 223
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dddda18221dc2430800000000000000
+      internalID: 3759609735082270166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_9
+      rect:
+        serializedVersion: 2
+        x: 1042
+        y: 162
+        width: 31
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ac72c34270ccbdc0800000000000000
+      internalID: -3621808403317097308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_10
+      rect:
+        serializedVersion: 2
+        x: 1044
+        y: 168
+        width: 6
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11355741d3ec0dab0800000000000000
+      internalID: -4985258025767578863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_11
+      rect:
+        serializedVersion: 2
+        x: 1575
+        y: 122
+        width: 91
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 556b1d6541ae46dc0800000000000000
+      internalID: -3646532425186429355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_12
+      rect:
+        serializedVersion: 2
+        x: 1674
+        y: 121
+        width: 82
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3604ea9042996f80800000000000000
+      internalID: -8112792447557040579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_13
+      rect:
+        serializedVersion: 2
+        x: 1764
+        y: 121
+        width: 75
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47f22f9b277495ae0800000000000000
+      internalID: -1560137237835665548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_14
+      rect:
+        serializedVersion: 2
+        x: 1847
+        y: 120
+        width: 51
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ff3743456816e380800000000000000
+      internalID: -8942433186898034701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_15
+      rect:
+        serializedVersion: 2
+        x: 1906
+        y: 176
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fb6a193c99e8cab0800000000000000
+      internalID: -4987479730130621450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_16
+      rect:
+        serializedVersion: 2
+        x: 1936
+        y: 176
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37c2989fef3f067e0800000000000000
+      internalID: -1774149976750216077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_17
+      rect:
+        serializedVersion: 2
+        x: 1090
+        y: 151
+        width: 22
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a0f0db8f93db3430800000000000000
+      internalID: 3763834595797168293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_18
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 151
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7dd9028bdbcc3ba10800000000000000
+      internalID: 1924106581027364311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_19
+      rect:
+        serializedVersion: 2
+        x: 1146
+        y: 151
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a80194a949cfef690800000000000000
+      internalID: -7566332608762015606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_20
+      rect:
+        serializedVersion: 2
+        x: 1906
+        y: 145
+        width: 24
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84cca252477942c90800000000000000
+      internalID: -7195459779535647672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_21
+      rect:
+        serializedVersion: 2
+        x: 1938
+        y: 145
+        width: 23
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c3a6dc97b8e24870800000000000000
+      internalID: 8665744508322227140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_22
+      rect:
+        serializedVersion: 2
+        x: 1969
+        y: 142
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c94a0cf1863a25bd0800000000000000
+      internalID: -2642870363708414820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_23
+      rect:
+        serializedVersion: 2
+        x: 934
+        y: 19
+        width: 138
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f982385945e52bb0800000000000000
+      internalID: -4961307311303652876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_24
+      rect:
+        serializedVersion: 2
+        x: 1100
+        y: 19
+        width: 127
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c7546474b96657e0800000000000000
+      internalID: -1777116779183319104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_25
+      rect:
+        serializedVersion: 2
+        x: 1245
+        y: 9
+        width: 143
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a024acbec66db7540800000000000000
+      internalID: 5006831174053151242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_26
+      rect:
+        serializedVersion: 2
+        x: 1396
+        y: 9
+        width: 134
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6591ebc52ce4440b0800000000000000
+      internalID: -5745380627931326122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_27
+      rect:
+        serializedVersion: 2
+        x: 1538
+        y: 9
+        width: 123
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c69359bf16d06ca70800000000000000
+      internalID: 8846773232499767660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_28
+      rect:
+        serializedVersion: 2
+        x: 1669
+        y: 9
+        width: 118
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a254010df3c77a30800000000000000
+      internalID: 4213051467839591079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_29
+      rect:
+        serializedVersion: 2
+        x: 1795
+        y: 9
+        width: 115
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10598e1cf8d531260800000000000000
+      internalID: 7067095112289391873
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_30
+      rect:
+        serializedVersion: 2
+        x: 1918
+        y: 104
+        width: 37
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0217091640125ec30800000000000000
+      internalID: 4387949714642858272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_31
+      rect:
+        serializedVersion: 2
+        x: 1963
+        y: 104
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd73251c4731042f0800000000000000
+      internalID: -990770525840984100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_32
+      rect:
+        serializedVersion: 2
+        x: 2001
+        y: 104
+        width: 25
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1a14590214dbe6d0800000000000000
+      internalID: -2960039156134962659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chocolate_33
+      rect:
+        serializedVersion: 2
+        x: 1918
+        y: 9
+        width: 112
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb93376bf26ffd0d0800000000000000
+      internalID: -3395724909229164101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      chocolate_0: -5209720356119618007
+      chocolate_1: -7692801499134545714
+      chocolate_10: -4985258025767578863
+      chocolate_11: -3646532425186429355
+      chocolate_12: -8112792447557040579
+      chocolate_13: -1560137237835665548
+      chocolate_14: -8942433186898034701
+      chocolate_15: -4987479730130621450
+      chocolate_16: -1774149976750216077
+      chocolate_17: 3763834595797168293
+      chocolate_18: 1924106581027364311
+      chocolate_19: -7566332608762015606
+      chocolate_2: -3817842652456256374
+      chocolate_20: -7195459779535647672
+      chocolate_21: 8665744508322227140
+      chocolate_22: -2642870363708414820
+      chocolate_23: -4961307311303652876
+      chocolate_24: -1777116779183319104
+      chocolate_25: 5006831174053151242
+      chocolate_26: -5745380627931326122
+      chocolate_27: 8846773232499767660
+      chocolate_28: 4213051467839591079
+      chocolate_29: 7067095112289391873
+      chocolate_3: -6828608559573175569
+      chocolate_30: 4387949714642858272
+      chocolate_31: -990770525840984100
+      chocolate_32: -2960039156134962659
+      chocolate_33: -3395724909229164101
+      chocolate_4: 6050747989495449622
+      chocolate_5: -8213183050339170486
+      chocolate_6: 6884757968405919360
+      chocolate_7: -5985533798702531976
+      chocolate_8: 3759609735082270166
+      chocolate_9: -3621808403317097308
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

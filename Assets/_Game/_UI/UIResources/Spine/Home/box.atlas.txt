@@ -1,0 +1,7 @@
+box.png
+size:1024,512
+filter:Linear,Linear
+pma:false
+box
+bounds:10,10,579,337
+offsets:13,13,604,360

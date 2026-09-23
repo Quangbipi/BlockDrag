@@ -1,0 +1,19 @@
+{
+    "name": "Hung.Utilities.Input",
+    "rootNamespace": "Utilities.Input",
+    "references": [
+        "Hung.Utilities.STimer",
+        "Hung.Utilities",
+        "Hung.DesignPattern",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

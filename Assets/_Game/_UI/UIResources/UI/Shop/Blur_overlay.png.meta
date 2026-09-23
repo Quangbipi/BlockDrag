@@ -1,0 +1,1183 @@
+fileFormatVersion: 2
+guid: dd6aad29cf01e794c8762f95f1bcb92b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -785718235546062658
+    second: Blur_overlay_0
+  - first:
+      213: -2782027605789765358
+    second: Blur_overlay_1
+  - first:
+      213: -916799257900614003
+    second: Blur_overlay_2
+  - first:
+      213: 7664522428552720816
+    second: Blur_overlay_3
+  - first:
+      213: 3234154662619052767
+    second: Blur_overlay_4
+  - first:
+      213: -1130870524350129827
+    second: Blur_overlay_5
+  - first:
+      213: -9191627233303882367
+    second: Blur_overlay_6
+  - first:
+      213: 926444895683263329
+    second: Blur_overlay_7
+  - first:
+      213: 1700994726278352396
+    second: Blur_overlay_8
+  - first:
+      213: -8708741679882527835
+    second: Blur_overlay_9
+  - first:
+      213: 2743038601021653341
+    second: Blur_overlay_10
+  - first:
+      213: 5642982368184903
+    second: Blur_overlay_11
+  - first:
+      213: 6062801803309567132
+    second: Blur_overlay_12
+  - first:
+      213: 3251513856184620728
+    second: Blur_overlay_13
+  - first:
+      213: -1705017327044942799
+    second: Blur_overlay_14
+  - first:
+      213: 402971755201318080
+    second: Blur_overlay_15
+  - first:
+      213: 6453002339950255180
+    second: Blur_overlay_16
+  - first:
+      213: -6362968672454184512
+    second: Blur_overlay_17
+  - first:
+      213: -3641836522972883429
+    second: Blur_overlay_18
+  - first:
+      213: -7867471912656400210
+    second: Blur_overlay_19
+  - first:
+      213: 3267307609287860871
+    second: Blur_overlay_20
+  - first:
+      213: 6488018343010336666
+    second: Blur_overlay_21
+  - first:
+      213: 8292385017668652280
+    second: Blur_overlay_22
+  - first:
+      213: 2937451899464054533
+    second: Blur_overlay_23
+  - first:
+      213: 8659384127318480629
+    second: Blur_overlay_24
+  - first:
+      213: -1948058079877795169
+    second: Blur_overlay_25
+  - first:
+      213: 3473352498140511383
+    second: Blur_overlay_26
+  - first:
+      213: -2708626685611962336
+    second: Blur_overlay_27
+  - first:
+      213: 178954706215005268
+    second: Blur_overlay_28
+  - first:
+      213: -9033565227755917096
+    second: Blur_overlay_29
+  - first:
+      213: 1952011115818358384
+    second: Blur_overlay_30
+  - first:
+      213: 6028726092235817546
+    second: Blur_overlay_31
+  - first:
+      213: 5886035219483666822
+    second: Blur_overlay_32
+  - first:
+      213: 5074599019157060498
+    second: Blur_overlay_33
+  - first:
+      213: 1132392124446232970
+    second: Blur_overlay_34
+  - first:
+      213: 227616226413925761
+    second: Blur_overlay_35
+  - first:
+      213: -6541679022656726977
+    second: Blur_overlay_36
+  - first:
+      213: -5655752214367927904
+    second: Blur_overlay_37
+  - first:
+      213: 3426707177490129526
+    second: Blur_overlay_38
+  - first:
+      213: 6996474331354227115
+    second: Blur_overlay_39
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 524, y: 95, z: 524, w: 421}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 50
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Blur_overlay_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1080
+        height: 547
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb0fabc7d619815f0800000000000000
+      internalID: -785718235546062658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_1
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 450
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2111291e1a04469d0800000000000000
+      internalID: -2782027605789765358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_2
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 450
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8efd7eaeefd643f0800000000000000
+      internalID: -916799257900614003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_3
+      rect:
+        serializedVersion: 2
+        x: 461
+        y: 452
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b136e65a8add5a60800000000000000
+      internalID: 7664522428552720816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_4
+      rect:
+        serializedVersion: 2
+        x: 498
+        y: 449
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdaf416c78602ec20800000000000000
+      internalID: 3234154662619052767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_5
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 455
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d59962def375e40f0800000000000000
+      internalID: -1130870524350129827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_6
+      rect:
+        serializedVersion: 2
+        x: 755
+        y: 454
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1859d1b0bb7c07080800000000000000
+      internalID: -9191627233303882367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_7
+      rect:
+        serializedVersion: 2
+        x: 806
+        y: 447
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16bbc2f59b46bdc00800000000000000
+      internalID: 926444895683263329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_8
+      rect:
+        serializedVersion: 2
+        x: 853
+        y: 451
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0e42a8f0b52b9710800000000000000
+      internalID: 1700994726278352396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_9
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 451
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ab96f14595542780800000000000000
+      internalID: -8708741679882527835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_10
+      rect:
+        serializedVersion: 2
+        x: 1040
+        y: 456
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d51841b031b311620800000000000000
+      internalID: 2743038601021653341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_11
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 449
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74a8787334c041000800000000000000
+      internalID: 5642982368184903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_12
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 444
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9c4dd53e16632450800000000000000
+      internalID: 6062801803309567132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_13
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 440
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b6152cff92bf1d20800000000000000
+      internalID: 3251513856184620728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_14
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 442
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 134a99d46cf8658e0800000000000000
+      internalID: -1705017327044942799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_15
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 440
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cc4a432da4a79500800000000000000
+      internalID: 402971755201318080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_16
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 442
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4cdf7f407bad8950800000000000000
+      internalID: 6453002339950255180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_17
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 440
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c1fd6174b132b7a0800000000000000
+      internalID: -6362968672454184512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_18
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 441
+        width: 11
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1658264af8957dc0800000000000000
+      internalID: -3641836522972883429
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_19
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 446
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea090c5aaff11d290800000000000000
+      internalID: -7867471912656400210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_20
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 448
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 782a88fa5fec75d20800000000000000
+      internalID: 3267307609287860871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_21
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 444
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9f7957de421a0a50800000000000000
+      internalID: 6488018343010336666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_22
+      rect:
+        serializedVersion: 2
+        x: 315
+        y: 448
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fc49e61d38741370800000000000000
+      internalID: 8292385017668652280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_23
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 444
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 507f95470fce3c820800000000000000
+      internalID: 2937451899464054533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_24
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 444
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f659720cff4c2870800000000000000
+      internalID: 8659384127318480629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_25
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 443
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f92fd036f7b17f4e0800000000000000
+      internalID: -1948058079877795169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_26
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 438
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79c7167c1b3d33030800000000000000
+      internalID: 3473352498140511383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_27
+      rect:
+        serializedVersion: 2
+        x: 478
+        y: 443
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02094fe5166096ad0800000000000000
+      internalID: -2708626685611962336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_28
+      rect:
+        serializedVersion: 2
+        x: 499
+        y: 442
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45c64de6b56cb7200800000000000000
+      internalID: 178954706215005268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_29
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 443
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d0b948894452a280800000000000000
+      internalID: -9033565227755917096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_30
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 445
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07697f384cfe61b10800000000000000
+      internalID: 1952011115818358384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_31
+      rect:
+        serializedVersion: 2
+        x: 705
+        y: 447
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4248d770765aa350800000000000000
+      internalID: 6028726092235817546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_32
+      rect:
+        serializedVersion: 2
+        x: 717
+        y: 443
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68923c8b8d56fa150800000000000000
+      internalID: 5886035219483666822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_33
+      rect:
+        serializedVersion: 2
+        x: 730
+        y: 448
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29bf66aebe89c6640800000000000000
+      internalID: 5074599019157060498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_34
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 442
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a81511433a017bf00800000000000000
+      internalID: 1132392124446232970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_35
+      rect:
+        serializedVersion: 2
+        x: 941
+        y: 443
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 185548080c7a82300800000000000000
+      internalID: 227616226413925761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_36
+      rect:
+        serializedVersion: 2
+        x: 977
+        y: 444
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f38dbe396994735a0800000000000000
+      internalID: -6541679022656726977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_37
+      rect:
+        serializedVersion: 2
+        x: 1001
+        y: 438
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a188f4935bb281b0800000000000000
+      internalID: -5655752214367927904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_38
+      rect:
+        serializedVersion: 2
+        x: 1042
+        y: 441
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 672a49fb50c1e8f20800000000000000
+      internalID: 3426707177490129526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blur_overlay_39
+      rect:
+        serializedVersion: 2
+        x: 1052
+        y: 447
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba1e180e558781160800000000000000
+      internalID: 6996474331354227115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 1537655665
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Blur_overlay_0: -785718235546062658
+      Blur_overlay_1: -2782027605789765358
+      Blur_overlay_10: 2743038601021653341
+      Blur_overlay_11: 5642982368184903
+      Blur_overlay_12: 6062801803309567132
+      Blur_overlay_13: 3251513856184620728
+      Blur_overlay_14: -1705017327044942799
+      Blur_overlay_15: 402971755201318080
+      Blur_overlay_16: 6453002339950255180
+      Blur_overlay_17: -6362968672454184512
+      Blur_overlay_18: -3641836522972883429
+      Blur_overlay_19: -7867471912656400210
+      Blur_overlay_2: -916799257900614003
+      Blur_overlay_20: 3267307609287860871
+      Blur_overlay_21: 6488018343010336666
+      Blur_overlay_22: 8292385017668652280
+      Blur_overlay_23: 2937451899464054533
+      Blur_overlay_24: 8659384127318480629
+      Blur_overlay_25: -1948058079877795169
+      Blur_overlay_26: 3473352498140511383
+      Blur_overlay_27: -2708626685611962336
+      Blur_overlay_28: 178954706215005268
+      Blur_overlay_29: -9033565227755917096
+      Blur_overlay_3: 7664522428552720816
+      Blur_overlay_30: 1952011115818358384
+      Blur_overlay_31: 6028726092235817546
+      Blur_overlay_32: 5886035219483666822
+      Blur_overlay_33: 5074599019157060498
+      Blur_overlay_34: 1132392124446232970
+      Blur_overlay_35: 227616226413925761
+      Blur_overlay_36: -6541679022656726977
+      Blur_overlay_37: -5655752214367927904
+      Blur_overlay_38: 3426707177490129526
+      Blur_overlay_39: 6996474331354227115
+      Blur_overlay_4: 3234154662619052767
+      Blur_overlay_5: -1130870524350129827
+      Blur_overlay_6: -9191627233303882367
+      Blur_overlay_7: 926444895683263329
+      Blur_overlay_8: 1700994726278352396
+      Blur_overlay_9: -8708741679882527835
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

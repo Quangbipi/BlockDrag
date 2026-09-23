@@ -1,0 +1,28 @@
+{
+    "name": "Hung.UI",
+    "rootNamespace": "UI",
+    "references": [
+        "Unity.Addressables",
+        "Unity.ResourceManager",
+        "Hung.Base",
+        "Hung.Common",
+        "Hung.DesignPattern",
+        "Hung.Utilities.STimer",
+        "Hung.Data",
+        "Hung.Utilities",
+        "DOTween.Modules",
+        "Unity.TextMeshPro",
+        "spine-csharp",
+        "spine-unity",
+        "MOST_HapticFeedback"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
