@@ -20,8 +20,8 @@ namespace UI
         public Slider LoadingBar => loadingBar;
         void Awake()
         {
-            loadingSpine.AnimationState.SetAnimation(0, "appear", false);
-            loadingSpine.AnimationState.AddAnimation(0, "idle", true, 0);
+            // loadingSpine.AnimationState.SetAnimation(0, "appear", false);
+            // loadingSpine.AnimationState.AddAnimation(0, "idle", true, 0);
         }
         public void SetPercentage(float value)
         {
