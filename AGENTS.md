@@ -10,6 +10,13 @@ Third-party assets such as Spine, DOTween, Odin Inspector, and Ingame Debug Cons
 
 Read `.agents/rules/architecture.md` before architectural or cross-module changes. Preserve its dependency direction: UI and feature services may depend on data and shared contracts, while `Hung.Base`, `Hung.DesignPattern`, and utilities must not depend on concrete features. Update the architecture memory whenever a change intentionally alters these boundaries.
 
+## Task Workflow & Design Guidelines
+
+Read and follow `.agents/rules/task_planning.md`. Whenever a task is assigned:
+1. **Planning & Design**: Analyze requirements, outline architectural design, and **always include a clear visual diagram (Mermaid)**.
+2. **Implementation Plan**: Provide a concrete step-by-step implementation plan with impacted files and verification steps before coding.
+
+
 ## Build, Test, and Development Commands
 
 Open the repository through Unity Hub with editor `2022.3.62f2`, then run the game from the intended scene. Useful editor shortcuts are under `Open Scene` in Unity's menu.
