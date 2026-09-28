@@ -13,8 +13,8 @@ Read `.agents/rules/architecture.md` before architectural or cross-module change
 ## Task Workflow & Design Guidelines
 
 Read and follow `.agents/rules/task_planning.md`. Whenever a task is assigned:
-1. **Planning & Design**: Analyze requirements, outline architectural design, and **always include a clear visual diagram (Mermaid)**.
-2. **Implementation Plan**: Provide a concrete step-by-step implementation plan with impacted files and verification steps before coding.
+1. **Planning & Design**: Analyze requirements, outline architectural design, **always include a clear visual diagram (Mermaid)**, and save to a separate markdown file: `Docs/designs/YYYY-MM-DD-<task-name>-design.md`.
+2. **Implementation Plan**: Provide a concrete step-by-step implementation plan with impacted files and verification steps before coding, and save to a separate markdown file: `Docs/plans/YYYY-MM-DD-<task-name>-implementation-plan.md`.
 
 
 ## Build, Test, and Development Commands

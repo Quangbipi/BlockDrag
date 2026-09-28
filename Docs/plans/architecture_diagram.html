@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sơ Đồ Kiến Trúc & Refactor BlockDrag</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 1100px;
+            width: 100%;
+        }
+        h1 {
+            color: #38bdf8;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .card {
+            background-color: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            border: 1px solid #334155;
+        }
+        h2 {
+            color: #f1f5f9;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+        }
+        .badge {
+            background-color: #0284c7;
+            color: white;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .desc {
+            color: #94a3b8;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .mermaid {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📐 Sơ Đồ Kiến Trúc Module BlockDrag</h1>
+
+        <div class="card">
+            <h2>Sơ Đồ 1: So Sánh Bản Chất Giữa Dùng asmref và Tách asmdef Riêng <span class="badge">Kiến Trúc</span></h2>
+            <div class="desc">
+                Phân tích vì sao không nên dùng <code>.asmref</code> nhồi vào <code>Hung.Data</code> (làm bẩn Base Package) mà nên tạo <code>BlockDrag.asmdef</code> riêng.
+            </div>
+            <div class="mermaid">
+graph TD
+    classDef base fill:#2e7d32,stroke:#81c784,stroke-width:2px,color:#fff;
+    classDef game fill:#1565c0,stroke:#64b5f6,stroke-width:2px,color:#fff;
+    classDef bad fill:#c62828,stroke:#ef5350,stroke-width:2px,color:#fff;
+
+    subgraph WrongWay ["❌ Phương án A: Dùng asmref (Gây Coupling, khó tái sử dụng Base)"]
+        A_Script["BlockShapeData.cs<br/>(Nằm trong BlockDrag/Data)"]:::bad
+        A_Ref["Hung.Data.asmref"]:::bad
+        A_Dll["Hung.Data.dll<br/>(Bị nhiễm code của BlockDrag,<br/>khi mang sang dự án khác sẽ bị rác/lỗi)"]:::bad
+        
+        A_Script --> A_Ref
+        A_Ref -. Compile trực tiếp vào .-> A_Dll
+    end
+
+    subgraph RightWay ["✅ Phương án B: Tách biệt Assembly (Chuẩn Package Architecture)"]
+        subgraph SharedBase ["TẦNG BASE DÙNG CHUNG (Tách thành Pack độc lập)"]
+            B_Base["_Base<br/>(Hung.Base.asmdef)<br/>Interfaces, Contracts, Locator"]:::base
+            B_Data["_Data<br/>(Hung.Data.asmdef)<br/>DataManager, Save/Load Database"]:::base
+            B_Utils["_Utilities & _DesignPattern<br/>Singleton, SimplePool, STimer, Json"]:::base
+            B_Data --> B_Base
+        end
+
+        subgraph GameProject ["TẦNG DỰ ÁN GAME (BlockDrag Feature)"]
+            B_Asmdef["BlockDrag.asmdef<br/>(Assembly riêng của game)"]:::game
+            B_GameData["BlockDrag/Data/<br/>(BlockShapeData.cs, BlockRotation.cs)"]:::game
+            B_GameLogic["BlockDrag/Scripts/<br/>(BlockSpawner.cs, BlockShape.cs, BlockGrid.cs)"]:::game
+            
+            B_Asmdef --- B_GameData
+            B_Asmdef --- B_GameLogic
+        end
+
+        B_Asmdef ==>|References: Đọc core service| B_Data
+        B_Asmdef ==>|References: Đọc contracts| B_Base
+        B_Asmdef ==>|References: Dùng Pool, Timer| B_Utils
+    end
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Sơ Đồ 2: Cấu Trúc Thư Mục và Phân Vùng Assembly <span class="badge">Tổ Chức File</span></h2>
+            <div class="desc">
+                Cấu trúc phân tầng rõ ràng giữa các module dùng chung (tiền tố <code>_</code>) và module game <code>BlockDrag</code>.
+            </div>
+            <div class="mermaid">
+graph LR
+    classDef shared fill:#2e7d32,stroke:#81c784,stroke-width:2px,color:#fff;
+    classDef game fill:#0277bd,stroke:#4fc3f7,stroke-width:2px,color:#fff;
+    classDef asset fill:#ef6c00,stroke:#ffb74d,stroke-width:2px,color:#fff;
+
+    Root["Assets/_Game/"]
+    
+    subgraph BaseModules ["Tầng Base Packages (Dùng cho nhiều game)"]
+        F_Base["_Base/ (Hung.Base.asmdef)"]:::shared
+        F_Data["_Data/ (Hung.Data.asmdef)"]:::shared
+        F_Common["_Common/ (Hung.Common.asmdef)"]:::shared
+        F_DP["_DesignPattern/ (Hung.DesignPattern.asmdef)"]:::shared
+        F_Util["_Utilities/ (Hung.Utilities.asmdef)"]:::shared
+        F_UI["_UI/ (Hung.UI.asmdef)"]:::shared
+    end
+
+    subgraph BlockDragModule ["Tầng Game BlockDrag (Dự án cụ thể)"]
+        BD_Root["BlockDrag/"]
+        BD_Asm["BlockDrag.asmdef"]:::game
+        
+        BD_DirData["Data/"]
+        BD_ShapeData["BlockShapeData.cs"]:::game
+        BD_Rot["BlockRotation.cs"]:::game
+        BD_Assets["ScriptableObjects/ (.asset)"]:::asset
+        
+        BD_DirScripts["Scripts/"]
+        BD_Shape["BlockShape.cs"]:::game
+        BD_Spawner["BlockSpawner.cs"]:::game
+        BD_Grid["BlockGrid.cs"]:::game
+        
+        BD_DirPrefabs["Prefabs/"]:::asset
+        BD_DirResources["Resource/"]:::asset
+    end
+
+    Root --> BaseModules
+    Root --> BD_Root
+    BD_Root --> BD_Asm
+    BD_Root --> BD_DirData
+    BD_Root --> BD_DirScripts
+    BD_Root --> BD_DirPrefabs
+    BD_Root --> BD_DirResources
+    BD_DirData --> BD_ShapeData
+    BD_DirData --> BD_Rot
+    BD_DirData --> BD_Assets
+    BD_DirScripts --> BD_Shape
+    BD_DirScripts --> BD_Spawner
+    BD_DirScripts --> BD_Grid
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Sơ Đồ 3: Biểu Đồ Lớp (Class Diagram) Module BlockDrag <span class="badge">Class Design</span></h2>
+            <div class="desc">
+                Mối quan hệ giữa các lớp trong `BlockDrag`, tách rời `BlockRotation` và đóng gói dữ liệu an toàn.
+            </div>
+            <div class="mermaid">
+classDiagram
+    direction TB
+    
+    class BlockRotation {
+        <<enumeration>>
+        Rot_0 = 0
+        Rot_90 = 90
+        Rot_180 = 180
+        Rot_270 = 270
+    }
+
+    class BlockShapeData {
+        -Color shapeColor
+        -string[] rows
+        +int RowsCount
+        +int ColumnsCount
+        +Color ShapeColor
+        +bool HasBlockAt(int row, int col)
+        +int GetRotatedRowsCount(BlockRotation rotation)
+        +int GetRotatedColumnsCount(BlockRotation rotation)
+        +bool HasBlockAtRotated(int rNew, int cNew, BlockRotation rotation)
+    }
+
+    class BlockShape {
+        -BlockShapeData shapeData
+        -List~GameObject~ activeBlocks
+        -float spacing
+        +BlockShapeData ShapeData
+        +IReadOnlyList~GameObject~ ActiveBlocks
+        +void Initialize(BlockShapeData data, GameObject singleBlockPrefab, BlockRotation rotation, float cellSize)
+    }
+
+    class BlockSpawner {
+        -GameObject singleBlockPrefab
+        -GameObject shapeContainerPrefab
+        -List~BlockShapeData~ availableShapes
+        -Transform[] spawnSlots
+        +void SpawnNewHand()
+        -void SpawnRandomShapeAt(Transform slot)
+    }
+
+    class BlockGrid {
+        -int maxColumn
+        -int maxRow
+    }
+
+    BlockShapeData ..> BlockRotation : Uses
+    BlockShape --> BlockShapeData : Holds
+    BlockShape ..> BlockRotation : Uses
+    BlockSpawner --> BlockShapeData : References Pool
+    BlockSpawner ..> BlockShape : Instantiates & Inits
+            </div>
+        </div>
+    </div>
+</body>
+</html>
