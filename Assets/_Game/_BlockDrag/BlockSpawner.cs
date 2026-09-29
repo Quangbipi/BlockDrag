@@ -35,7 +35,7 @@ public class BlockSpawner : MonoBehaviour
 
     private void SpawnRandomShapeAt(Transform slot)
     {
-        if (availableShapes.Count == 0) return;
+        if (availableShapes == null || availableShapes.Count == 0) return;
 
         // Chọn ngẫu nhiên 1 hình khối
         BlockShapeData randomData = availableShapes[Random.Range(0, availableShapes.Count)];
@@ -45,6 +45,16 @@ public class BlockSpawner : MonoBehaviour
         BlockShape shapeComp = newShapeObj.GetComponent<BlockShape>();
 
         // Khởi tạo các ô gạch 1x1 bên trong
-        shapeComp.Initialize(randomData, singleBlockPrefab, rotation: BlockRotation.Rot_90);
+        if (shapeComp != null)
+        {
+            shapeComp.Initialize(randomData, singleBlockPrefab, rotation: BlockRotation.Rot_90);
+        }
+
+        // Ghi nhận toạ độ gốc và tỷ lệ gốc cho BlockDragHandler
+        BlockDragHandler dragHandler = newShapeObj.GetComponent<BlockDragHandler>();
+        if (dragHandler != null)
+        {
+            dragHandler.SetOrigin(newShapeObj.transform.position, newShapeObj.transform.localScale);
+        }
     }
 }

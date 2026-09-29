@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(BoxCollider2D))]
 public class BlockShape : MonoBehaviour
 {
     public BlockShapeData shapeData;
@@ -10,6 +11,18 @@ public class BlockShape : MonoBehaviour
     public List<GameObject> activeBlocks = new List<GameObject>();
     [Tooltip("Khoảng cách khe hở giữa các ô gạch 1x1")]
     public float spacing = 0.1f;
+
+    private BoxCollider2D boxCollider;
+    private int baseSortingOrder = 0;
+    private readonly List<SpriteRenderer> cachedRenderers = new List<SpriteRenderer>();
+
+    public BoxCollider2D BoxCollider => boxCollider;
+
+    private void Awake()
+    {
+        boxCollider = GetComponent<BoxCollider2D>();
+    }
+
     public void Initialize(BlockShapeData data, GameObject singleBlockPrefab, BlockRotation rotation = BlockRotation.Rot_0, float cellSize = 0f)
     {
         this.shapeData = data;
@@ -17,9 +30,13 @@ public class BlockShape : MonoBehaviour
         // Xóa block cũ nếu có
         foreach (var b in activeBlocks)
         {
-            Destroy(b);
+            if (b != null)
+            {
+                Destroy(b);
+            }
         }
         activeBlocks.Clear();
+        cachedRenderers.Clear();
 
         // Dùng số hàng và số cột đã tính theo góc xoay
         int rows = data.GetRotatedRowsCount(rotation);
@@ -66,10 +83,61 @@ public class BlockShape : MonoBehaviour
                     if (spriteRenderer != null)
                     {
                         spriteRenderer.color = data.shapeColor;
+                        cachedRenderers.Add(spriteRenderer);
+                        baseSortingOrder = spriteRenderer.sortingOrder;
                     }
 
                     activeBlocks.Add(block);
                 }
+            }
+        }
+
+        UpdateColliderBounds(blockSize);
+    }
+
+    /// <summary>
+    /// Cập nhật kích thước BoxCollider2D theo kích thước các khối gạch
+    /// </summary>
+    private void UpdateColliderBounds(Vector2 blockSize)
+    {
+        if (boxCollider == null)
+        {
+            boxCollider = GetComponent<BoxCollider2D>();
+            if (boxCollider == null)
+            {
+                boxCollider = gameObject.AddComponent<BoxCollider2D>();
+            }
+        }
+
+        if (activeBlocks.Count == 0)
+        {
+            boxCollider.size = Vector2.zero;
+            boxCollider.offset = Vector2.zero;
+            return;
+        }
+
+        // Tính bao viền dựa trên danh sách activeBlocks
+        Bounds bounds = new Bounds(activeBlocks[0].transform.localPosition, Vector3.zero);
+        for (int i = 1; i < activeBlocks.Count; i++)
+        {
+            bounds.Encapsulate(activeBlocks[i].transform.localPosition);
+        }
+
+        // Kích thước collider bao trọn cả ô ngoài cùng
+        boxCollider.size = new Vector2(bounds.size.x + blockSize.x, bounds.size.y + blockSize.y);
+        boxCollider.offset = bounds.center;
+    }
+
+    /// <summary>
+    /// Tăng giảm sortingOrder hiển thị của toàn bộ các ô con
+    /// </summary>
+    public void SetSortingOrderOffset(int offset)
+    {
+        for (int i = 0; i < cachedRenderers.Count; i++)
+        {
+            if (cachedRenderers[i] != null)
+            {
+                cachedRenderers[i].sortingOrder = baseSortingOrder + offset;
             }
         }
     }

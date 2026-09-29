@@ -3,7 +3,8 @@
     "rootNamespace": "Gameplay.BlockDrag",
     "references": [
         "GUID:d8f99e86a031141438d186833c629fd7",
-        "GUID:a5893f15044049c40822e21fa22b439c"
+        "GUID:a5893f15044049c40822e21fa22b439c",
+        "GUID:bd7cbe032296944a69986a3acfb90044"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

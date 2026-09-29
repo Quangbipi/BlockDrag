@@ -15,8 +15,15 @@ public class BlockGrid : MonoBehaviour
     [Tooltip("Tỷ lệ cách đều lề trái/phải màn hình (mặc định 0.1 tương ứng 10%)")]
     [Range(0f, 0.4f)]
     [SerializeField] protected float marginPercent = 0.1f;
-    [Tooltip("Nếu bật, tự động đưa vị trí Grid về chính giữa màn hình Camera. Nếu tắt, giữ nguyên transform.position")]
+    [Header("Positioning & Offset")]
+    [Tooltip("Nếu bật, tự động căn vị trí Grid theo tỷ lệ màn hình Camera. Nếu tắt, giữ nguyên transform.position")]
     [SerializeField] protected bool centerOnCamera = true;
+    [Tooltip("Tỷ lệ vị trí tâm Grid theo chiều ngang màn hình (0: Mép trái, 0.5: Giữa, 1: Mép phải)")]
+    [Range(0f, 1f)]
+    [SerializeField] protected float screenPositionX = 0.5f;
+    [Tooltip("Tỷ lệ vị trí tâm Grid theo chiều dọc màn hình (0: Mép dưới, 0.5: Giữa, 0.6: Cách đáy 60%, 1: Mép trên)")]
+    [Range(0f, 1f)]
+    [SerializeField] protected float screenPositionY = 0.5f;
 
     [Header("Prefabs & References")]
     [Tooltip("Prefab ô nền vuông 1x1")]
@@ -36,6 +43,33 @@ public class BlockGrid : MonoBehaviour
     public int MaxColumn => maxColumn;
     public int MaxRow => maxRow;
     public float Spacing => spacing;
+    public bool CenterOnCamera
+    {
+        get => centerOnCamera;
+        set
+        {
+            centerOnCamera = value;
+            UpdateGridPosition();
+        }
+    }
+    public float ScreenPositionX
+    {
+        get => screenPositionX;
+        set
+        {
+            screenPositionX = Mathf.Clamp01(value);
+            UpdateGridPosition();
+        }
+    }
+    public float ScreenPositionY
+    {
+        get => screenPositionY;
+        set
+        {
+            screenPositionY = Mathf.Clamp01(value);
+            UpdateGridPosition();
+        }
+    }
 
     protected virtual void Start()
     {
@@ -87,13 +121,8 @@ public class BlockGrid : MonoBehaviour
         gridWidth = cols * cellSize + totalSpacingX;
         gridHeight = rows * cellSize + (rows - 1) * spacing;
 
-        // Căn tâm grid vào giữa màn hình nếu được bật
-        if (centerOnCamera)
-        {
-            Vector3 centerPos = cam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, cam.nearClipPlane));
-            centerPos.z = transform.position.z;
-            transform.position = centerPos;
-        }
+        // Cập nhật vị trí grid theo tỷ lệ màn hình Camera nếu được bật
+        UpdateGridPosition();
     }
 
     /// <summary>
@@ -270,6 +299,35 @@ public class BlockGrid : MonoBehaviour
 
         return new Vector2Int(row, col);
     }
+
+    /// <summary>
+    /// Cập nhật vị trí của Grid trên màn hình Camera dựa trên tỷ lệ Viewport (screenPositionX, screenPositionY)
+    /// </summary>
+    public void UpdateGridPosition()
+    {
+        if (!centerOnCamera) return;
+
+        Camera cam = targetCamera != null ? targetCamera : Camera.main;
+        if (cam == null) return;
+
+        Vector3 targetPos = cam.ViewportToWorldPoint(new Vector3(screenPositionX, screenPositionY, cam.nearClipPlane));
+        targetPos.z = transform.position.z;
+        transform.position = targetPos;
+    }
+
+#if UNITY_EDITOR
+    protected virtual void OnValidate()
+    {
+        screenPositionX = Mathf.Clamp01(screenPositionX);
+        screenPositionY = Mathf.Clamp01(screenPositionY);
+        marginPercent = Mathf.Clamp(marginPercent, 0f, 0.4f);
+
+        if (centerOnCamera)
+        {
+            UpdateGridPosition();
+        }
+    }
+#endif
 
     private void OnDrawGizmosSelected()
     {
