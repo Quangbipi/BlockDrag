@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c314d30bc4d7d4f41b8c9faaa52a4356, type: 3}
-  m_Name: Block_L
+  m_Name: Block_I_2
   m_EditorClassIdentifier: 
   shapeColor: {r: 0, g: 1, b: 1, a: 1}
   rows:
-  - 1,0
-  - 1,0
-  - 1,1
+  - 1
+  - 1
+  - 1
