@@ -37,6 +37,14 @@ public class BlockSpawner : MonoBehaviour
     private const int SlotCount = 3;
     private Transform[] spawnSlots;
 
+    private static readonly BlockRotation[] AvailableRotations =
+    {
+        BlockRotation.Rot_0,
+        BlockRotation.Rot_90,
+        BlockRotation.Rot_180,
+        BlockRotation.Rot_270
+    };
+
     private void Awake()
     {
         if (blockGrid == null)
@@ -176,7 +184,8 @@ public class BlockSpawner : MonoBehaviour
         // Khởi tạo các ô gạch 1x1 với kích thước BẰNG grid (cellSize thật)
         if (shapeComp != null)
         {
-            shapeComp.Initialize(randomData, singleBlockPrefab, rotation: BlockRotation.Rot_90, cellSize: gridCellSize);
+            BlockRotation randomRotation = AvailableRotations[Random.Range(0, AvailableRotations.Length)];
+            shapeComp.Initialize(randomData, singleBlockPrefab, rotation: randomRotation, cellSize: gridCellSize);
         }
 
         // Thu nhỏ container bằng localScale → hiển thị nhỏ tại slot chờ
