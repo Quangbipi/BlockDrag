@@ -2769,12 +2769,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   singleBlockPrefab: {fileID: 6428341610429012991, guid: 309a7bc5b779944d2acaa26d69081231, type: 3}
   shapeContainerPrefab: {fileID: 5633127227813909826, guid: b8ed50c59d2394937b0ce8b74c5a1459, type: 3}
+  blockGrid: {fileID: 1500020727}
   availableShapes:
   - {fileID: 11400000, guid: 5825a0136aa8a4f8ea7487deb370e75d, type: 2}
-  spawnSlots:
-  - {fileID: 1460548280}
-  - {fileID: 1556961119}
-  - {fileID: 566727785}
+  bottomOffsetPercent: 0.12
+  sideMarginPercent: 0.15
+  spawnScaleRatio: 0.6
+  targetCamera: {fileID: 0}
 --- !u!4 &1099586251
 Transform:
   m_ObjectHideFlags: 0

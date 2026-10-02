@@ -78,6 +78,9 @@ public class BlockShape : MonoBehaviour
                     GameObject block = Instantiate(singleBlockPrefab, transform);
                     block.transform.localPosition = localPos;
 
+                    // Đồng bộ scale với cellObj trong BlockGrid
+                    ApplyBlockScale(block, blockSize.x);
+
                     // Đổi màu block con
                     var spriteRenderer = block.GetComponent<SpriteRenderer>();
                     if (spriteRenderer != null)
@@ -93,6 +96,14 @@ public class BlockShape : MonoBehaviour
         }
 
         UpdateColliderBounds(blockSize);
+    }
+
+    /// <summary>
+    /// Căn chỉnh scale của ô con 1x1 theo kích thước cellSize chuẩn của BlockGrid
+    /// </summary>
+    private void ApplyBlockScale(GameObject blockObj, float targetSize)
+    {
+        BlockGrid.ApplyScale(blockObj, targetSize);
     }
 
     /// <summary>

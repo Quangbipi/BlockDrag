@@ -43,6 +43,7 @@ public class BlockGrid : MonoBehaviour
     public int MaxColumn => maxColumn;
     public int MaxRow => maxRow;
     public float Spacing => spacing;
+    public Vector3 CellScale { get; protected set; } = Vector3.one;
     public bool CenterOnCamera
     {
         get => centerOnCamera;
@@ -175,19 +176,33 @@ public class BlockGrid : MonoBehaviour
     /// <summary>
     /// Căn chỉnh scale của ô dựa vào sprite.bounds.size của SpriteRenderer
     /// </summary>
-    private void ApplyCellScale(GameObject cellObj, float targetSize)
+    public void ApplyCellScale(GameObject cellObj, float targetSize)
     {
-        var spriteRenderer = cellObj.GetComponent<SpriteRenderer>();
+        ApplyScale(cellObj, targetSize);
+        if (cellObj != null)
+        {
+            CellScale = cellObj.transform.localScale;
+        }
+    }
+
+    /// <summary>
+    /// Hàm tiện ích căn chỉnh scale của một GameObject chứa SpriteRenderer theo targetSize
+    /// </summary>
+    public static void ApplyScale(GameObject targetObj, float targetSize)
+    {
+        if (targetObj == null || targetSize <= 0f) return;
+
+        var spriteRenderer = targetObj.GetComponent<SpriteRenderer>();
         if (spriteRenderer != null && spriteRenderer.sprite != null)
         {
             Vector2 spriteSize = spriteRenderer.sprite.bounds.size;
             float scaleX = spriteSize.x > 0f ? (targetSize / spriteSize.x) : 1f;
             float scaleY = spriteSize.y > 0f ? (targetSize / spriteSize.y) : 1f;
-            cellObj.transform.localScale = new Vector3(scaleX, scaleY, 1f);
+            targetObj.transform.localScale = new Vector3(scaleX, scaleY, 1f);
         }
         else
         {
-            cellObj.transform.localScale = new Vector3(targetSize, targetSize, 1f);
+            targetObj.transform.localScale = new Vector3(targetSize, targetSize, 1f);
         }
     }
 

@@ -12,6 +12,15 @@ public class BlockDragHandler : MonoBehaviour
     [Tooltip("Tỷ lệ scale của khối khi đang kéo thả (chuẩn tỷ lệ Grid = 1.0)")]
     [SerializeField] private float dragScale = 1f;
 
+    /// <summary>
+    /// Cho phép gán dragScale từ bên ngoài (ví dụ BlockSpawner tính 1/spawnScaleRatio)
+    /// </summary>
+    public float DragScale
+    {
+        get => dragScale;
+        set => dragScale = value;
+    }
+
     [Tooltip("Thời gian tween scale khi nhấc khối")]
     [SerializeField] private float pickUpDuration = 0.15f;
 
