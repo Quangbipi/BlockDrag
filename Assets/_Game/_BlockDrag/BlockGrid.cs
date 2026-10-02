@@ -300,6 +300,32 @@ public class BlockGrid : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Xóa toàn bộ các khối gạch đang chiếm chỗ trên Grid khi chơi lại (Replay), giữ nguyên các ô nền Grid
+    /// </summary>
+    [ContextMenu("Reset Board")]
+    public void ResetBoard()
+    {
+        HideIndicator();
+
+        if (occupiedBlocks != null)
+        {
+            int rows = occupiedBlocks.GetLength(0);
+            int cols = occupiedBlocks.GetLength(1);
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    if (occupiedBlocks[r, c] != null)
+                    {
+                        DestroySafely(occupiedBlocks[r, c]);
+                        occupiedBlocks[r, c] = null;
+                    }
+                }
+            }
+        }
+    }
+
     private void DestroySafely(GameObject obj)
     {
         if (obj == null) return;

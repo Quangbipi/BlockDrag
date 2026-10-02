@@ -100,6 +100,7 @@ public class BlockDragHandler : MonoBehaviour
     private void OnMouseDown()
     {
         if (isReturning) return;
+        if (blockShape != null && blockShape.IsDimmed) return;
 
         isDragging = true;
         originalPosition = transform.position;

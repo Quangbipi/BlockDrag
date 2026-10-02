@@ -34,8 +34,20 @@ public class BlockSpawner : MonoBehaviour
     [Tooltip("Camera dùng để tính toạ độ (nếu để trống sẽ tự lấy Camera.main)")]
     [SerializeField] private Camera targetCamera;
 
+    [Header("Game Over Settings")]
+    [Tooltip("Thời gian chờ (giây) trước khi kích hoạt Game Over để đợi animation phá hàng hoàn tất")]
+    [SerializeField] private float gameOverDelay = 0.35f;
+
+    // Events
+    public event System.Action OnGameOver;
+    public event System.Action OnGameRestarted;
+
     private const int SlotCount = 3;
     private Transform[] spawnSlots;
+    private bool isGameOver = false;
+    private Coroutine gameOverRoutine;
+
+    public bool IsGameOver => isGameOver;
 
     private static readonly BlockRotation[] AvailableRotations =
     {
@@ -91,14 +103,26 @@ public class BlockSpawner : MonoBehaviour
 
         CreateSpawnSlots();
         SpawnNewHand();
+        CheckPlacementsAndGameOver();
+
+        // Tự động khởi tạo GameOverUI nếu trong scene chưa có
+        if (FindObjectOfType<Gameplay.BlockDrag.GameOverUI>() == null)
+        {
+            GameObject uiObj = new GameObject("GameOverUI");
+            uiObj.AddComponent<Gameplay.BlockDrag.GameOverUI>();
+        }
     }
 
     private void HandleShapePlaced()
     {
+        if (isGameOver) return;
+
         if (IsHandEmpty())
         {
             SpawnNewHand();
         }
+
+        CheckPlacementsAndGameOver();
     }
 
     /// <summary>
@@ -115,6 +139,117 @@ public class BlockSpawner : MonoBehaviour
             }
         }
         return true;
+    }
+
+    /// <summary>
+    /// Lấy danh sách toàn bộ các khối BlockShape hiện đang có trong các slot chờ
+    /// </summary>
+    public List<BlockShape> GetRemainingShapes()
+    {
+        List<BlockShape> list = new List<BlockShape>();
+        if (spawnSlots == null) return list;
+
+        for (int i = 0; i < spawnSlots.Length; i++)
+        {
+            if (spawnSlots[i] != null && spawnSlots[i].childCount > 0)
+            {
+                BlockShape shape = spawnSlots[i].GetComponentInChildren<BlockShape>();
+                if (shape != null)
+                {
+                    list.Add(shape);
+                }
+            }
+        }
+        return list;
+    }
+
+    /// <summary>
+    /// Đánh giá từng khối còn lại trong khay: làm mờ (dim) khối không thể đặt,
+    /// và kích hoạt Game Over nếu không còn bất kỳ khối nào có thể đặt được.
+    /// </summary>
+    public bool CheckPlacementsAndGameOver()
+    {
+        if (isGameOver) return true;
+
+        List<BlockShape> shapes = GetRemainingShapes();
+        if (shapes.Count == 0) return false;
+
+        int placeableCount = 0;
+        for (int i = 0; i < shapes.Count; i++)
+        {
+            BlockShape shape = shapes[i];
+            if (shape == null) continue;
+
+            bool canPlace = blockGrid != null && blockGrid.CanShapeBePlacedAnywhere(shape);
+            shape.SetDimmed(!canPlace);
+
+            if (canPlace)
+            {
+                placeableCount++;
+            }
+        }
+
+        if (placeableCount == 0)
+        {
+            isGameOver = true;
+            if (gameOverRoutine != null)
+            {
+                StopCoroutine(gameOverRoutine);
+            }
+            gameOverRoutine = StartCoroutine(TriggerGameOverDelayed(gameOverDelay));
+            return true;
+        }
+
+        return false;
+    }
+
+    private System.Collections.IEnumerator TriggerGameOverDelayed(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        OnGameOver?.Invoke();
+    }
+
+    /// <summary>
+    /// Xóa toàn bộ khối còn sót lại trong các slot
+    /// </summary>
+    public void ClearHand()
+    {
+        if (spawnSlots == null) return;
+        for (int i = 0; i < spawnSlots.Length; i++)
+        {
+            if (spawnSlots[i] != null)
+            {
+                for (int c = spawnSlots[i].childCount - 1; c >= 0; c--)
+                {
+                    Destroy(spawnSlots[i].GetChild(c).gameObject);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Chơi lại ván mới: dọn sạch bàn cờ, xóa khay cũ và sinh 3 khối mới
+    /// </summary>
+    public void RestartGame()
+    {
+        if (gameOverRoutine != null)
+        {
+            StopCoroutine(gameOverRoutine);
+            gameOverRoutine = null;
+        }
+
+        isGameOver = false;
+
+        if (blockGrid != null)
+        {
+            blockGrid.ResetBoard();
+        }
+
+        ClearHand();
+        SpawnNewHand();
+        CheckPlacementsAndGameOver();
+
+        OnGameRestarted?.Invoke();
     }
 
     /// <summary>

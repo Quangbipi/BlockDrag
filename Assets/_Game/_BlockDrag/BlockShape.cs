@@ -19,6 +19,7 @@ public class BlockShape : MonoBehaviour
 
     public BoxCollider2D BoxCollider => boxCollider;
     public BlockRotation CurrentRotation { get; private set; } = BlockRotation.Rot_0;
+    public bool IsDimmed { get; private set; } = false;
     public int RowsCount => shapeData != null ? shapeData.GetRotatedRowsCount(CurrentRotation) : 0;
     public int ColumnsCount => shapeData != null ? shapeData.GetRotatedColumnsCount(CurrentRotation) : 0;
     public IReadOnlyDictionary<Vector2Int, GameObject> BlockMap => blockMap;
@@ -43,6 +44,7 @@ public class BlockShape : MonoBehaviour
     {
         this.shapeData = data;
         this.CurrentRotation = rotation;
+        this.IsDimmed = false;
 
         // Xóa block cũ nếu có
         foreach (var b in activeBlocks)
@@ -168,6 +170,43 @@ public class BlockShape : MonoBehaviour
             if (cachedRenderers[i] != null)
             {
                 cachedRenderers[i].sortingOrder = baseSortingOrder + offset;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Làm tối/mờ khối gạch khi không thể đặt vừa vào bất kỳ ô nào trên Grid (Block Blast style)
+    /// Khi dimmed = true: giảm alpha/color và vô hiệu hóa BoxCollider2D để không kéo được.
+    /// Khi dimmed = false: khôi phục màu gốc rực rỡ và kích hoạt lại BoxCollider2D.
+    /// </summary>
+    public void SetDimmed(bool dimmed)
+    {
+        IsDimmed = dimmed;
+
+        if (boxCollider != null)
+        {
+            boxCollider.enabled = !dimmed;
+        }
+
+        Color originalColor = shapeData != null ? shapeData.shapeColor : Color.white;
+        Color targetColor;
+
+        if (dimmed)
+        {
+            // Màu tối mờ: hòa trộn với màu đen và giảm alpha xuống 0.45f
+            targetColor = new Color(originalColor.r * 0.4f, originalColor.g * 0.4f, originalColor.b * 0.4f, 0.45f);
+        }
+        else
+        {
+            targetColor = originalColor;
+            targetColor.a = 1f;
+        }
+
+        for (int i = 0; i < cachedRenderers.Count; i++)
+        {
+            if (cachedRenderers[i] != null)
+            {
+                cachedRenderers[i].color = targetColor;
             }
         }
     }
