@@ -15,8 +15,24 @@ public class BlockShape : MonoBehaviour
     private BoxCollider2D boxCollider;
     private int baseSortingOrder = 0;
     private readonly List<SpriteRenderer> cachedRenderers = new List<SpriteRenderer>();
+    private readonly Dictionary<Vector2Int, GameObject> blockMap = new Dictionary<Vector2Int, GameObject>();
 
     public BoxCollider2D BoxCollider => boxCollider;
+    public BlockRotation CurrentRotation { get; private set; } = BlockRotation.Rot_0;
+    public int RowsCount => shapeData != null ? shapeData.GetRotatedRowsCount(CurrentRotation) : 0;
+    public int ColumnsCount => shapeData != null ? shapeData.GetRotatedColumnsCount(CurrentRotation) : 0;
+    public IReadOnlyDictionary<Vector2Int, GameObject> BlockMap => blockMap;
+
+    public bool HasBlockAt(int r, int c)
+    {
+        return shapeData != null && shapeData.HasBlockAtRotated(r, c, CurrentRotation);
+    }
+
+    public GameObject GetBlockAt(int r, int c)
+    {
+        blockMap.TryGetValue(new Vector2Int(r, c), out var block);
+        return block;
+    }
 
     private void Awake()
     {
@@ -26,6 +42,7 @@ public class BlockShape : MonoBehaviour
     public void Initialize(BlockShapeData data, GameObject singleBlockPrefab, BlockRotation rotation = BlockRotation.Rot_0, float cellSize = 0f)
     {
         this.shapeData = data;
+        this.CurrentRotation = rotation;
 
         // Xóa block cũ nếu có
         foreach (var b in activeBlocks)
@@ -37,6 +54,7 @@ public class BlockShape : MonoBehaviour
         }
         activeBlocks.Clear();
         cachedRenderers.Clear();
+        blockMap.Clear();
 
         // Dùng số hàng và số cột đã tính theo góc xoay
         int rows = data.GetRotatedRowsCount(rotation);
@@ -91,6 +109,7 @@ public class BlockShape : MonoBehaviour
                     }
 
                     activeBlocks.Add(block);
+                    blockMap[new Vector2Int(r, c)] = block;
                 }
             }
         }

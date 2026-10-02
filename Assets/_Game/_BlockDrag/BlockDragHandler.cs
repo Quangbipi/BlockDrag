@@ -39,6 +39,10 @@ public class BlockDragHandler : MonoBehaviour
     [Tooltip("Camera chính dùng để quy đổi toạ độ màn hình (nếu để trống tự lấy Camera.main)")]
     [SerializeField] private Camera targetCamera;
 
+    [Header("Grid Reference")]
+    [Tooltip("Tham chiếu BlockGrid (nếu để trống tự tìm FindObjectOfType)")]
+    [SerializeField] private BlockGrid blockGrid;
+
     // Events phục vụ mở rộng tích hợp BlockGrid
     public event Action<BlockDragHandler> OnBeginDragEvent;
     public event Action<BlockDragHandler, Vector3> OnDraggingEvent;
@@ -54,6 +58,11 @@ public class BlockDragHandler : MonoBehaviour
 
     public bool IsDragging => isDragging;
     public BlockShape BlockShape => blockShape;
+    public BlockGrid BlockGrid
+    {
+        get => blockGrid;
+        set => blockGrid = value;
+    }
     public Vector3 DragOffset => dragOffset;
     public Vector3 OriginalPosition => originalPosition;
     public Vector3 OriginalScale => originalScale;
@@ -61,6 +70,10 @@ public class BlockDragHandler : MonoBehaviour
     private void Awake()
     {
         blockShape = GetComponent<BlockShape>();
+        if (blockGrid == null)
+        {
+            blockGrid = FindObjectOfType<BlockGrid>();
+        }
     }
 
     private void Start()
@@ -108,6 +121,11 @@ public class BlockDragHandler : MonoBehaviour
         // Cập nhật vị trí ngay lập tức theo con trỏ
         UpdateDragPosition();
 
+        if (blockGrid != null)
+        {
+            blockGrid.UpdateDragIndicator(blockShape, transform.position);
+        }
+
         OnBeginDragEvent?.Invoke(this);
     }
 
@@ -116,6 +134,12 @@ public class BlockDragHandler : MonoBehaviour
         if (!isDragging) return;
 
         UpdateDragPosition();
+
+        if (blockGrid != null)
+        {
+            blockGrid.UpdateDragIndicator(blockShape, transform.position);
+        }
+
         OnDraggingEvent?.Invoke(this, transform.position);
     }
 
@@ -126,8 +150,17 @@ public class BlockDragHandler : MonoBehaviour
         isDragging = false;
         OnEndDragEvent?.Invoke(this);
 
-        // Mặc định: Trở về vị trí và scale ban đầu tại Slot
-        ReturnToOrigin();
+        bool placed = false;
+        if (blockGrid != null)
+        {
+            placed = blockGrid.TryPlaceShape(blockShape, transform.position);
+        }
+
+        // Nếu không xếp được lên grid, bay về vị trí gốc tại slot
+        if (!placed)
+        {
+            ReturnToOrigin();
+        }
     }
 
     /// <summary>

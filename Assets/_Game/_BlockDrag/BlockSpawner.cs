@@ -45,11 +45,34 @@ public class BlockSpawner : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        if (blockGrid != null)
+        {
+            blockGrid.OnShapePlaced -= HandleShapePlaced;
+            blockGrid.OnShapePlaced += HandleShapePlaced;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (blockGrid != null)
+        {
+            blockGrid.OnShapePlaced -= HandleShapePlaced;
+        }
+    }
+
     void Start()
     {
         if (blockGrid == null)
         {
             blockGrid = FindObjectOfType<BlockGrid>();
+        }
+
+        if (blockGrid != null)
+        {
+            blockGrid.OnShapePlaced -= HandleShapePlaced;
+            blockGrid.OnShapePlaced += HandleShapePlaced;
         }
 
         // Đảm bảo grid đã tính cellSize trước khi spawn
@@ -60,6 +83,30 @@ public class BlockSpawner : MonoBehaviour
 
         CreateSpawnSlots();
         SpawnNewHand();
+    }
+
+    private void HandleShapePlaced()
+    {
+        if (IsHandEmpty())
+        {
+            SpawnNewHand();
+        }
+    }
+
+    /// <summary>
+    /// Kiểm tra xem cả 3 slot chờ đã đặt hết khối lên grid hay chưa
+    /// </summary>
+    public bool IsHandEmpty()
+    {
+        if (spawnSlots == null) return false;
+        for (int i = 0; i < spawnSlots.Length; i++)
+        {
+            if (spawnSlots[i] != null && spawnSlots[i].childCount > 0)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /// <summary>
@@ -142,6 +189,7 @@ public class BlockSpawner : MonoBehaviour
         BlockDragHandler dragHandler = newShapeObj.GetComponent<BlockDragHandler>();
         if (dragHandler != null)
         {
+            dragHandler.BlockGrid = blockGrid;
             dragHandler.SetOrigin(newShapeObj.transform.position, newShapeObj.transform.localScale);
             dragHandler.DragScale = 1f;
         }
