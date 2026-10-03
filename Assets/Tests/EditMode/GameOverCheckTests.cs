@@ -106,5 +106,42 @@ namespace Tests.EditMode
 
             Assert.IsFalse(grid.IsCellOccupied(0, 0));
         }
+
+        [Test]
+        public void ClearHand_WhenSlotsHaveChildren_ClearsChildCountImmediately()
+        {
+            var spawnerObj = new GameObject("TestSpawner");
+            var spawner = spawnerObj.AddComponent<BlockSpawner>();
+
+            // Setup 3 mock slot transforms
+            var slot0 = new GameObject("Slot_0").transform;
+            slot0.SetParent(spawner.transform);
+            var slot1 = new GameObject("Slot_1").transform;
+            slot1.SetParent(spawner.transform);
+            var slot2 = new GameObject("Slot_2").transform;
+            slot2.SetParent(spawner.transform);
+
+            // Thêm khối con vào slot 1 và slot 2 (mô phỏng tình huống còn 2 khối khi thua)
+            var child1 = new GameObject("Child_1");
+            child1.transform.SetParent(slot1);
+            var child2 = new GameObject("Child_2");
+            child2.transform.SetParent(slot2);
+
+            Assert.AreEqual(0, slot0.childCount);
+            Assert.AreEqual(1, slot1.childCount);
+            Assert.AreEqual(1, slot2.childCount);
+
+            var field = typeof(BlockSpawner).GetField("spawnSlots", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            field.SetValue(spawner, new Transform[] { slot0, slot1, slot2 });
+
+            spawner.ClearHand();
+
+            // Cả 3 slot phải có childCount == 0 ngay lập tức, không đợi tới cuối frame
+            Assert.AreEqual(0, slot0.childCount);
+            Assert.AreEqual(0, slot1.childCount);
+            Assert.AreEqual(0, slot2.childCount);
+
+            Object.DestroyImmediate(spawnerObj);
+        }
     }
 }

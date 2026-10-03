@@ -221,14 +221,23 @@ public class BlockSpawner : MonoBehaviour
             {
                 for (int c = spawnSlots[i].childCount - 1; c >= 0; c--)
                 {
-                    Destroy(spawnSlots[i].GetChild(c).gameObject);
+                    Transform child = spawnSlots[i].GetChild(c);
+                    child.SetParent(null); // Tách ngay lập tức để childCount của slot trở về 0 đồng bộ
+#if UNITY_EDITOR
+                    if (!Application.isPlaying)
+                    {
+                        DestroyImmediate(child.gameObject);
+                        continue;
+                    }
+#endif
+                    Destroy(child.gameObject);
                 }
             }
         }
     }
 
     /// <summary>
-    /// Chơi lại ván mới: dọn sạch bàn cờ, xóa khay cũ và sinh 3 khối mới
+    /// Chơi lại ván mới: dọn sạch bàn cờ, xóa khay cũ và sinh đủ 3 khối mới
     /// </summary>
     public void RestartGame()
     {

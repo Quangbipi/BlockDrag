@@ -2749,7 +2749,7 @@ GameObject:
   - component: {fileID: 1099586251}
   - component: {fileID: 1099586250}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: BlockSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2771,11 +2771,26 @@ MonoBehaviour:
   shapeContainerPrefab: {fileID: 5633127227813909826, guid: b8ed50c59d2394937b0ce8b74c5a1459, type: 3}
   blockGrid: {fileID: 1500020727}
   availableShapes:
+  - {fileID: 11400000, guid: 6091e2415f6a046b7969cf4640f450b3, type: 2}
+  - {fileID: 11400000, guid: af37930f3112a4ca6932815481b14cae, type: 2}
+  - {fileID: 11400000, guid: d97ee2979689944b1a5854fc346435cf, type: 2}
+  - {fileID: 11400000, guid: 8b5cb59b2f60b42488ce513966f82a46, type: 2}
+  - {fileID: 11400000, guid: d90ad9310ed4a4d0abd9e452b66110bd, type: 2}
+  - {fileID: 11400000, guid: 7a423fe5ca3484217aa71541cb804039, type: 2}
+  - {fileID: 11400000, guid: 8537223e00a5b4fa2981463240c1deaa, type: 2}
   - {fileID: 11400000, guid: 5825a0136aa8a4f8ea7487deb370e75d, type: 2}
-  bottomOffsetPercent: 0.12
-  sideMarginPercent: 0.15
+  - {fileID: 11400000, guid: 81a99d50ff7b24a8099c7e57b2525cd7, type: 2}
+  - {fileID: 11400000, guid: c6badc35334424af3ac81c11706a79e4, type: 2}
+  - {fileID: 11400000, guid: 605219af0e5f64f5f81472ea7fa3260d, type: 2}
+  - {fileID: 11400000, guid: 09091dc436ab8473eb2f25d69410aca9, type: 2}
+  - {fileID: 11400000, guid: 2a81eca730a844421a8389f5b3c0631d, type: 2}
+  - {fileID: 11400000, guid: 8e6dcc17d84b5401eaf4e98cfe585402, type: 2}
+  - {fileID: 11400000, guid: b2d705e2ff93446e59f314bec0fd68a2, type: 2}
+  bottomOffsetPercent: 0.2
+  sideMarginPercent: 0.1
   spawnScaleRatio: 0.6
   targetCamera: {fileID: 0}
+  gameOverDelay: 0.35
 --- !u!4 &1099586251
 Transform:
   m_ObjectHideFlags: 0
@@ -3689,12 +3704,16 @@ MonoBehaviour:
   maxColumn: 8
   maxRow: 8
   spacing: 0
-  marginPercent: 0.15
+  marginPercent: 0.06
   centerOnCamera: 1
   screenPositionX: 0.5
   screenPositionY: 0.6
   cellPrefab: {fileID: 6428341610429012991, guid: 309a7bc5b779944d2acaa26d69081231, type: 3}
   targetCamera: {fileID: 1981483883}
+  indicatorAlpha: 0.4
+  indicatorSortingOrder: 5
+  clearDuration: 0.25
+  clearEase: 26
 --- !u!4 &1500020728
 Transform:
   m_ObjectHideFlags: 0
