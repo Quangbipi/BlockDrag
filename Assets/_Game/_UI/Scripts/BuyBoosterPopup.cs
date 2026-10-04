@@ -192,7 +192,7 @@ namespace UI
                     break;
                 default:
                     Locator.Reward.ClaimItem(boosterData.Type, 1);
-                    UIManager.Ins.GetUI<GameplayCanvas>().OnBoosterBtnClick((int)boosterData.Type);
+                    //UIManager.Ins.GetUI<GameplayCanvas>().OnBoosterBtnClick((int)boosterData.Type);
                     break;
             }
             Time.timeScale = 1;
@@ -216,7 +216,7 @@ namespace UI
                     break;
                 default:
                     Locator.Reward.ClaimItem(boosterData.Type, 1);
-                    UIManager.Ins.GetUI<GameplayCanvas>().OnBoosterBtnClick((int)boosterData.Type);
+                    //UIManager.Ins.GetUI<GameplayCanvas>().OnBoosterBtnClick((int)boosterData.Type);
                     break;
             }
             Time.timeScale = 1;
