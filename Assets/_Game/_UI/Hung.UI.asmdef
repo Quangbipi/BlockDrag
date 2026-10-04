@@ -10,6 +10,7 @@
         "Hung.Utilities.STimer",
         "Hung.Data",
         "Hung.Utilities",
+        "BlockDrag",
         "DOTween.Modules",
         "Unity.TextMeshPro",
         "spine-csharp",

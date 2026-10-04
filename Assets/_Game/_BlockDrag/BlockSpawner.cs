@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Gameplay.BlockDrag;
 using UnityEngine;
 
 public class BlockSpawner : MonoBehaviour
@@ -110,6 +111,13 @@ public class BlockSpawner : MonoBehaviour
         {
             GameObject uiObj = new GameObject("GameOverUI");
             uiObj.AddComponent<Gameplay.BlockDrag.GameOverUI>();
+        }
+
+        // Tự động khởi tạo ScoreManager nếu trong scene chưa có
+        if (FindObjectOfType<ScoreManager>() == null)
+        {
+            GameObject scoreObj = new GameObject("ScoreManager");
+            scoreObj.AddComponent<ScoreManager>();
         }
     }
 

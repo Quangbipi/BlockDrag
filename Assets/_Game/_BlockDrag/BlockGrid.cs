@@ -47,6 +47,7 @@ public class BlockGrid : MonoBehaviour
 
     // Events
     public event System.Action OnShapePlaced;
+    public event System.Action<int> OnShapePlacedWithCount;
     public event System.Action<int, int, int> OnLinesCleared; // (rowsCleared, colsCleared, totalCellsCleared)
 
     // Runtime variables
@@ -624,12 +625,14 @@ public class BlockGrid : MonoBehaviour
         int rows = shape.RowsCount;
         int cols = shape.ColumnsCount;
 
+        int placedBlockCount = 0;
         for (int r = 0; r < rows; r++)
         {
             for (int c = 0; c < cols; c++)
             {
                 if (shape.HasBlockAt(r, c))
                 {
+                    placedBlockCount++;
                     int targetR = baseCoord.x + r;
                     int targetC = baseCoord.y + c;
 
@@ -669,6 +672,7 @@ public class BlockGrid : MonoBehaviour
 
         // Bắn sự kiện đặt khối thành công
         OnShapePlaced?.Invoke();
+        OnShapePlacedWithCount?.Invoke(placedBlockCount);
 
         return true;
     }

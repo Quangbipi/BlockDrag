@@ -104,6 +104,18 @@ namespace Gameplay.BlockDrag
         {
             EnsureUIElements();
 
+            if (messageText != null)
+            {
+                if (ScoreManager.Ins != null)
+                {
+                    messageText.text = $"Điểm: {ScoreManager.Ins.CurrentScore}  |  Kỷ Lục: {ScoreManager.Ins.HighScore}";
+                }
+                else
+                {
+                    messageText.text = "Không còn nước đi nào hợp lệ!";
+                }
+            }
+
             fadeTween?.Kill();
             scaleTween?.Kill();
 
