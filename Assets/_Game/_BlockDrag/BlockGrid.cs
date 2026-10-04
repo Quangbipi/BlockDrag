@@ -49,6 +49,9 @@ public class BlockGrid : MonoBehaviour
     public event System.Action OnShapePlaced;
     public event System.Action<int> OnShapePlacedWithCount;
     public event System.Action<int, int, int> OnLinesCleared; // (rowsCleared, colsCleared, totalCellsCleared)
+    public event System.Action<int, int, int, Vector3> OnLinesClearedWithPos; // (rowsCleared, colsCleared, totalCellsCleared, placedCenterPos)
+
+    public Vector3 LastPlacedCenterPosition { get; private set; }
 
     // Runtime variables
     protected GameObject[,] gridCells;
@@ -626,6 +629,7 @@ public class BlockGrid : MonoBehaviour
         int cols = shape.ColumnsCount;
 
         int placedBlockCount = 0;
+        List<Vector2Int> placedCells = new List<Vector2Int>();
         for (int r = 0; r < rows; r++)
         {
             for (int c = 0; c < cols; c++)
@@ -635,6 +639,7 @@ public class BlockGrid : MonoBehaviour
                     placedBlockCount++;
                     int targetR = baseCoord.x + r;
                     int targetC = baseCoord.y + c;
+                    placedCells.Add(new Vector2Int(targetR, targetC));
 
                     GameObject blockObj = shape.GetBlockAt(r, c);
                     if (blockObj != null)
@@ -666,6 +671,9 @@ public class BlockGrid : MonoBehaviour
         // Hủy khối shape cha và tách khỏi slot ngay lập tức
         shape.transform.SetParent(null);
         Destroy(shape.gameObject);
+
+        // Lưu tâm hình học của khối vừa đặt
+        LastPlacedCenterPosition = CalculateCellsCenterPosition(placedCells);
 
         // Kiểm tra và phá hủy các hàng ngang / cột dọc đã lấp đầy
         CheckAndClearLines();
@@ -749,6 +757,21 @@ public class BlockGrid : MonoBehaviour
         }
 
         OnLinesCleared?.Invoke(fullRows.Count, fullCols.Count, cellsToClear.Count);
+        OnLinesClearedWithPos?.Invoke(fullRows.Count, fullCols.Count, cellsToClear.Count, LastPlacedCenterPosition);
+    }
+
+    /// <summary>
+    /// Tính tâm hình học thế giới từ danh sách toạ độ các ô trên Grid
+    /// </summary>
+    public Vector3 CalculateCellsCenterPosition(IReadOnlyList<Vector2Int> cellCoords)
+    {
+        if (cellCoords == null || cellCoords.Count == 0) return transform.position;
+        Vector3 sum = Vector3.zero;
+        for (int i = 0; i < cellCoords.Count; i++)
+        {
+            sum += GetCellWorldPosition(cellCoords[i].x, cellCoords[i].y);
+        }
+        return sum / cellCoords.Count;
     }
 
     private void AnimateAndDestroyBlock(GameObject blockObj)

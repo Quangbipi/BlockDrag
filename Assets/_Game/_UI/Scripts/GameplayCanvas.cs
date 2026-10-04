@@ -64,6 +64,11 @@ namespace UI
             base.Open(param);
             toastCanvas = UIManager.Ins.OpenUI<ToastCanvas>();
 
+            if (ComboEffectManager.Ins == null && GetComponent<ComboEffectManager>() == null)
+            {
+                gameObject.AddComponent<ComboEffectManager>();
+            }
+
             SubscribeScoreEvents();
 
             if (ScoreManager.Ins != null)

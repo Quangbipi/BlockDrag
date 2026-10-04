@@ -73,15 +73,64 @@ namespace Tests.EditMode
         }
 
         [Test]
-        public void ClearMultipleLines_Simultaneous_Awards25PointsPerLine()
+        public void ClearMultipleLines_Simultaneous_StartsComboByLinesClearedAndAwardsBonus()
         {
-            // Phá đồng thời 1 hàng và 1 cột = 2 lines
+            // Phá đồng thời 1 hàng và 1 cột = 2 lines ngay từ đầu
             scoreManager.HandleLinesCleared(1, 1, 15);
 
-            // 2 lines * 25 = 50 điểm
-            Assert.AreEqual(50, scoreManager.CurrentScore);
-            Assert.AreEqual(1, scoreManager.CurrentCombo);
+            // 2 lines * 25 = 50 cơ bản + (2 - 1) * 25 = 25 thưởng combo = 75 điểm
+            Assert.AreEqual(75, scoreManager.CurrentScore);
+            Assert.AreEqual(2, scoreManager.CurrentCombo);
             Assert.AreEqual(5f, scoreManager.ComboTimer, 0.001f);
+        }
+
+        [Test]
+        public void ClearTripleLines_Simultaneous_StartsCombo3AndAwardsBonus()
+        {
+            // Phá đồng thời 3 dòng = 3 lines ngay từ đầu
+            scoreManager.HandleLinesCleared(2, 1, 20);
+
+            // 3 lines * 25 = 75 cơ bản + (3 - 1) * 25 = 50 thưởng combo = 125 điểm
+            Assert.AreEqual(125, scoreManager.CurrentScore);
+            Assert.AreEqual(3, scoreManager.CurrentCombo);
+            Assert.AreEqual(5f, scoreManager.ComboTimer, 0.001f);
+        }
+
+        [Test]
+        public void ClearMultipleLines_DuringComboStreak_AccumulatesLinesCleared()
+        {
+            // Bước 1: Phá 1 dòng -> Combo 1, 25 điểm
+            scoreManager.HandleLinesCleared(1, 0, 8);
+            Assert.AreEqual(1, scoreManager.CurrentCombo);
+            Assert.AreEqual(25, scoreManager.CurrentScore);
+
+            // Bước 2: Trong thời gian combo, phá tiếp 2 dòng cùng lúc
+            // Combo tăng thêm 2: 1 + 2 = Combo 3!
+            // Điểm dòng = 2 * 25 = 50
+            // Điểm combo = (3 - 1) * 25 = 50
+            // Tổng cộng thêm = 100 -> Điểm mới: 25 + 100 = 125
+            scoreManager.HandleLinesCleared(1, 1, 15);
+            Assert.AreEqual(3, scoreManager.CurrentCombo);
+            Assert.AreEqual(125, scoreManager.CurrentScore);
+        }
+
+        [Test]
+        public void HandleLinesClearedWithPos_MultiLineInitial_TriggersComboEvent()
+        {
+            int triggeredCombo = 0;
+            Vector3 triggeredPos = Vector3.zero;
+            scoreManager.OnComboTriggered += (combo, pos) =>
+            {
+                triggeredCombo = combo;
+                triggeredPos = pos;
+            };
+
+            Vector3 spawnPos = new Vector3(2.5f, 3.5f, 0f);
+            // Phá 2 dòng cùng lúc ngay từ đầu -> Đạt Combo 2 -> Kích hoạt event
+            scoreManager.HandleLinesClearedWithPos(1, 1, 15, spawnPos);
+
+            Assert.AreEqual(2, triggeredCombo);
+            Assert.AreEqual(spawnPos, triggeredPos);
         }
 
         [Test]
@@ -172,6 +221,38 @@ namespace Tests.EditMode
 
             Assert.GreaterOrEqual(scoreManager.HighScore, 500);
             Assert.AreEqual(500, scoreManager.CurrentScore);
+        }
+
+        [Test]
+        public void HandleLinesClearedWithPos_Combo1_DoesNotTriggerOnComboTriggered()
+        {
+            int comboTriggered = 0;
+            scoreManager.OnComboTriggered += (c, pos) => comboTriggered = c;
+
+            scoreManager.HandleLinesClearedWithPos(1, 0, 8, new Vector3(1f, 2f, 0f));
+
+            Assert.AreEqual(0, comboTriggered, "Combo 1 should not trigger visual combo effect");
+        }
+
+        [Test]
+        public void HandleLinesClearedWithPos_Combo2_TriggersOnComboTriggeredWithPosition()
+        {
+            int comboTriggered = 0;
+            Vector3 triggeredPos = Vector3.zero;
+            scoreManager.OnComboTriggered += (c, pos) =>
+            {
+                comboTriggered = c;
+                triggeredPos = pos;
+            };
+
+            // Lần 1: kích hoạt combo 1
+            scoreManager.HandleLinesClearedWithPos(1, 0, 8, new Vector3(1f, 1f, 0f));
+            // Lần 2: trong cửa sổ combo -> lên combo 2
+            Vector3 targetPos = new Vector3(3f, 4f, 0f);
+            scoreManager.HandleLinesClearedWithPos(1, 0, 8, targetPos);
+
+            Assert.AreEqual(2, comboTriggered);
+            Assert.AreEqual(targetPos, triggeredPos);
         }
     }
 }

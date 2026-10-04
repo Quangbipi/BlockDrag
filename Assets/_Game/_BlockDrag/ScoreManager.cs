@@ -33,6 +33,7 @@ namespace Gameplay.BlockDrag
         public event Action<int> OnScoreChanged;
         public event Action<int> OnHighScoreChanged;
         public event Action<int, int> OnComboChanged; // (comboCount, bonusScoreAwarded)
+        public event Action<int, Vector3> OnComboTriggered; // (comboCount, worldPos) khi combo >= 2
         public event Action<float> OnComboTimerUpdated; // (remainingTime)
         public event Action OnComboExpired;
 
@@ -141,8 +142,8 @@ namespace Gameplay.BlockDrag
                 blockGrid.OnShapePlacedWithCount -= HandleShapePlacedWithCount;
                 blockGrid.OnShapePlacedWithCount += HandleShapePlacedWithCount;
 
-                blockGrid.OnLinesCleared -= HandleLinesCleared;
-                blockGrid.OnLinesCleared += HandleLinesCleared;
+                blockGrid.OnLinesClearedWithPos -= HandleLinesClearedWithPos;
+                blockGrid.OnLinesClearedWithPos += HandleLinesClearedWithPos;
             }
 
             if (blockSpawner != null)
@@ -160,7 +161,7 @@ namespace Gameplay.BlockDrag
             if (blockGrid != null)
             {
                 blockGrid.OnShapePlacedWithCount -= HandleShapePlacedWithCount;
-                blockGrid.OnLinesCleared -= HandleLinesCleared;
+                blockGrid.OnLinesClearedWithPos -= HandleLinesClearedWithPos;
             }
 
             if (blockSpawner != null)
@@ -198,8 +199,8 @@ namespace Gameplay.BlockDrag
 
             if (isComboActive && comboTimer > 0f)
             {
-                // Đang trong thời gian đếm ngược: tăng combo và cộng thêm thời gian
-                currentCombo++;
+                // Đang trong thời gian đếm ngược: tăng cấp combo bằng số hàng/cột vừa phá hủy
+                currentCombo += linesCleared;
                 comboBonusPoints = (currentCombo - 1) * Config.ComboBonusMultiplier;
 
                 comboTimer += Config.ComboBonusDuration;
@@ -211,9 +212,9 @@ namespace Gameplay.BlockDrag
             }
             else
             {
-                // Bắt đầu chuỗi combo mới (Combo 1)
-                currentCombo = 1;
-                comboBonusPoints = 0;
+                // Bắt đầu chuỗi combo mới: 1 dòng là combo 1, nhiều dòng là combo tương ứng (2 dòng = combo 2, ...)
+                currentCombo = linesCleared;
+                comboBonusPoints = (currentCombo - 1) * Config.ComboBonusMultiplier;
                 comboTimer = Config.InitialComboDuration;
                 isComboActive = true;
 
@@ -225,6 +226,20 @@ namespace Gameplay.BlockDrag
 
             OnComboChanged?.Invoke(currentCombo, comboBonusPoints);
             OnComboTimerUpdated?.Invoke(comboTimer);
+        }
+
+        /// <summary>
+        /// Xử lý phá hủy hàng/cột kèm toạ độ tâm của khối shape vừa đặt:
+        /// Gọi HandleLinesCleared và nếu combo >= 2 thì phát OnComboTriggered.
+        /// </summary>
+        public void HandleLinesClearedWithPos(int rowsCleared, int colsCleared, int totalCellsCleared, Vector3 placedPos)
+        {
+            HandleLinesCleared(rowsCleared, colsCleared, totalCellsCleared);
+
+            if (currentCombo >= 2)
+            {
+                OnComboTriggered?.Invoke(currentCombo, placedPos);
+            }
         }
 
         /// <summary>

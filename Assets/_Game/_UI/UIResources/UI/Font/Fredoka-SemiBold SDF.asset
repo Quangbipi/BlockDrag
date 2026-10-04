@@ -169,7 +169,7 @@ MonoBehaviour:
   m_Name: Fredoka-SemiBold SDF
   m_EditorClassIdentifier: 
   hashCode: 1941747323
-  material: {fileID: 0}
+  material: {fileID: -465102015373997938}
   materialHashCode: 1784521979
   m_Version: 1.1.0
   m_SourceFontFileGUID: aac18c38be4ef434abb08f4ba9ee3e0d
