@@ -320,6 +320,8 @@ namespace Base
             public int watchingAdsCount = 0;
             public int playGameAdsCount = 0;
             public string lastHeartSaveTime;
+            // Score Data
+            public int highScore;
             // Item Data
             public ItemData[] ItemDatas;
             public List<IAP_ITEM> PurchasedItems;

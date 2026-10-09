@@ -9,6 +9,21 @@ namespace Tests.EditMode
         private GameObject scoreManagerObject;
         private ScoreManager scoreManager;
         private ScoreConfigSO config;
+        private FakeHighScoreStore highScoreStore;
+
+        private class FakeHighScoreStore : IHighScoreStore
+        {
+            public int StoredHighScore;
+            public int SaveCallCount;
+
+            public int Load() => StoredHighScore;
+
+            public void Save(int highScore)
+            {
+                StoredHighScore = highScore;
+                SaveCallCount++;
+            }
+        }
 
         [SetUp]
         public void SetUp()
@@ -20,6 +35,10 @@ namespace Tests.EditMode
             // Sử dụng các thông số mặc định theo đúng yêu cầu người dùng
             // pointsPerSingleBlock = 1, pointsPerLine = 25, initialComboDuration = 5, comboBonusDuration = 3, comboBonusMultiplier = 25
             scoreManager.Config = config;
+
+            // Không chạm vào PlayerPrefs / GameData thật của người chơi
+            highScoreStore = new FakeHighScoreStore();
+            scoreManager.SetHighScoreStore(highScoreStore);
             scoreManager.ResetScoreAndCombo();
         }
 
@@ -253,6 +272,52 @@ namespace Tests.EditMode
 
             Assert.AreEqual(2, comboTriggered);
             Assert.AreEqual(targetPos, triggeredPos);
+        }
+
+        [Test]
+        public void SetHighScoreStore_LoadsHighScoreFromStore()
+        {
+            var store = new FakeHighScoreStore { StoredHighScore = 1234 };
+
+            scoreManager.SetHighScoreStore(store);
+
+            Assert.AreEqual(1234, scoreManager.HighScore);
+        }
+
+        [Test]
+        public void SaveHighScore_AfterBeatingRecord_WritesNewHighScoreToStore()
+        {
+            highScoreStore.StoredHighScore = 100;
+            scoreManager.SetHighScoreStore(highScoreStore);
+
+            scoreManager.AddScore(150);
+            scoreManager.SaveHighScore();
+
+            Assert.AreEqual(150, highScoreStore.StoredHighScore);
+            Assert.AreEqual(1, highScoreStore.SaveCallCount);
+        }
+
+        [Test]
+        public void SaveHighScore_WithoutNewRecord_DoesNotWriteToStore()
+        {
+            highScoreStore.StoredHighScore = 500;
+            scoreManager.SetHighScoreStore(highScoreStore);
+
+            scoreManager.AddScore(100);
+            scoreManager.SaveHighScore();
+
+            Assert.AreEqual(500, scoreManager.HighScore);
+            Assert.AreEqual(0, highScoreStore.SaveCallCount);
+        }
+
+        [Test]
+        public void SaveHighScore_CalledTwice_WritesOnlyOnce()
+        {
+            scoreManager.AddScore(300);
+            scoreManager.SaveHighScore();
+            scoreManager.SaveHighScore();
+
+            Assert.AreEqual(1, highScoreStore.SaveCallCount);
         }
     }
 }

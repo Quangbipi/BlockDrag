@@ -8,8 +8,12 @@ namespace Gameplay.BlockDrag
     {
         public static ScoreManager Ins { get; private set; }
 
+        /// <summary>
+        /// Phát khi một ScoreManager vừa sẵn sàng (cuối Awake), cho UI mở trước đó đăng ký lại
+        /// </summary>
+        public static event Action<ScoreManager> OnInstanceReady;
+
         public const string ComboCountdownId = "BLOCK_BLAST_COMBO_TIMER";
-        private const string HighScoreKey = "BlockDrag_HighScore";
 
         [Header("Configuration")]
         [Tooltip("Asset dữ liệu ScriptableObject chứa thiết lập điểm và combo")]
@@ -28,6 +32,8 @@ namespace Gameplay.BlockDrag
         private int currentCombo = 1;
         private float comboTimer = 0f;
         private bool isComboActive = false;
+        private bool isHighScoreDirty = false;
+        private IHighScoreStore highScoreStore;
 
         // Events
         public event Action<int> OnScoreChanged;
@@ -65,6 +71,16 @@ namespace Gameplay.BlockDrag
             get => blockSpawner;
             set => blockSpawner = value;
         }
+        private IHighScoreStore HighScoreStore => highScoreStore ??= new GameDataHighScoreStore();
+
+        /// <summary>
+        /// Thay nơi lưu HighScore (dùng cho tests) và load lại HighScore từ đó
+        /// </summary>
+        public void SetHighScoreStore(IHighScoreStore store)
+        {
+            highScoreStore = store;
+            LoadHighScore();
+        }
 
         private void Awake()
         {
@@ -91,6 +107,8 @@ namespace Gameplay.BlockDrag
             }
 
             LoadHighScore();
+
+            OnInstanceReady?.Invoke(this);
         }
 
         private void OnEnable()
@@ -102,6 +120,19 @@ namespace Gameplay.BlockDrag
         {
             UnsubscribeEvents();
             StopComboTimer();
+        }
+
+        private void OnApplicationPause(bool paused)
+        {
+            if (paused)
+            {
+                SaveHighScore();
+            }
+        }
+
+        private void OnApplicationQuit()
+        {
+            SaveHighScore();
         }
 
         private void OnDestroy()
@@ -320,6 +351,7 @@ namespace Gameplay.BlockDrag
             if (currentScore > highScore)
             {
                 highScore = currentScore;
+                isHighScoreDirty = true;
                 OnHighScoreChanged?.Invoke(highScore);
             }
         }
@@ -348,23 +380,33 @@ namespace Gameplay.BlockDrag
 
         private void HandleGameRestarted()
         {
+            SaveHighScore();
             ResetScoreAndCombo();
         }
 
+        /// <summary>
+        /// Ghi HighScore vào GameData (qua DataManager) nếu có kỷ lục mới chưa được lưu
+        /// </summary>
         public void SaveHighScore()
         {
             if (currentScore > highScore)
             {
                 highScore = currentScore;
+                isHighScoreDirty = true;
                 OnHighScoreChanged?.Invoke(highScore);
             }
-            PlayerPrefs.SetInt(HighScoreKey, highScore);
-            PlayerPrefs.Save();
+
+            if (!isHighScoreDirty) return;
+
+            HighScoreStore.Save(highScore);
+            isHighScoreDirty = false;
         }
 
         private void LoadHighScore()
         {
-            highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
+            highScore = HighScoreStore.Load();
+            isHighScoreDirty = false;
+            OnHighScoreChanged?.Invoke(highScore);
         }
     }
 }

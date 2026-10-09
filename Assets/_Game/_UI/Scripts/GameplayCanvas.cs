@@ -27,6 +27,7 @@ namespace UI
 
         protected ToastCanvas toastCanvas;
         private Tween scorePunchTween;
+        private ScoreManager boundScoreManager;
 
         void Awake()
         {
@@ -38,12 +39,15 @@ namespace UI
 
         private void OnEnable()
         {
-            SubscribeScoreEvents();
+            ScoreManager.OnInstanceReady -= BindScoreManager;
+            ScoreManager.OnInstanceReady += BindScoreManager;
+            BindScoreManager(ScoreManager.Ins);
         }
 
         private void OnDisable()
         {
-            UnsubscribeScoreEvents();
+            ScoreManager.OnInstanceReady -= BindScoreManager;
+            UnbindScoreManager();
         }
 
         protected override void OnDestroy()
@@ -56,7 +60,8 @@ namespace UI
             }
 
             scorePunchTween?.Kill();
-            UnsubscribeScoreEvents();
+            ScoreManager.OnInstanceReady -= BindScoreManager;
+            UnbindScoreManager();
         }
 
         public override void Open(object param = null)
@@ -69,34 +74,36 @@ namespace UI
                 gameObject.AddComponent<ComboEffectManager>();
             }
 
-            SubscribeScoreEvents();
-
-            if (ScoreManager.Ins != null)
-            {
-                UpdateScoreText(ScoreManager.Ins.CurrentScore);
-                UpdateHighScoreText(ScoreManager.Ins.HighScore);
-            }
+            BindScoreManager(ScoreManager.Ins);
         }
 
-        private void SubscribeScoreEvents()
+        /// <summary>
+        /// Đăng ký sự kiện điểm của ScoreManager (kể cả khi ScoreManager được tạo sau canvas
+        /// hoặc được thay bằng instance mới khi load lại scene) và hiển thị ngay điểm hiện tại
+        /// </summary>
+        private void BindScoreManager(ScoreManager scoreManager)
         {
-            if (ScoreManager.Ins != null)
-            {
-                ScoreManager.Ins.OnScoreChanged -= UpdateScoreText;
-                ScoreManager.Ins.OnScoreChanged += UpdateScoreText;
+            if (scoreManager == null || scoreManager == boundScoreManager) return;
 
-                ScoreManager.Ins.OnHighScoreChanged -= UpdateHighScoreText;
-                ScoreManager.Ins.OnHighScoreChanged += UpdateHighScoreText;
+            UnbindScoreManager();
+            boundScoreManager = scoreManager;
+            boundScoreManager.OnScoreChanged += UpdateScoreText;
+            boundScoreManager.OnHighScoreChanged += UpdateHighScoreText;
+
+            if (ScoreTxt != null)
+            {
+                ScoreTxt.text = boundScoreManager.CurrentScore.ToString();
             }
+            UpdateHighScoreText(boundScoreManager.HighScore);
         }
 
-        private void UnsubscribeScoreEvents()
+        private void UnbindScoreManager()
         {
-            if (ScoreManager.Ins != null)
-            {
-                ScoreManager.Ins.OnScoreChanged -= UpdateScoreText;
-                ScoreManager.Ins.OnHighScoreChanged -= UpdateHighScoreText;
-            }
+            if (boundScoreManager == null) return;
+
+            boundScoreManager.OnScoreChanged -= UpdateScoreText;
+            boundScoreManager.OnHighScoreChanged -= UpdateHighScoreText;
+            boundScoreManager = null;
         }
 
         private void UpdateScoreText(int score)

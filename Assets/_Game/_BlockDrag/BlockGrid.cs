@@ -50,6 +50,7 @@ public class BlockGrid : MonoBehaviour
     public event System.Action<int> OnShapePlacedWithCount;
     public event System.Action<int, int, int> OnLinesCleared; // (rowsCleared, colsCleared, totalCellsCleared)
     public event System.Action<int, int, int, Vector3> OnLinesClearedWithPos; // (rowsCleared, colsCleared, totalCellsCleared, placedCenterPos)
+    public event System.Action<IReadOnlyList<Vector2Int>> OnShapePlacedCells; // (placedCellCoords) toạ độ (row, col) các ô khối vừa chiếm
 
     public Vector3 LastPlacedCenterPosition { get; private set; }
 
@@ -674,6 +675,9 @@ public class BlockGrid : MonoBehaviour
 
         // Lưu tâm hình học của khối vừa đặt
         LastPlacedCenterPosition = CalculateCellsCenterPosition(placedCells);
+
+        // Báo danh sách ô vừa đặt (trước khi phá hàng để toạ độ ô vẫn hợp lệ)
+        OnShapePlacedCells?.Invoke(placedCells);
 
         // Kiểm tra và phá hủy các hàng ngang / cột dọc đã lấp đầy
         CheckAndClearLines();
