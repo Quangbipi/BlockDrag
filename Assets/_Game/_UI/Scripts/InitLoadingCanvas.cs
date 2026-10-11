@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace UI
 {
-    using Base.UI;
+    using Quang.UI;
     using Spine.Unity;
     using TMPro;
     using UnityEngine.UI;
-    using Utilities;
+    using Quang.Utilities;
 
     public class InitLoadingCanvas : UISCanvas
     {

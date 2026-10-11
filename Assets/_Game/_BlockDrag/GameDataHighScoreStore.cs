@@ -1,10 +1,10 @@
-using Base;
+using Quang.Base;
 using UnityEngine;
 
 namespace Gameplay.BlockDrag
 {
     /// <summary>
-    /// Lưu HighScore vào GameData.user.highScore qua Locator.Data (DataManager).
+    /// Lưu HighScore vào GameData.highScore qua Locator.Data (DataManager).
     /// Nếu chưa có DataManager (chạy thẳng GameScene) thì đọc/ghi GameData trực tiếp qua Database.
     /// </summary>
     public class GameDataHighScoreStore : IHighScoreStore
@@ -23,15 +23,15 @@ namespace Gameplay.BlockDrag
         {
             GameData data = GetGameData();
             MigrateLegacyHighScore(data);
-            return data.user.highScore;
+            return data.highScore;
         }
 
         public void Save(int highScore)
         {
             GameData data = GetGameData();
-            if (highScore <= data.user.highScore) return;
+            if (highScore <= data.highScore) return;
 
-            data.user.highScore = highScore;
+            data.highScore = highScore;
             Persist();
         }
 
@@ -43,9 +43,9 @@ namespace Gameplay.BlockDrag
             if (!PlayerPrefs.HasKey(legacyKey)) return;
 
             int legacyHighScore = PlayerPrefs.GetInt(legacyKey, 0);
-            if (legacyHighScore > data.user.highScore)
+            if (legacyHighScore > data.highScore)
             {
-                data.user.highScore = legacyHighScore;
+                data.highScore = legacyHighScore;
             }
             Persist();
 

@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace UI
 {
-    using Base.UI;
+    using Quang.UI;
     using DG.Tweening;
-    using Utilities.Timer;
+    using Quang.Utilities.Timer;
 
     public class ToastCanvas : UISCanvas
     {

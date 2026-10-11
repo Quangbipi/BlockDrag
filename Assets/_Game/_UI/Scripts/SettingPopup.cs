@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace UI
 {
-    using Base;
-    using Base.UI;
-    using Common;
+    using Quang.Base;
+    using Quang.UI;
+    using Quang.Common;
     using System;
 
     public class SettingPopup : BasePopup
@@ -140,7 +140,7 @@ namespace UI
 
         protected void OnGoHome()
         {
-            Locator.Ads.Inter.Show(Loading);
+            Locator.Ads.Inter.Show(Loading, Placement.NONE);
             void Loading()
             {
                 UIManager.Ins.OpenUI<LoadingCanvas>(new object[] { loadingTimes, loadingActions });

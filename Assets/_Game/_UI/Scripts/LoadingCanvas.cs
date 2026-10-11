@@ -1,11 +1,11 @@
-using Base;
-using Base.UI;
+using Quang.Base;
+using Quang.UI;
 using Spine.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Utilities.Timer;
+using Quang.Utilities.Timer;
 
 namespace UI
 {
@@ -85,7 +85,7 @@ namespace UI
         public override void Close()
         {
             base.Close();
-            UIManager.Ins.RemoveBackUI(this);
+            UIManager.Ins.BackStack.Remove(this);
         }
     }
 }

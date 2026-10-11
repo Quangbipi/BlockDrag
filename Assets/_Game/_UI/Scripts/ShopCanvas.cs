@@ -1,12 +1,13 @@
+using Gameplay.BlockDrag;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace UI
 {
-    using Base;
-    using Base.UI;
-    using Common;
+    using Quang.Base;
+    using Quang.UI;
+    using Quang.Common;
 
     public class ShopCanvas : UISCanvas
     {
@@ -39,7 +40,7 @@ namespace UI
         //     {
         //         packs[i].OnInit(iapData.PurchaseProducts[packs[i].Item]);
         //     }
-        //     //GameEventManager.Ins.PostEvent(DesignPattern.EventID.OnActiveHomeScene, new bool[2] {false, true});
+        //     //GameEventManager.Ins.PostEvent(Quang.DesignPattern.EventID.OnActiveHomeScene, new bool[2] {false, true});
         // }
 
         // public override void UpdateUI()
@@ -83,11 +84,11 @@ namespace UI
         //         {
         //             items.Add(iapData.PurchaseProducts[item].rewards[i].Item);
         //             quantitys.Add(iapData.PurchaseProducts[item].rewards[i].Quantity);
-        //             Locator.Reward.ClaimItem(items[i], quantitys[i]);
+        //             Locator.Items.ClaimItem(items[i], quantitys[i]);
         //         }
                 
-        //         Locator.Reward.SaveItemData();              
-        //         Locator.Reward.ShowReward(items, quantitys);
+        //         Locator.Items.SaveItemData();              
+        //         Locator.Items.ShowReward(items, quantitys);
         //         UIManager.Ins.UpdateAllUI();
         //     }, () => UIManager.Ins.OpenUI<ToastCanvas>().Show("Buy Fail!"));
         // }

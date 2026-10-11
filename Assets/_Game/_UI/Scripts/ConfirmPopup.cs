@@ -1,13 +1,13 @@
 
 namespace UI
 {
-    using Base.UI;
+    using Quang.UI;
     using System;
     using UnityEngine;
 
     using System.Collections.Generic;
     using TMPro;
-    using Base;
+    using Quang.Base;
 
     public class ConfirmPopup : BasePopup
     {

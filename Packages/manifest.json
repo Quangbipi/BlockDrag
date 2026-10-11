@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.quang.designpattern": "file:/Users/minhquang/Documents/PackUnity/Quang_Packages/Packages/com.quang.designpattern",
+    "com.quang.utilities": "file:/Users/minhquang/Documents/PackUnity/Quang_Packages/Packages/com.quang.utilities",
+    "com.quang.persistence": "file:/Users/minhquang/Documents/PackUnity/Quang_Packages/Packages/com.quang.persistence",
+    "com.quang.base": "file:/Users/minhquang/Documents/PackUnity/Quang_Packages/Packages/com.quang.base",
+    "com.quang.data": "file:/Users/minhquang/Documents/PackUnity/Quang_Packages/Packages/com.quang.data",
+    "com.quang.ui": "file:/Users/minhquang/Documents/PackUnity/Quang_Packages/Packages/com.quang.ui",
     "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#main",
     "com.google.external-dependency-manager": "file:../GooglePackages/com.google.external-dependency-manager-1.2.190.tgz",
     "com.google.firebase.analytics": "file:../GooglePackages/com.google.firebase.analytics-13.17.0.tgz",

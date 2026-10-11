@@ -1,3 +1,4 @@
+using Gameplay.BlockDrag;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,12 +6,12 @@ using UnityEngine;
 namespace UI
 {
     using System;
-    using Base;
-    using Base.UI;
-    using Common;
+    using Quang.Base;
+    using Quang.UI;
+    using Quang.Common;
     using TMPro;
     using UnityEngine.UI;
-    using Utilities.Timer;
+    using Quang.Utilities.Timer;
 
     public class BuyBoosterPopup : BasePopup
     {
@@ -43,7 +44,7 @@ namespace UI
         private void Awake()
         {
             gameplayData = Locator.Data.GetSOData<GameplayData>();
-            goldItem = Locator.Reward.GetItem(ITEM.GOLD);
+            goldItem = Locator.Items.GetItem(ITEM.GOLD.ToItemId());
             heartTimer = TimerManager.Ins.PopSTimer();
             for (int i = 0; i < funcBtns.Length; i++)
             {
@@ -65,7 +66,7 @@ namespace UI
             IsRevive = false;
             base.Open(param);
             UIManager.Ins.OpenUI<TopCanvas>();
-            switch (boosterData.Type)
+            switch (boosterData.GetItemType())
             {
                 case ITEM.HINT_BOOSTER:
                     place = Placement.HINT_BOOSTER;
@@ -82,7 +83,7 @@ namespace UI
         {
             base.UpdateUI();
             cost = 0;
-            switch (boosterData.Type)
+            switch (boosterData.GetItemType())
             {
                 case ITEM.HEART:
                     cost = boosterData.Cost * gameplayData.MaxHearts;
@@ -118,7 +119,7 @@ namespace UI
 
             if (boosterData != null)
             {
-                switch (boosterData.Type)
+                switch (boosterData.GetItemType())
                 {
                     case ITEM.HEART:
                         description.gameObject.SetActive(false);
@@ -127,7 +128,7 @@ namespace UI
                         titleTxt.text = $"Refill {boosterData.Name}?";
                         icon.sprite = boosterData.Icon;
                         costTxt.text = $"{boosterData.Cost * gameplayData.MaxHearts}";
-                        boosterItem = Locator.Reward.GetItem(boosterData.Type);
+                        boosterItem = Locator.Items.GetItem(boosterData.Id);
                         OnTimeTik();
                         heartTimer.Start(1f, OnTimeTik, true);
                         break;
@@ -139,7 +140,7 @@ namespace UI
                         icon.sprite = boosterData.Icon;
                         description.text = boosterData.Description;
                         costTxt.text = boosterData.Cost.ToString();
-                        boosterItem = Locator.Reward.GetItem(boosterData.Type);
+                        boosterItem = Locator.Items.GetItem(boosterData.Id);
                         break;
                 }
             }
@@ -147,7 +148,7 @@ namespace UI
 
         private void OnTimeTik()
         {
-            heartTimeTxt.text = Locator.Heart.GetFormattedTimeRemaining();
+            heartTimeTxt.text = Locator.Heart.GetHeartFormattedTimeRemaining();
         }
 
         protected void OnUsingFunction(int code)
@@ -163,7 +164,7 @@ namespace UI
                     }
                     else
                     {
-                        Locator.Reward.SpendItem(ITEM.GOLD, cost);
+                        Locator.Items.SpendItem(ITEM.GOLD.ToItemId(), cost);
                         OnUsingBooster();
                     }
                     break;
@@ -180,23 +181,23 @@ namespace UI
         }
         protected void OnUsingBooster()
         {
-            switch (boosterData.Type)
+            switch (boosterData.GetItemType())
             {
                 case ITEM.HEART:
                     Locator.Heart.RefillHearts();
                     if (IsRevive)
                     {
-                        GameEventManager.Ins.PostEvent(DesignPattern.EventID.REVIVE);
+                        GameEventManager.Ins.PostEvent(Quang.DesignPattern.EventID.REVIVE);
                         Locator.Gameplay.Revive();
                     }
                     break;
                 default:
-                    Locator.Reward.ClaimItem(boosterData.Type, 1);
-                    //UIManager.Ins.GetUI<GameplayCanvas>().OnBoosterBtnClick((int)boosterData.Type);
+                    Locator.Items.ClaimItem(boosterData.Id, 1);
+                    //UIManager.Ins.GetUI<GameplayCanvas>().OnBoosterBtnClick((int)boosterData.GetItemType());
                     break;
             }
             Time.timeScale = 1;
-            Locator.Reward.SaveItemData();
+            Locator.Items.SaveItemData();
             UIManager.Ins.UpdateAllUI();
             Close();
         }
@@ -204,23 +205,23 @@ namespace UI
         protected void OnVideoUsingBooster()
         {
             boosterData.WatchVideoCount--;
-            switch (boosterData.Type)
+            switch (boosterData.GetItemType())
             {
                 case ITEM.HEART:
-                    Locator.Reward.ClaimItem(ITEM.HEART, 1);
+                    Locator.Items.ClaimItem(ITEM.HEART.ToItemId(), 1);
                     if (IsRevive)
                     {
-                        GameEventManager.Ins.PostEvent(DesignPattern.EventID.REVIVE);
+                        GameEventManager.Ins.PostEvent(Quang.DesignPattern.EventID.REVIVE);
                         Locator.Gameplay.Revive();
                     }
                     break;
                 default:
-                    Locator.Reward.ClaimItem(boosterData.Type, 1);
-                    //UIManager.Ins.GetUI<GameplayCanvas>().OnBoosterBtnClick((int)boosterData.Type);
+                    Locator.Items.ClaimItem(boosterData.Id, 1);
+                    //UIManager.Ins.GetUI<GameplayCanvas>().OnBoosterBtnClick((int)boosterData.GetItemType());
                     break;
             }
             Time.timeScale = 1;
-            Locator.Reward.SaveItemData();
+            Locator.Items.SaveItemData();
             UIManager.Ins.UpdateAllUI();
             Close();
         }

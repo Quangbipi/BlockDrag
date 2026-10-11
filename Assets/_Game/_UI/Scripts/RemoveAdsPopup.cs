@@ -1,10 +1,11 @@
+using Gameplay.BlockDrag;
 using System.Collections.Generic;
-using Base;
-using Base.UI;
+using Quang.Base;
+using Quang.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Utilities;
+using Quang.Utilities;
 
 namespace UI
 {
@@ -72,11 +73,11 @@ namespace UI
     //             {
     //                 items.Add(iapData.PurchaseProducts[currentItem].rewards[i].Item);
     //                 quantitys.Add(iapData.PurchaseProducts[currentItem].rewards[i].Quantity);
-    //                 Locator.Reward.ClaimItem(items[i], quantitys[i]);
+    //                 Locator.Items.ClaimItem(items[i], quantitys[i]);
     //             }
                 
-    //             Locator.Reward.SaveItemData();              
-    //             Locator.Reward.ShowReward(items, quantitys);
+    //             Locator.Items.SaveItemData();              
+    //             Locator.Items.ShowReward(items, quantitys);
     //             UIManager.Ins.UpdateAllUI();
     //             Close();
     //         });

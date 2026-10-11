@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Base;
+using Quang.Base;
 using MEC;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 
 namespace UI
 {
-    using Utilities;
+    using Quang.Utilities;
     public class UIFlyReward : MonoBehaviour
     {
         [FoldoutGroup("References")] [SerializeField]

@@ -1,8 +1,9 @@
-using Base;
-using Base.UI;
+using Gameplay.BlockDrag;
+using Quang.Base;
+using Quang.UI;
 using TMPro;
 using UnityEngine;
-using Utilities.Timer;
+using Quang.Utilities.Timer;
 
 namespace UI
 {
@@ -28,9 +29,9 @@ namespace UI
         public override void UpdateUI()
         {
             base.UpdateUI();
-            goldTxt.text = gameData.GetItemData(ITEM.GOLD).Quantity.ToString();
-            heartTxt.text = gameData.GetItemData(ITEM.HEART).Quantity.ToString();
-            // if (gameData.GetItemData(ITEM.HEART).Quantity >= HeartSave.MaxHearts)
+            goldTxt.text = gameData.GetItemData(ITEM.GOLD.ToItemId()).Quantity.ToString();
+            heartTxt.text = gameData.GetItemData(ITEM.HEART.ToItemId()).Quantity.ToString();
+            // if (gameData.GetItemData(ITEM.HEART.ToItemId()).Quantity >= HeartSave.MaxHearts)
             // {
             //     heartTimeTxt.text = "FULL";
             //     regenerateHeartTime.Stop();
@@ -48,8 +49,8 @@ namespace UI
 
         protected void OnTimeTik()
         {
-            heartTimeTxt.text = Locator.Heart.GetFormattedTimeRemaining();
-            heartTxt.text = gameData.GetItemData(ITEM.HEART).Quantity.ToString();
+            heartTimeTxt.text = Locator.Heart.GetHeartFormattedTimeRemaining();
+            heartTxt.text = gameData.GetItemData(ITEM.HEART.ToItemId()).Quantity.ToString();
         }
         public override void Close()
         {
@@ -59,7 +60,7 @@ namespace UI
 
         public void FlyGoldReward(Vector3 fromPos, int amount)
         {
-            int currentGold = gameData.GetItemData(ITEM.GOLD).Quantity;
+            int currentGold = gameData.GetItemData(ITEM.GOLD.ToItemId()).Quantity;
             int prevGold = currentGold - amount;
             flyReward.InitReward(prevGold, currentGold, fromPos);
         }

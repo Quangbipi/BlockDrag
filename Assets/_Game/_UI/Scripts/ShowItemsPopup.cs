@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Base;
-using Base.UI;
+using Gameplay.BlockDrag;
+using Quang.Base;
+using Quang.UI;
 using UnityEngine;
 using UnityEngine.UI;
-using Utilities.Timer;
+using Quang.Utilities.Timer;
 
 namespace UI
 {

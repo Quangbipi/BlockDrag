@@ -1,10 +1,11 @@
+using Gameplay.BlockDrag;
 using UnityEngine;
 
 namespace UI
 {
-    using Base;
-    using Base.UI;
-    using Common;
+    using Quang.Base;
+    using Quang.UI;
+    using Quang.Common;
     using TMPro;
 
     public class RevivePopup : BasePopup
@@ -30,7 +31,7 @@ namespace UI
             goldReviveButton._OnClick += OnRevive;
             videoReviveButton._OnClick += OnRevive;
             gameData = Locator.Data.GetData<GameData>();
-            heartItem = gameData.GetItemData(ITEM.HEART);
+            heartItem = gameData.GetItemData(ITEM.HEART.ToItemId());
             gameplayData = Locator.Data.GetSOData<GameplayData>();
         }
         public override void Open(object param)
@@ -47,7 +48,7 @@ namespace UI
                 case 0: //NOTE: Heart
                     if (gameplayData.ReviveHeartCost <= heartItem.Quantity)
                     {
-                        Locator.Ads.Inter.Show(OnRevive);
+                        Locator.Ads.Inter.Show(OnRevive, Placement.NONE);
                         UIManager.Ins.UpdateAllUI();
                     }
                     else
@@ -94,7 +95,7 @@ namespace UI
         protected void OnRevive()
         {
             isRevive = true;
-            GameEventManager.Ins.PostEvent(DesignPattern.EventID.REVIVE);
+            GameEventManager.Ins.PostEvent(Quang.DesignPattern.EventID.REVIVE);
             Locator.Gameplay.Revive();
             Close();
         }

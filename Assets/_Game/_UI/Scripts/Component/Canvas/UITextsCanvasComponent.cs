@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    using Base.UI;
+    using Quang.UI;
     public class UITextsCanvasComponent : UICanvasComponent
     {
         [SerializeField]

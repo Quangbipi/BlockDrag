@@ -1,19 +1,20 @@
+using Gameplay.BlockDrag;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace UI
 {
-    using Common;
+    using Quang.Common;
     using TMPro;
 
-    using Base.UI;
-    using Base;
-    using Base.Init;
+    using Quang.UI;
+    using Quang.Base;
+    using Quang.Base.Init;
     using System;
     using PolyAndCode.UI;
     using DG.Tweening;
-    using Utilities.Timer;
-    using Utilities;
+    using Quang.Utilities.Timer;
+    using Quang.Utilities;
     using UnityEngine.EventSystems;
     using UnityEngine.UI;
     using Spine.Unity;
@@ -153,7 +154,7 @@ namespace UI
                 UIManager.Ins.OpenUI<Debug_HomeCanvas>();
             }
             PlayAppearAnim();
-            GameEventManager.Ins.PostEvent(DesignPattern.EventID.ON_ACTIVE_HOME_SCENE, new bool[2] { true, false });
+            GameEventManager.Ins.PostEvent(Quang.DesignPattern.EventID.ON_ACTIVE_HOME_SCENE, new bool[2] { true, false });
             currentLevel = gameData.user.normalLevelIndex;
 
             for (int i = 0; i < gameData.level.LevelStars.Count; i++)
@@ -213,10 +214,10 @@ namespace UI
             gameplayData ??= Locator.Data.GetSOData<GameplayData>();
             currentTotalStar = gameData.TotalStar;
 
-            goldTxt.text = gameData.GetItemData(ITEM.GOLD).Quantity.ToString();
-            heartTxt.text = gameData.GetItemData(ITEM.HEART).Quantity.ToString();
+            goldTxt.text = gameData.GetItemData(ITEM.GOLD.ToItemId()).Quantity.ToString();
+            heartTxt.text = gameData.GetItemData(ITEM.HEART.ToItemId()).Quantity.ToString();
 
-            // if (gameData.GetItemData(ITEM.HEART).Quantity >= HeartSave.MaxHearts)
+            // if (gameData.GetItemData(ITEM.HEART.ToItemId()).Quantity >= HeartSave.MaxHearts)
             // {
             //     heartTimeTxt.text = "FULL";
             //     regenerateHeartTime.Stop();
@@ -238,7 +239,7 @@ namespace UI
             {
                 removeAdsBtn.gameObject.SetActive(true);
             }
-            // DevLog.Log(DevId.Hung, $"CUR HEART = {gameData.GetItemData(ITEM.HEART).Quantity} MAX HEART = {HeartSave.MaxHearts}");
+            // DevLog.Log(DevId.Hung, $"CUR HEART = {gameData.GetItemData(ITEM.HEART.ToItemId()).Quantity} MAX HEART = {HeartSave.MaxHearts}");
             //SetUpFeatureBtn(FeatureButtonType.All);
             // TimerManager.Ins.WaitForFrame(5, () =>
             // {
@@ -288,7 +289,7 @@ namespace UI
         }
         protected void OnTimeTik()
         {
-            heartTimeTxt.text = Locator.Heart.GetFormattedTimeRemaining();
+            heartTimeTxt.text = Locator.Heart.GetHeartFormattedTimeRemaining();
         }
 
         protected void OnHeartChanged(int count)
@@ -406,7 +407,7 @@ namespace UI
             }
             else
             {
-                if (gameData.GetItemData(ITEM.HEART).Quantity < gameplayData.ReviveHeartCost)
+                if (gameData.GetItemData(ITEM.HEART.ToItemId()).Quantity < gameplayData.ReviveHeartCost)
                 {
                     UIManager.Ins.OpenUI<BuyBoosterPopup>(gameplayData.Items[ITEM.HEART]);
                 }
@@ -462,7 +463,7 @@ namespace UI
 
         public void FlyGoldReward(Vector3 fromPos, int amount)
         {
-            int currentGold = gameData.GetItemData(ITEM.GOLD).Quantity;
+            int currentGold = gameData.GetItemData(ITEM.GOLD.ToItemId()).Quantity;
             int prevGold = currentGold - amount;
             flyReward.InitReward(prevGold, currentGold, fromPos);
         }
@@ -518,7 +519,7 @@ namespace UI
         //    }
         //    if (updateCoin)
         //    {
-        //        goldTxt.text = gameData.GetItemData(ITEM.GOLD).Quantity.ToString();
+        //        goldTxt.text = gameData.GetItemData(ITEM.GOLD.ToItemId()).Quantity.ToString();
         //    }
         //}
     }

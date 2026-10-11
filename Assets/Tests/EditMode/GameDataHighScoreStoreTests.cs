@@ -1,4 +1,4 @@
-using Base;
+using Quang.Base;
 using Gameplay.BlockDrag;
 using NUnit.Framework;
 using UnityEngine;
@@ -45,7 +45,7 @@ namespace Tests.EditMode
         [Test]
         public void Load_ReturnsHighScoreFromGameData()
         {
-            dataService.GameData.user.highScore = 420;
+            dataService.GameData.highScore = 420;
 
             Assert.AreEqual(420, store.Load());
             Assert.AreEqual(0, dataService.SaveCallCount);
@@ -59,7 +59,7 @@ namespace Tests.EditMode
             int loaded = store.Load();
 
             Assert.AreEqual(900, loaded);
-            Assert.AreEqual(900, dataService.GameData.user.highScore);
+            Assert.AreEqual(900, dataService.GameData.highScore);
             Assert.AreEqual(1, dataService.SaveCallCount);
             Assert.IsFalse(PlayerPrefs.HasKey(TestLegacyKey));
         }
@@ -67,7 +67,7 @@ namespace Tests.EditMode
         [Test]
         public void Load_WithLegacyValueLowerThanGameData_KeepsGameDataValue()
         {
-            dataService.GameData.user.highScore = 1000;
+            dataService.GameData.highScore = 1000;
             PlayerPrefs.SetInt(TestLegacyKey, 300);
 
             Assert.AreEqual(1000, store.Load());
@@ -77,22 +77,22 @@ namespace Tests.EditMode
         [Test]
         public void Save_WithHigherValue_UpdatesGameDataAndSaves()
         {
-            dataService.GameData.user.highScore = 100;
+            dataService.GameData.highScore = 100;
 
             store.Save(250);
 
-            Assert.AreEqual(250, dataService.GameData.user.highScore);
+            Assert.AreEqual(250, dataService.GameData.highScore);
             Assert.AreEqual(1, dataService.SaveCallCount);
         }
 
         [Test]
         public void Save_WithLowerValue_DoesNotOverwriteHigherHighScore()
         {
-            dataService.GameData.user.highScore = 800;
+            dataService.GameData.highScore = 800;
 
             store.Save(200);
 
-            Assert.AreEqual(800, dataService.GameData.user.highScore);
+            Assert.AreEqual(800, dataService.GameData.highScore);
             Assert.AreEqual(0, dataService.SaveCallCount);
         }
     }

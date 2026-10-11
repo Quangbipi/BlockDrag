@@ -1,6 +1,7 @@
-using Base;
-using Base.UI;
-using Common;
+using Gameplay.BlockDrag;
+using Quang.Base;
+using Quang.UI;
+using Quang.Common;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -85,7 +86,7 @@ namespace UI
         }
         protected void OnAddGold()
         {
-            Locator.Reward.ClaimItem(ITEM.GOLD, 200);
+            Locator.Items.ClaimItem(ITEM.GOLD.ToItemId(), 200);
             UIManager.Ins.UpdateAllUI();
         }
         protected void OnFullStarLevel()

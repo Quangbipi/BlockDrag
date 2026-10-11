@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Quang.UI;
 using UnityEngine;
 
 namespace Base.UI

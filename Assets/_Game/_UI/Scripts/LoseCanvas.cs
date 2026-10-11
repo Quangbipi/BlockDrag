@@ -1,17 +1,18 @@
+using Gameplay.BlockDrag;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace UI
 {
-    using _Game.Managers;
-    using Base;
-    using Base.UI;
-    using Common;
+    using Quang.Data;
+    using Quang.Base;
+    using Quang.UI;
+    using Quang.Common;
     using System;
     using System.Data;
     using TMPro;
-    using Utilities.Timer;
+    using Quang.Utilities.Timer;
 
     public class LoseCanvas : UISCanvas
     {
@@ -60,7 +61,7 @@ namespace UI
                     }
                     else
                     {
-                        GameEventManager.Ins.PostEvent(DesignPattern.EventID.RECONSTUCT_LEVEL);
+                        GameEventManager.Ins.PostEvent(Quang.DesignPattern.EventID.RECONSTUCT_LEVEL);
                     }
                     UIManager.Ins.OpenUI<GameplayCanvas>();
                 },
@@ -94,7 +95,7 @@ namespace UI
             isNextLevel = false;
             isWin = (bool)param;
             Locator.Audio.PlaySfx(SFX_TYPE.LOSE);
-            Locator.Ads.Analytic.LevelTrackEvent(LEVEL_STATE.FAIL, gameData.user.normalLevelIndex);
+            Locator.Analytics?.LevelTrackEvent(LEVEL_STATE.FAIL, gameData.user.normalLevelIndex, gameData.level.Star, false, false);
             topCanvas = UIManager.Ins.OpenUI<TopCanvas>();
             starList.SetMaxItems(3);
             starList.ActiveItems(gameData.level.Star, 1);
@@ -125,7 +126,7 @@ namespace UI
         }
         protected void OnTryAgain(int index)
         {
-            if (Locator.Reward.GetItem(ITEM.HEART).Quantity > 0)
+            if (Locator.Items.GetItem(ITEM.HEART.ToItemId()).Quantity > 0)
             {
                 Close();
                 isNextLevel = true;
@@ -134,7 +135,7 @@ namespace UI
                     gameData.user.normalLevelIndex -= 1;
                 }
                 UIManager.Ins.CloseUI<TopCanvas>();
-                Locator.Ads.Inter.Show(Loading);
+                Locator.Ads.Inter.Show(Loading, Placement.NONE);
             }
             else
             {
@@ -149,7 +150,7 @@ namespace UI
 
         protected void OnGoHome(int index)
         {
-            Locator.Ads.Inter.Show(Loading);
+            Locator.Ads.Inter.Show(Loading, Placement.NONE);
             UIManager.Ins.CloseUI<TopCanvas>();
             void Loading()
             {
@@ -158,7 +159,7 @@ namespace UI
         }
         protected void OnNextLevel(int index)
         {
-            Locator.Reward.ClaimItem(ITEM.GOLD, BASE_GOLD);
+            Locator.Items.ClaimItem(ITEM.GOLD.ToItemId(), BASE_GOLD);
             topCanvas.FlyGoldReward(startGoldTf.position, BASE_GOLD);
             Database.Save(gameData);
             isNextLevel = true;
@@ -167,9 +168,9 @@ namespace UI
                     Close();
                     UIManager.Ins.CloseUI<TopCanvas>();
                     if ((gameData.TotalStar >= gameData.user.normalLevelIndex / gameplayData.LevelPerChapter * 3 * gameplayData.LevelPerChapter) 
-                    && Locator.Reward.GetItem(ITEM.HEART).Quantity > 0)
+                    && Locator.Items.GetItem(ITEM.HEART.ToItemId()).Quantity > 0)
                     {
-                        Locator.Ads.Inter.Show(Loading);
+                        Locator.Ads.Inter.Show(Loading, Placement.NONE);
                         void Loading()
                         {
                             UIManager.Ins.OpenUI<LoadingCanvas>(new object[] { loadingTimes, loadingActions });

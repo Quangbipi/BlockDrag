@@ -1,5 +1,6 @@
-using Base;
-using Base.UI;
+using Gameplay.BlockDrag;
+using Quang.Base;
+using Quang.UI;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using Solo.MOST_IN_ONE;
@@ -10,7 +11,7 @@ using System.Collections.Generic;
 using System.Timers;
 using UnityEngine;
 using UnityEngine.UI;
-using Utilities.Timer;
+using Quang.Utilities.Timer;
 
 namespace UI
 {

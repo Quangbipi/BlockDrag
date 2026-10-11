@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UI
 {
-    using Base.UI;
+    using Quang.UI;
     using System;
     using UnityEngine.UI;
 

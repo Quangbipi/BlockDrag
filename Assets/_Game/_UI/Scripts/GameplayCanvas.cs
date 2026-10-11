@@ -1,5 +1,5 @@
-using Base.UI;
-using Common;
+using Quang.UI;
+using Quang.Common;
 using UnityEngine;
 
 namespace UI
@@ -7,14 +7,14 @@ namespace UI
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Base;
-    using DesignPattern;
+    using Quang.Base;
+    using Quang.DesignPattern;
     using DG.Tweening;
     using Gameplay.BlockDrag;
     using Solo.MOST_IN_ONE;
     using TMPro;
     using UnityEngine.UI;
-    using Utilities.Timer;
+    using Quang.Utilities.Timer;
 
     public class GameplayCanvas : UISCanvas
     {

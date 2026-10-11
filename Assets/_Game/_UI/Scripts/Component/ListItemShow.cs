@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Base.UI;
+using Quang.UI;
 using UnityEngine;
 using UnityEngine.UI;
 

@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace UI
 {
-    using Base.UI;
+    using Quang.UI;
     using System;
-    using Utilities.Timer;
+    using Quang.Utilities.Timer;
 
     public class LoadingAdsCanvas : UISCanvas
     {

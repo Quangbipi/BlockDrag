@@ -1,7 +1,7 @@
-using Base;
-using Base.Init;
-using Base.UI;
-using Common;
+using Quang.Base;
+using Quang.Base.Init;
+using Quang.UI;
+using Quang.Common;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +19,6 @@ namespace UI
         public override void Open(object param = null)
         {
             base.Open(param);
-            UIManager.Ins.UpdateBannerSpace(!gameData.IsRemoveAds());
             if (currentTab > 0)
             {
                 tabs[currentTab]?.Close();

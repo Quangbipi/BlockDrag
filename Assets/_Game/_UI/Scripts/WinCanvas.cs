@@ -1,18 +1,19 @@
+using Gameplay.BlockDrag;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace UI
 {
-    using Base;
-    using Base.UI;
-    using Common;
+    using Quang.Base;
+    using Quang.UI;
+    using Quang.Common;
     using DG.Tweening;
     using Spine;
     using System;
     using TMPro;
     using UnityEngine.UI;
-    using Utilities.Timer;
+    using Quang.Utilities.Timer;
 
     public class WinCanvas : UISCanvas
     {
@@ -57,7 +58,7 @@ namespace UI
             gameData = Locator.Data.GetData<GameData>();
             gameplayData = Locator.Data.GetSOData<GameplayData>();
             //iapData = Locator.Data.GetSOData<IAPData>();
-            goldData = gameData.GetItemData(ITEM.GOLD);
+            goldData = gameData.GetItemData(ITEM.GOLD.ToItemId());
             for (int i = 0; i < nextLevelBtns.Count; i++)
             {
                 nextLevelBtns[i]._OnClick += OnNextLevelClick;
@@ -135,7 +136,8 @@ namespace UI
             currentReceiveGold = BASE_GOLD;
             base.Open(param);
             Locator.Audio.PlaySfx(SFX_TYPE.WIN);
-            Locator.Ads.Analytic.LevelTrackEvent(LEVEL_STATE.COMPLETE, gameData.user.normalLevelIndex - 1);
+            int passedLevel = gameData.user.normalLevelIndex - 1;
+            Locator.Analytics?.LevelTrackEvent(LEVEL_STATE.COMPLETE, passedLevel, gameData.level.Star, gameData.level.MarkPassed(passedLevel), false);
             // StartAmpliGold();
             Locator.PiggyBank.IncreasePiggyProgress();
             Database.Save(gameData);
@@ -223,7 +225,7 @@ namespace UI
             //     quantitys.Add(iapData.PurchaseProducts[item].rewards[i].Quantity);
             // }
             // Locator.IAPService.Purchase(item, () => {
-            //     Locator.Reward.ShowReward(items, quantitys);
+            //     Locator.Items.ShowReward(items, quantitys);
             //     gameData.user.PurchasedItems.Add(item);
             //     UIManager.Ins.UpdateAllUI();
             //     }, () => UIManager.Ins.OpenUI<ToastCanvas>().Show("Buy Fail!"));
@@ -233,7 +235,7 @@ namespace UI
             if (addGold > 0)
             {
                 isClaimGold = true;
-                Locator.Reward.ClaimItem(ITEM.GOLD, addGold);
+                Locator.Items.ClaimItem(ITEM.GOLD.ToItemId(), addGold);
                 Database.Save(gameData);
             }
             UpdateUI();
@@ -243,7 +245,7 @@ namespace UI
 
             void Next()
             {
-                Locator.Ads.Inter.Show(NextLevel);
+                Locator.Ads.Inter.Show(NextLevel, Placement.NONE);
             }
         }
         protected void OnVideoHidden()
