@@ -132,10 +132,7 @@ namespace UI
             Close();
             UIManager.Ins.CloseUI<TopCanvas>();
 
-            if (BlockSpawner.Ins != null)
-            {
-                BlockSpawner.Ins.RestartGame();
-            }
+            Locator.BoardSession?.RestartGame();
         }
 
         protected void OnGoHome(int index)

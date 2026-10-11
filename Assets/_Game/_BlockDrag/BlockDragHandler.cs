@@ -2,214 +2,217 @@ using System;
 using DG.Tweening;
 using UnityEngine;
 
-[RequireComponent(typeof(BlockShape))]
-public class BlockDragHandler : MonoBehaviour
+namespace Gameplay.BlockDrag
 {
-    [Header("Drag Offset & Scaling")]
-    [Tooltip("Khoảng cách dịch chuyển khi nhấc khối lên (trục Y nhấc lên để ngón tay không che)")]
-    [SerializeField] private Vector3 dragOffset = new Vector3(0f, 1.5f, 0f);
-
-    [Tooltip("Tỷ lệ scale của khối khi đang kéo thả (chuẩn tỷ lệ Grid = 1.0)")]
-    [SerializeField] private float dragScale = 1f;
-
-    /// <summary>
-    /// Cho phép gán dragScale từ bên ngoài (ví dụ BlockSpawner tính 1/spawnScaleRatio)
-    /// </summary>
-    public float DragScale
+    [RequireComponent(typeof(BlockShape))]
+    public class BlockDragHandler : MonoBehaviour
     {
-        get => dragScale;
-        set => dragScale = value;
-    }
+        [Header("Drag Offset & Scaling")]
+        [Tooltip("Khoảng cách dịch chuyển khi nhấc khối lên (trục Y nhấc lên để ngón tay không che)")]
+        [SerializeField] private Vector3 dragOffset = new Vector3(0f, 1.5f, 0f);
 
-    [Tooltip("Thời gian tween scale khi nhấc khối")]
-    [SerializeField] private float pickUpDuration = 0.15f;
+        [Tooltip("Tỷ lệ scale của khối khi đang kéo thả (chuẩn tỷ lệ Grid = 1.0)")]
+        [SerializeField] private float dragScale = 1f;
 
-    [Header("Return Animation")]
-    [Tooltip("Thời gian bay về lại Slot khi thả tay ra ngoài")]
-    [SerializeField] private float returnDuration = 0.2f;
-
-    [Tooltip("Kiểu ease khi bay về Slot")]
-    [SerializeField] private Ease returnEase = Ease.OutQuad;
-
-    [Header("Sorting Layer")]
-    [Tooltip("Độ tăng SortingOrder khi đang kéo để hiển thị trên cùng")]
-    [SerializeField] private int dragSortingOrderOffset = 10;
-
-    [Header("Camera Reference")]
-    [Tooltip("Camera chính dùng để quy đổi toạ độ màn hình (nếu để trống tự lấy Camera.main)")]
-    [SerializeField] private Camera targetCamera;
-
-    [Header("Grid Reference")]
-    [Tooltip("Tham chiếu BlockGrid (nếu để trống tự tìm FindObjectOfType)")]
-    [SerializeField] private BlockGrid blockGrid;
-
-    // Events phục vụ mở rộng tích hợp BlockGrid
-    public event Action<BlockDragHandler> OnBeginDragEvent;
-    public event Action<BlockDragHandler, Vector3> OnDraggingEvent;
-    public event Action<BlockDragHandler> OnEndDragEvent;
-
-    private BlockShape blockShape;
-    private Vector3 originalPosition;
-    private Vector3 originalScale;
-    private bool isDragging = false;
-    private bool isReturning = false;
-    private Tween moveTween;
-    private Tween scaleTween;
-
-    public bool IsDragging => isDragging;
-    public BlockShape BlockShape => blockShape;
-    public BlockGrid BlockGrid
-    {
-        get => blockGrid;
-        set => blockGrid = value;
-    }
-    public Vector3 DragOffset => dragOffset;
-    public Vector3 OriginalPosition => originalPosition;
-    public Vector3 OriginalScale => originalScale;
-
-    private void Awake()
-    {
-        blockShape = GetComponent<BlockShape>();
-        if (blockGrid == null)
+        /// <summary>
+        /// Cho phép gán dragScale từ bên ngoài (ví dụ BlockSpawner tính 1/spawnScaleRatio)
+        /// </summary>
+        public float DragScale
         {
-            blockGrid = FindObjectOfType<BlockGrid>();
-        }
-    }
-
-    private void Start()
-    {
-        originalPosition = transform.position;
-        originalScale = transform.localScale;
-
-    }
-
-    /// <summary>
-    /// Ghi nhận lại vị trí gốc khi sinh ra hoặc khi đặt vào Slot mới
-    /// </summary>
-    public void SetOrigin(Vector3 position, Vector3 scale)
-    {
-        originalPosition = position;
-        originalScale = scale;
-    }
-
-    private Camera GetCamera()
-    {
-        return targetCamera != null ? targetCamera : Camera.main;
-    }
-
-    private void OnMouseDown()
-    {
-        if (isReturning) return;
-        if (blockShape != null && blockShape.IsDimmed) return;
-
-        isDragging = true;
-        originalPosition = transform.position;
-        originalScale = transform.localScale;
-
-        // Kill các tween cũ nếu có
-        moveTween?.Kill();
-        scaleTween?.Kill();
-
-        // Nâng sorting order hiển thị
-        if (blockShape != null)
-        {
-            blockShape.SetSortingOrderOffset(dragSortingOrderOffset);
+            get => dragScale;
+            set => dragScale = value;
         }
 
-        // Tween scale lên kích thước chuẩn khi kéo
-        scaleTween = transform.DOScale(Vector3.one * dragScale, pickUpDuration).SetEase(Ease.OutBack);
+        [Tooltip("Thời gian tween scale khi nhấc khối")]
+        [SerializeField] private float pickUpDuration = 0.15f;
 
-        // Cập nhật vị trí ngay lập tức theo con trỏ
-        UpdateDragPosition();
+        [Header("Return Animation")]
+        [Tooltip("Thời gian bay về lại Slot khi thả tay ra ngoài")]
+        [SerializeField] private float returnDuration = 0.2f;
 
-        if (blockGrid != null)
+        [Tooltip("Kiểu ease khi bay về Slot")]
+        [SerializeField] private Ease returnEase = Ease.OutQuad;
+
+        [Header("Sorting Layer")]
+        [Tooltip("Độ tăng SortingOrder khi đang kéo để hiển thị trên cùng")]
+        [SerializeField] private int dragSortingOrderOffset = 10;
+
+        [Header("Camera Reference")]
+        [Tooltip("Camera chính dùng để quy đổi toạ độ màn hình (nếu để trống tự lấy Camera.main)")]
+        [SerializeField] private Camera targetCamera;
+
+        [Header("Grid Reference")]
+        [Tooltip("Tham chiếu BlockGrid (nếu để trống tự tìm FindObjectOfType)")]
+        [SerializeField] private BlockGrid blockGrid;
+
+        // Events phục vụ mở rộng tích hợp BlockGrid
+        public event Action<BlockDragHandler> OnBeginDragEvent;
+        public event Action<BlockDragHandler, Vector3> OnDraggingEvent;
+        public event Action<BlockDragHandler> OnEndDragEvent;
+
+        private BlockShape blockShape;
+        private Vector3 originalPosition;
+        private Vector3 originalScale;
+        private bool isDragging = false;
+        private bool isReturning = false;
+        private Tween moveTween;
+        private Tween scaleTween;
+
+        public bool IsDragging => isDragging;
+        public BlockShape BlockShape => blockShape;
+        public BlockGrid BlockGrid
         {
-            blockGrid.UpdateDragIndicator(blockShape, transform.position);
+            get => blockGrid;
+            set => blockGrid = value;
         }
+        public Vector3 DragOffset => dragOffset;
+        public Vector3 OriginalPosition => originalPosition;
+        public Vector3 OriginalScale => originalScale;
 
-        OnBeginDragEvent?.Invoke(this);
-    }
-
-    private void OnMouseDrag()
-    {
-        if (!isDragging) return;
-
-        UpdateDragPosition();
-
-        if (blockGrid != null)
+        private void Awake()
         {
-            blockGrid.UpdateDragIndicator(blockShape, transform.position);
-        }
-
-        OnDraggingEvent?.Invoke(this, transform.position);
-    }
-
-    private void OnMouseUp()
-    {
-        if (!isDragging) return;
-
-        isDragging = false;
-        OnEndDragEvent?.Invoke(this);
-
-        bool placed = false;
-        if (blockGrid != null)
-        {
-            placed = blockGrid.TryPlaceShape(blockShape, transform.position);
-        }
-
-        // Nếu không xếp được lên grid, bay về vị trí gốc tại slot
-        if (!placed)
-        {
-            ReturnToOrigin();
-        }
-    }
-
-    /// <summary>
-    /// Tính toán và cập nhật toạ độ khối gạch theo con trỏ chuột/touch
-    /// </summary>
-    private void UpdateDragPosition()
-    {
-        Camera cam = GetCamera();
-        if (cam == null) return;
-
-        Vector3 mouseScreen = Input.mousePosition;
-        float planeDistance = Mathf.Abs(cam.transform.position.z - transform.position.z);
-        mouseScreen.z = planeDistance;
-        Vector3 mouseWorld = cam.ScreenToWorldPoint(mouseScreen);
-
-        transform.position = new Vector3(
-            mouseWorld.x + dragOffset.x,
-            mouseWorld.y + dragOffset.y,
-            originalPosition.z
-        );
-    }
-
-    /// <summary>
-    /// Chạy hiệu ứng bay trở lại vị trí gốc
-    /// </summary>
-    public void ReturnToOrigin(Action onComplete = null)
-    {
-        isReturning = true;
-        moveTween?.Kill();
-        scaleTween?.Kill();
-
-        scaleTween = transform.DOScale(originalScale, returnDuration).SetEase(returnEase);
-        moveTween = transform.DOMove(originalPosition, returnDuration)
-            .SetEase(returnEase)
-            .OnComplete(() =>
+            blockShape = GetComponent<BlockShape>();
+            if (blockGrid == null)
             {
-                isReturning = false;
-                if (blockShape != null)
-                {
-                    blockShape.SetSortingOrderOffset(0);
-                }
-                onComplete?.Invoke();
-            });
-    }
+                blockGrid = FindObjectOfType<BlockGrid>();
+            }
+        }
 
-    private void OnDestroy()
-    {
-        moveTween?.Kill();
-        scaleTween?.Kill();
+        private void Start()
+        {
+            originalPosition = transform.position;
+            originalScale = transform.localScale;
+
+        }
+
+        /// <summary>
+        /// Ghi nhận lại vị trí gốc khi sinh ra hoặc khi đặt vào Slot mới
+        /// </summary>
+        public void SetOrigin(Vector3 position, Vector3 scale)
+        {
+            originalPosition = position;
+            originalScale = scale;
+        }
+
+        private Camera GetCamera()
+        {
+            return targetCamera != null ? targetCamera : Camera.main;
+        }
+
+        private void OnMouseDown()
+        {
+            if (isReturning) return;
+            if (blockShape != null && blockShape.IsDimmed) return;
+
+            isDragging = true;
+            originalPosition = transform.position;
+            originalScale = transform.localScale;
+
+            // Kill các tween cũ nếu có
+            moveTween?.Kill();
+            scaleTween?.Kill();
+
+            // Nâng sorting order hiển thị
+            if (blockShape != null)
+            {
+                blockShape.SetSortingOrderOffset(dragSortingOrderOffset);
+            }
+
+            // Tween scale lên kích thước chuẩn khi kéo
+            scaleTween = transform.DOScale(Vector3.one * dragScale, pickUpDuration).SetEase(Ease.OutBack);
+
+            // Cập nhật vị trí ngay lập tức theo con trỏ
+            UpdateDragPosition();
+
+            if (blockGrid != null)
+            {
+                blockGrid.UpdateDragIndicator(blockShape, transform.position);
+            }
+
+            OnBeginDragEvent?.Invoke(this);
+        }
+
+        private void OnMouseDrag()
+        {
+            if (!isDragging) return;
+
+            UpdateDragPosition();
+
+            if (blockGrid != null)
+            {
+                blockGrid.UpdateDragIndicator(blockShape, transform.position);
+            }
+
+            OnDraggingEvent?.Invoke(this, transform.position);
+        }
+
+        private void OnMouseUp()
+        {
+            if (!isDragging) return;
+
+            isDragging = false;
+            OnEndDragEvent?.Invoke(this);
+
+            bool placed = false;
+            if (blockGrid != null)
+            {
+                placed = blockGrid.TryPlaceShape(blockShape, transform.position);
+            }
+
+            // Nếu không xếp được lên grid, bay về vị trí gốc tại slot
+            if (!placed)
+            {
+                ReturnToOrigin();
+            }
+        }
+
+        /// <summary>
+        /// Tính toán và cập nhật toạ độ khối gạch theo con trỏ chuột/touch
+        /// </summary>
+        private void UpdateDragPosition()
+        {
+            Camera cam = GetCamera();
+            if (cam == null) return;
+
+            Vector3 mouseScreen = Input.mousePosition;
+            float planeDistance = Mathf.Abs(cam.transform.position.z - transform.position.z);
+            mouseScreen.z = planeDistance;
+            Vector3 mouseWorld = cam.ScreenToWorldPoint(mouseScreen);
+
+            transform.position = new Vector3(
+                mouseWorld.x + dragOffset.x,
+                mouseWorld.y + dragOffset.y,
+                originalPosition.z
+            );
+        }
+
+        /// <summary>
+        /// Chạy hiệu ứng bay trở lại vị trí gốc
+        /// </summary>
+        public void ReturnToOrigin(Action onComplete = null)
+        {
+            isReturning = true;
+            moveTween?.Kill();
+            scaleTween?.Kill();
+
+            scaleTween = transform.DOScale(originalScale, returnDuration).SetEase(returnEase);
+            moveTween = transform.DOMove(originalPosition, returnDuration)
+                .SetEase(returnEase)
+                .OnComplete(() =>
+                {
+                    isReturning = false;
+                    if (blockShape != null)
+                    {
+                        blockShape.SetSortingOrderOffset(0);
+                    }
+                    onComplete?.Invoke();
+                });
+        }
+
+        private void OnDestroy()
+        {
+            moveTween?.Kill();
+            scaleTween?.Kill();
+        }
     }
 }

@@ -21,7 +21,7 @@ public class CountdownManager : MonoBehaviour
         public Coroutine coroutine;
     }
 
-    public static CountdownManager Instance;
+    public static CountdownManager Instance { get; private set; }
 
     private readonly Dictionary<string, CountdownData> countdowns = new();
 

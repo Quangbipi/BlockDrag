@@ -27,8 +27,8 @@ namespace UI
 
         protected ToastCanvas toastCanvas;
         private Tween scorePunchTween;
-        private ScoreManager boundScoreManager;
-        private BlockSpawner boundBlockSpawner;
+        private IScoreService boundScore;
+        private IBoardSessionService boundSession;
 
         void Awake()
         {
@@ -40,21 +40,21 @@ namespace UI
 
         private void OnEnable()
         {
-            ScoreManager.OnInstanceReady -= BindScoreManager;
-            ScoreManager.OnInstanceReady += BindScoreManager;
-            BindScoreManager(ScoreManager.Ins);
+            Locator.ScoreChanged -= BindScore;
+            Locator.ScoreChanged += BindScore;
+            BindScore(Locator.Score);
 
-            BlockSpawner.OnInstanceReady -= BindBlockSpawner;
-            BlockSpawner.OnInstanceReady += BindBlockSpawner;
-            BindBlockSpawner(BlockSpawner.Ins);
+            Locator.BoardSessionChanged -= BindSession;
+            Locator.BoardSessionChanged += BindSession;
+            BindSession(Locator.BoardSession);
         }
 
         private void OnDisable()
         {
-            ScoreManager.OnInstanceReady -= BindScoreManager;
-            BlockSpawner.OnInstanceReady -= BindBlockSpawner;
-            UnbindScoreManager();
-            UnbindBlockSpawner();
+            Locator.ScoreChanged -= BindScore;
+            Locator.BoardSessionChanged -= BindSession;
+            UnbindScore();
+            UnbindSession();
         }
 
         protected override void OnDestroy()
@@ -67,10 +67,10 @@ namespace UI
             }
 
             scorePunchTween?.Kill();
-            ScoreManager.OnInstanceReady -= BindScoreManager;
-            BlockSpawner.OnInstanceReady -= BindBlockSpawner;
-            UnbindScoreManager();
-            UnbindBlockSpawner();
+            Locator.ScoreChanged -= BindScore;
+            Locator.BoardSessionChanged -= BindSession;
+            UnbindScore();
+            UnbindSession();
         }
 
         public override void Open(object param = null)
@@ -83,28 +83,31 @@ namespace UI
                 gameObject.AddComponent<ComboEffectManager>();
             }
 
-            BindScoreManager(ScoreManager.Ins);
-            BindBlockSpawner(BlockSpawner.Ins);
+            BindScore(Locator.Score);
+            BindSession(Locator.BoardSession);
         }
 
         /// <summary>
-        /// Lắng nghe Game Over từ BlockSpawner để mở LoseCanvas
+        /// Lắng nghe Game Over từ ván chơi hiện tại (Locator.BoardSession) để mở LoseCanvas.
+        /// Gọi với null khi service bị huỷ để gỡ đăng ký.
         /// </summary>
-        private void BindBlockSpawner(BlockSpawner blockSpawner)
+        private void BindSession(IBoardSessionService session)
         {
-            if (blockSpawner == null || blockSpawner == boundBlockSpawner) return;
+            if (ReferenceEquals(session, boundSession)) return;
 
-            UnbindBlockSpawner();
-            boundBlockSpawner = blockSpawner;
-            boundBlockSpawner.OnGameOver += HandleGameOver;
+            UnbindSession();
+            if (session == null) return;
+
+            boundSession = session;
+            boundSession.OnGameOver += HandleGameOver;
         }
 
-        private void UnbindBlockSpawner()
+        private void UnbindSession()
         {
-            if (boundBlockSpawner == null) return;
+            if (boundSession == null) return;
 
-            boundBlockSpawner.OnGameOver -= HandleGameOver;
-            boundBlockSpawner = null;
+            boundSession.OnGameOver -= HandleGameOver;
+            boundSession = null;
         }
 
         private void HandleGameOver()
@@ -113,32 +116,34 @@ namespace UI
         }
 
         /// <summary>
-        /// Đăng ký sự kiện điểm của ScoreManager (kể cả khi ScoreManager được tạo sau canvas
+        /// Đăng ký sự kiện điểm của Locator.Score (kể cả khi service đăng ký sau canvas
         /// hoặc được thay bằng instance mới khi load lại scene) và hiển thị ngay điểm hiện tại
         /// </summary>
-        private void BindScoreManager(ScoreManager scoreManager)
+        private void BindScore(IScoreService score)
         {
-            if (scoreManager == null || scoreManager == boundScoreManager) return;
+            if (ReferenceEquals(score, boundScore)) return;
 
-            UnbindScoreManager();
-            boundScoreManager = scoreManager;
-            boundScoreManager.OnScoreChanged += UpdateScoreText;
-            boundScoreManager.OnHighScoreChanged += UpdateHighScoreText;
+            UnbindScore();
+            if (score == null) return;
+
+            boundScore = score;
+            boundScore.OnScoreChanged += UpdateScoreText;
+            boundScore.OnHighScoreChanged += UpdateHighScoreText;
 
             if (ScoreTxt != null)
             {
-                ScoreTxt.text = boundScoreManager.CurrentScore.ToString();
+                ScoreTxt.text = boundScore.CurrentScore.ToString();
             }
-            UpdateHighScoreText(boundScoreManager.HighScore);
+            UpdateHighScoreText(boundScore.HighScore);
         }
 
-        private void UnbindScoreManager()
+        private void UnbindScore()
         {
-            if (boundScoreManager == null) return;
+            if (boundScore == null) return;
 
-            boundScoreManager.OnScoreChanged -= UpdateScoreText;
-            boundScoreManager.OnHighScoreChanged -= UpdateHighScoreText;
-            boundScoreManager = null;
+            boundScore.OnScoreChanged -= UpdateScoreText;
+            boundScore.OnHighScoreChanged -= UpdateHighScoreText;
+            boundScore = null;
         }
 
         private void UpdateScoreText(int score)

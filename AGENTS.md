@@ -2,13 +2,13 @@
 
 ## Project Structure & Module Organization
 
-This is a Unity 2022.3.62f2 project. Keep first-party gameplay code and content under `Assets/_Game/`; its feature folders include `_UI`, `_Items`, `_IAP`, `_Ads`, `_Tutorial`, and `_SubSystem`. Shared foundations live in `_Base`, `_Common`, `_Data`, `_DesignPattern`, and `_Utilities`. Scenes are stored in `Assets/_Game/_Scenes` and `Assets/Scenes`; project-wide settings belong in `ProjectSettings/`, and package dependencies in `Packages/manifest.json`.
+This is a Unity 2022.3.62f2 project. Keep first-party gameplay code and content under `Assets/_Game/`: gameplay in `_BlockDrag` (`BlockDrag` assembly) and presentation in `_UI` (`BlockDrag.UI` assembly). `_Base`, `_Data`, and `_Utilities` hold only prefabs and assets. Shared framework code (base, data, UI, ads, IAP, analytics, live-ops, design patterns, utilities) ships as local `com.quang.*` packages. Scenes are stored in `Assets/_Game/_Scenes` and `Assets/Scenes`; project-wide settings belong in `ProjectSettings/`, and package dependencies in `Packages/manifest.json`.
 
 Third-party assets such as Spine, DOTween, Odin Inspector, and Ingame Debug Console already have dedicated directories. Avoid editing vendor code unless upgrading or applying a documented compatibility fix. Never commit generated `Library/`, `Temp/`, `Logs/`, IDE project files, or local `UserSettings/`. Preserve every Unity `.meta` file when moving or adding assets.
 
 ## Architecture Rules
 
-Read `.agents/rules/architecture.md` before architectural or cross-module changes. Preserve its dependency direction: UI and feature services may depend on data and shared contracts, while `Hung.Base`, `Hung.DesignPattern`, and utilities must not depend on concrete features. Update the architecture memory whenever a change intentionally alters these boundaries.
+Read `.agents/rules/architecture.md` before architectural or cross-module changes. Preserve its dependency direction: UI and feature services may depend on data and shared contracts, while `Quang.*` packages must never depend on `BlockDrag` or `BlockDrag.UI`, and `BlockDrag` must never depend on `BlockDrag.UI`. Update the architecture memory whenever a change intentionally alters these boundaries.
 
 ## Task Workflow & Design Guidelines
 
@@ -36,7 +36,7 @@ Use C# with four-space indentation and braces on new lines. Follow existing conv
 
 ## Testing Guidelines
 
-Unity Test Framework 1.1.33 is installed, but no first-party test assemblies are present. Add Edit Mode tests under `Assets/Tests/EditMode` and Play Mode tests under `Assets/Tests/PlayMode`, each with a test `.asmdef`. Name fixtures `FeatureNameTests` and tests by behavior, for example `Close_WhenAnimationCompletes_DisablesCanvas`. Cover new data logic, utilities, and regressions; manually verify scene and prefab wiring in the Editor.
+Unity Test Framework 1.1.33 is installed; EditMode tests live in `Assets/Tests/EditMode` (`EditModeTests.asmdef`). Add Edit Mode tests under `Assets/Tests/EditMode` and Play Mode tests under `Assets/Tests/PlayMode`, each with a test `.asmdef`. Name fixtures `FeatureNameTests` and tests by behavior, for example `Close_WhenAnimationCompletes_DisablesCanvas`. Cover new data logic, utilities, and regressions; manually verify scene and prefab wiring in the Editor.
 
 ## Commit & Pull Request Guidelines
 

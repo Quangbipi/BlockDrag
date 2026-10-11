@@ -1,17 +1,14 @@
 using System;
+using Quang.Base;
 using UnityEngine;
 
 namespace Gameplay.BlockDrag
 {
-    public class ScoreManager : MonoBehaviour
+    /// <summary>
+    /// Đăng ký vào <see cref="Locator.Score"/> trong Awake để UI truy cập qua IScoreService
+    /// </summary>
+    public class ScoreManager : MonoBehaviour, IScoreService
     {
-        public static ScoreManager Ins { get; private set; }
-
-        /// <summary>
-        /// Phát khi một ScoreManager vừa sẵn sàng (cuối Awake), cho UI mở trước đó đăng ký lại
-        /// </summary>
-        public static event Action<ScoreManager> OnInstanceReady;
-
         public const string ComboCountdownId = "BLOCK_BLAST_COMBO_TIMER";
 
         [Header("Configuration")]
@@ -83,12 +80,11 @@ namespace Gameplay.BlockDrag
 
         private void Awake()
         {
-            if (Ins != null && Ins != this)
+            if (Locator.Score is ScoreManager other && other != null && other != this)
             {
                 Destroy(gameObject);
                 return;
             }
-            Ins = this;
 
             if (scoreConfig == null)
             {
@@ -107,7 +103,7 @@ namespace Gameplay.BlockDrag
 
             LoadHighScore();
 
-            OnInstanceReady?.Invoke(this);
+            Locator.Score = this;
         }
 
         private void OnEnable()
@@ -136,9 +132,9 @@ namespace Gameplay.BlockDrag
 
         private void OnDestroy()
         {
-            if (Ins == this)
+            if (ReferenceEquals(Locator.Score, this))
             {
-                Ins = null;
+                Locator.Score = null;
             }
         }
 

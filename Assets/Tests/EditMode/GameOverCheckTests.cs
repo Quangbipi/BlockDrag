@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using UnityEngine;
+using Gameplay.BlockDrag;
 
 namespace Tests.EditMode
 {

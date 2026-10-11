@@ -22,6 +22,7 @@ namespace UI
         [SerializeField] private Transform poolContainer;
 
         private readonly List<ComboTextEffect> pool = new List<ComboTextEffect>();
+        private IScoreService boundScore;
 
         public ComboTextEffect EffectPrefab
         {
@@ -82,21 +83,39 @@ namespace UI
             }
         }
 
+        /// <summary>
+        /// Lắng nghe Locator.ScoreChanged để vẫn nhận combo khi ScoreManager đăng ký sau manager này
+        /// </summary>
         private void SubscribeEvents()
         {
-            if (ScoreManager.Ins != null)
-            {
-                ScoreManager.Ins.OnComboTriggered -= HandleComboTriggered;
-                ScoreManager.Ins.OnComboTriggered += HandleComboTriggered;
-            }
+            Locator.ScoreChanged -= BindScore;
+            Locator.ScoreChanged += BindScore;
+            BindScore(Locator.Score);
         }
 
         private void UnsubscribeEvents()
         {
-            if (ScoreManager.Ins != null)
-            {
-                ScoreManager.Ins.OnComboTriggered -= HandleComboTriggered;
-            }
+            Locator.ScoreChanged -= BindScore;
+            UnbindScore();
+        }
+
+        private void BindScore(IScoreService score)
+        {
+            if (ReferenceEquals(score, boundScore)) return;
+
+            UnbindScore();
+            if (score == null) return;
+
+            boundScore = score;
+            boundScore.OnComboTriggered += HandleComboTriggered;
+        }
+
+        private void UnbindScore()
+        {
+            if (boundScore == null) return;
+
+            boundScore.OnComboTriggered -= HandleComboTriggered;
+            boundScore = null;
         }
 
         public Transform EnsurePoolContainer()
