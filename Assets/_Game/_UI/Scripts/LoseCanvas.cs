@@ -94,12 +94,12 @@ namespace UI
             base.Open(param);
             isNextLevel = false;
             isWin = (bool)param;
-            Locator.Audio.PlaySfx(SFX_TYPE.LOSE);
-            Locator.Analytics?.LevelTrackEvent(LEVEL_STATE.FAIL, gameData.user.normalLevelIndex, gameData.level.Star, false, false);
-            topCanvas = UIManager.Ins.OpenUI<TopCanvas>();
+            //Locator.Audio.PlaySfx(SFX_TYPE.LOSE);
+            //Locator.Analytics?.LevelTrackEvent(LEVEL_STATE.FAIL, gameData.user.normalLevelIndex, gameData.level.Star, false, false);
+            //topCanvas = UIManager.Ins.OpenUI<TopCanvas>();
             starList.SetMaxItems(3);
             starList.ActiveItems(gameData.level.Star, 1);
-            BASE_GOLD = gameplayData.WinLevelGold * gameData.level.DeltaStar;
+            //BASE_GOLD = gameplayData.WinLevelGold * gameData.level.DeltaStar;
 
             if (isWin)
             {
@@ -124,27 +124,17 @@ namespace UI
             base.UpdateUI();
             levelTxt.text = $"Level {gameData.user.normalLevelIndex + 1}";
         }
+        /// <summary>
+        /// Chơi lại ván mới (giống nút Replay của GameOverUI cũ)
+        /// </summary>
         protected void OnTryAgain(int index)
         {
-            if (Locator.Items.GetItem(ITEM.HEART.ToItemId()).Quantity > 0)
-            {
-                Close();
-                isNextLevel = true;
-                if (isWin)
-                {
-                    gameData.user.normalLevelIndex -= 1;
-                }
-                UIManager.Ins.CloseUI<TopCanvas>();
-                Locator.Ads.Inter.Show(Loading, Placement.NONE);
-            }
-            else
-            {
-                UIManager.Ins.OpenUI<BuyBoosterPopup>(gameplayData.Items[ITEM.HEART]);
-            }
+            Close();
+            UIManager.Ins.CloseUI<TopCanvas>();
 
-            void Loading()
+            if (BlockSpawner.Ins != null)
             {
-                UIManager.Ins.OpenUI<LoadingCanvas>(new object[] { loadingTimes, loadingActions });
+                BlockSpawner.Ins.RestartGame();
             }
         }
 

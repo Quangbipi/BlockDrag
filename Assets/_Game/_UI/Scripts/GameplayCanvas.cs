@@ -28,6 +28,7 @@ namespace UI
         protected ToastCanvas toastCanvas;
         private Tween scorePunchTween;
         private ScoreManager boundScoreManager;
+        private BlockSpawner boundBlockSpawner;
 
         void Awake()
         {
@@ -42,12 +43,18 @@ namespace UI
             ScoreManager.OnInstanceReady -= BindScoreManager;
             ScoreManager.OnInstanceReady += BindScoreManager;
             BindScoreManager(ScoreManager.Ins);
+
+            BlockSpawner.OnInstanceReady -= BindBlockSpawner;
+            BlockSpawner.OnInstanceReady += BindBlockSpawner;
+            BindBlockSpawner(BlockSpawner.Ins);
         }
 
         private void OnDisable()
         {
             ScoreManager.OnInstanceReady -= BindScoreManager;
+            BlockSpawner.OnInstanceReady -= BindBlockSpawner;
             UnbindScoreManager();
+            UnbindBlockSpawner();
         }
 
         protected override void OnDestroy()
@@ -61,7 +68,9 @@ namespace UI
 
             scorePunchTween?.Kill();
             ScoreManager.OnInstanceReady -= BindScoreManager;
+            BlockSpawner.OnInstanceReady -= BindBlockSpawner;
             UnbindScoreManager();
+            UnbindBlockSpawner();
         }
 
         public override void Open(object param = null)
@@ -75,6 +84,32 @@ namespace UI
             }
 
             BindScoreManager(ScoreManager.Ins);
+            BindBlockSpawner(BlockSpawner.Ins);
+        }
+
+        /// <summary>
+        /// Lắng nghe Game Over từ BlockSpawner để mở LoseCanvas
+        /// </summary>
+        private void BindBlockSpawner(BlockSpawner blockSpawner)
+        {
+            if (blockSpawner == null || blockSpawner == boundBlockSpawner) return;
+
+            UnbindBlockSpawner();
+            boundBlockSpawner = blockSpawner;
+            boundBlockSpawner.OnGameOver += HandleGameOver;
+        }
+
+        private void UnbindBlockSpawner()
+        {
+            if (boundBlockSpawner == null) return;
+
+            boundBlockSpawner.OnGameOver -= HandleGameOver;
+            boundBlockSpawner = null;
+        }
+
+        private void HandleGameOver()
+        {
+            UIManager.Ins.OpenUI<LoseCanvas>(false);
         }
 
         /// <summary>

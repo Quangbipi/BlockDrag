@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class BlockSpawner : MonoBehaviour
 {
+    public static BlockSpawner Ins { get; private set; }
+
+    /// <summary>
+    /// Phát khi một BlockSpawner vừa sẵn sàng (cuối Awake), cho UI mở trước đó đăng ký lại
+    /// </summary>
+    public static event System.Action<BlockSpawner> OnInstanceReady;
+
     [Header("Prefabs & References")]
     [Tooltip("Prefab ô vuông 1x1 chỉ gồm SpriteRenderer và BoxCollider2D")]
     public GameObject singleBlockPrefab;
@@ -60,9 +67,21 @@ public class BlockSpawner : MonoBehaviour
 
     private void Awake()
     {
+        Ins = this;
+
         if (blockGrid == null)
         {
             blockGrid = FindObjectOfType<BlockGrid>();
+        }
+
+        OnInstanceReady?.Invoke(this);
+    }
+
+    private void OnDestroy()
+    {
+        if (Ins == this)
+        {
+            Ins = null;
         }
     }
 
@@ -105,20 +124,6 @@ public class BlockSpawner : MonoBehaviour
         CreateSpawnSlots();
         SpawnNewHand();
         CheckPlacementsAndGameOver();
-
-        // Tự động khởi tạo GameOverUI nếu trong scene chưa có
-        if (FindObjectOfType<Gameplay.BlockDrag.GameOverUI>() == null)
-        {
-            GameObject uiObj = new GameObject("GameOverUI");
-            uiObj.AddComponent<Gameplay.BlockDrag.GameOverUI>();
-        }
-
-        // Tự động khởi tạo ScoreManager nếu trong scene chưa có
-        if (FindObjectOfType<ScoreManager>() == null)
-        {
-            GameObject scoreObj = new GameObject("ScoreManager");
-            scoreObj.AddComponent<ScoreManager>();
-        }
     }
 
     private void HandleShapePlaced()
