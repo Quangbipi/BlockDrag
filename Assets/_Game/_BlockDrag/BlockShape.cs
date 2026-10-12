@@ -15,6 +15,8 @@ namespace Gameplay.BlockDrag
         public float spacing = 0.1f;
 
         private BoxCollider2D boxCollider;
+        private Vector2 shapeColliderSize;
+        private bool inputEnabled = true;
         private int baseSortingOrder = 0;
         private readonly List<SpriteRenderer> cachedRenderers = new List<SpriteRenderer>();
         private readonly Dictionary<Vector2Int, GameObject> blockMap = new Dictionary<Vector2Int, GameObject>();
@@ -147,6 +149,7 @@ namespace Gameplay.BlockDrag
 
             if (activeBlocks.Count == 0)
             {
+                shapeColliderSize = Vector2.zero;
                 boxCollider.size = Vector2.zero;
                 boxCollider.offset = Vector2.zero;
                 return;
@@ -160,8 +163,61 @@ namespace Gameplay.BlockDrag
             }
 
             // Kích thước collider bao trọn cả ô ngoài cùng
-            boxCollider.size = new Vector2(bounds.size.x + blockSize.x, bounds.size.y + blockSize.y);
+            shapeColliderSize = new Vector2(bounds.size.x + blockSize.x, bounds.size.y + blockSize.y);
+            boxCollider.size = shapeColliderSize;
             boxCollider.offset = bounds.center;
+        }
+
+        /// <summary>
+        /// Kích thước collider (local) để vùng chạm phủ ít nhất touchWorldSize, không nhỏ hơn khối.
+        /// containerScale <= 0 → giữ kích thước khối.
+        /// </summary>
+        public static Vector2 CalculateTouchColliderSize(Vector2 shapeLocalSize, Vector2 touchWorldSize, float containerScale)
+        {
+            if (containerScale <= 0f) return shapeLocalSize;
+
+            return new Vector2(
+                Mathf.Max(shapeLocalSize.x, touchWorldSize.x / containerScale),
+                Mathf.Max(shapeLocalSize.y, touchWorldSize.y / containerScale)
+            );
+        }
+
+        /// <summary>
+        /// Phóng to collider thành vùng chạm của cả slot (căn giữa slot) để dễ nhấc khối nhỏ.
+        /// Collider chỉ dùng để chọn khối, Grid đặt khối theo vị trí nên không ảnh hưởng gameplay.
+        /// </summary>
+        public void SetTouchArea(Vector2 worldSize, float containerScale)
+        {
+            if (!EnsureCollider()) return;
+
+            boxCollider.size = CalculateTouchColliderSize(shapeColliderSize, worldSize, containerScale);
+            boxCollider.offset = Vector2.zero;
+        }
+
+        /// <summary>
+        /// Bật/tắt nhận chạm (tắt khi đang kéo). Collider chỉ bật khi được phép và khối không bị dim.
+        /// </summary>
+        public void SetInputEnabled(bool enabled)
+        {
+            inputEnabled = enabled;
+            RefreshColliderEnabled();
+        }
+
+        private void RefreshColliderEnabled()
+        {
+            if (EnsureCollider())
+            {
+                boxCollider.enabled = inputEnabled && !IsDimmed;
+            }
+        }
+
+        private bool EnsureCollider()
+        {
+            if (boxCollider == null)
+            {
+                boxCollider = GetComponent<BoxCollider2D>();
+            }
+            return boxCollider != null;
         }
 
         /// <summary>
@@ -186,11 +242,7 @@ namespace Gameplay.BlockDrag
         public void SetDimmed(bool dimmed)
         {
             IsDimmed = dimmed;
-
-            if (boxCollider != null)
-            {
-                boxCollider.enabled = !dimmed;
-            }
+            RefreshColliderEnabled();
 
             Color originalColor = ShapeColor;
             Color targetColor;

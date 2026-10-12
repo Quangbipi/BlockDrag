@@ -106,7 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18b78d7ff33324476b0f3074a03ae6bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragOffset: {x: 0, y: 5, z: 0}
+  dragLiftCells: 3
   dragScale: 0.5
   pickUpDuration: 0.15
   returnDuration: 0.2

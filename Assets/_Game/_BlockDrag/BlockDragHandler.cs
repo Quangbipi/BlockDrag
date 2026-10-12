@@ -7,9 +7,9 @@ namespace Gameplay.BlockDrag
     [RequireComponent(typeof(BlockShape))]
     public class BlockDragHandler : MonoBehaviour
     {
-        [Header("Drag Offset & Scaling")]
-        [Tooltip("Khoảng cách dịch chuyển khi nhấc khối lên (trục Y nhấc lên để ngón tay không che)")]
-        [SerializeField] private Vector3 dragOffset = new Vector3(0f, 1.5f, 0f);
+        [Header("Drag Lift & Scaling")]
+        [Tooltip("Khoảng nâng khối lên trên ngón tay khi kéo, tính theo số ô grid (để ngón tay không che)")]
+        [SerializeField] private float dragLiftCells = 3f;
 
         [Tooltip("Tỷ lệ scale của khối khi đang kéo thả (chuẩn tỷ lệ Grid = 1.0)")]
         [SerializeField] private float dragScale = 1f;
@@ -23,7 +23,7 @@ namespace Gameplay.BlockDrag
             set => dragScale = value;
         }
 
-        [Tooltip("Thời gian tween scale khi nhấc khối")]
+        [Tooltip("Thời gian tween scale và khoảng nâng khi nhấc khối")]
         [SerializeField] private float pickUpDuration = 0.15f;
 
         [Header("Return Animation")]
@@ -57,6 +57,9 @@ namespace Gameplay.BlockDrag
         private bool isReturning = false;
         private Tween moveTween;
         private Tween scaleTween;
+        private Tween liftTween;
+        private float currentLift;
+        private Vector2 lastScreenPos;
 
         public bool IsDragging => isDragging;
         public BlockShape BlockShape => blockShape;
@@ -65,7 +68,9 @@ namespace Gameplay.BlockDrag
             get => blockGrid;
             set => blockGrid = value;
         }
-        public Vector3 DragOffset => dragOffset;
+        public bool CanBeginDrag => !isDragging && blockShape != null && !blockShape.IsDimmed;
+        public float LiftWorld => dragLiftCells * (blockGrid != null && blockGrid.CellSize > 0f ? blockGrid.CellSize : 1f);
+        public Vector3 DragOffset => new Vector3(0f, LiftWorld, 0f);
         public Vector3 OriginalPosition => originalPosition;
         public Vector3 OriginalScale => originalScale;
 
@@ -99,29 +104,34 @@ namespace Gameplay.BlockDrag
             return targetCamera != null ? targetCamera : Camera.main;
         }
 
-        private void OnMouseDown()
+        /// <summary>
+        /// Nhấc khối lên theo ngón tay. Được phép cả khi khối đang bay về slot.
+        /// </summary>
+        public void BeginDrag(Vector2 screenPos)
         {
-            if (isReturning) return;
-            if (blockShape != null && blockShape.IsDimmed) return;
+            if (!CanBeginDrag) return;
 
             isDragging = true;
-            originalPosition = transform.position;
-            originalScale = transform.localScale;
+            isReturning = false;
+            lastScreenPos = screenPos;
 
-            // Kill các tween cũ nếu có
-            moveTween?.Kill();
-            scaleTween?.Kill();
+            // Kill các tween cũ (kể cả tween bay về slot)
+            KillTweens();
+
+            // Đang kéo không cần nhận chạm nữa
+            blockShape.SetInputEnabled(false);
 
             // Nâng sorting order hiển thị
-            if (blockShape != null)
-            {
-                blockShape.SetSortingOrderOffset(dragSortingOrderOffset);
-            }
+            blockShape.SetSortingOrderOffset(dragSortingOrderOffset);
 
-            // Tween scale lên kích thước chuẩn khi kéo
-            scaleTween = transform.DOScale(Vector3.one * dragScale, pickUpDuration).SetEase(Ease.OutBack);
+            // Tween scale lên kích thước chuẩn khi kéo (không overshoot)
+            scaleTween = transform.DOScale(Vector3.one * dragScale, pickUpDuration).SetEase(Ease.OutQuad);
 
-            // Cập nhật vị trí ngay lập tức theo con trỏ
+            // Nâng dần khối lên trên ngón tay thay vì nhảy tức thời
+            currentLift = 0f;
+            liftTween = DOTween.To(() => currentLift, v => currentLift = v, LiftWorld, pickUpDuration)
+                .SetEase(Ease.OutQuad);
+
             UpdateDragPosition();
 
             if (blockGrid != null)
@@ -132,10 +142,14 @@ namespace Gameplay.BlockDrag
             OnBeginDragEvent?.Invoke(this);
         }
 
-        private void OnMouseDrag()
+        /// <summary>
+        /// Cập nhật vị trí khi kéo. Gọi mỗi frame (kể cả khi ngón tay đứng yên) để khoảng nâng chạy mượt.
+        /// </summary>
+        public void Drag(Vector2 screenPos)
         {
             if (!isDragging) return;
 
+            lastScreenPos = screenPos;
             UpdateDragPosition();
 
             if (blockGrid != null)
@@ -146,11 +160,15 @@ namespace Gameplay.BlockDrag
             OnDraggingEvent?.Invoke(this, transform.position);
         }
 
-        private void OnMouseUp()
+        /// <summary>
+        /// Thả tay: thử đặt lên grid, không được thì bay về slot.
+        /// </summary>
+        public void EndDrag()
         {
             if (!isDragging) return;
 
             isDragging = false;
+            liftTween?.Kill();
             OnEndDragEvent?.Invoke(this);
 
             bool placed = false;
@@ -167,21 +185,38 @@ namespace Gameplay.BlockDrag
         }
 
         /// <summary>
-        /// Tính toán và cập nhật toạ độ khối gạch theo con trỏ chuột/touch
+        /// Touch bị huỷ (cuộc gọi, notification...): không đặt khối, bay về slot.
+        /// </summary>
+        public void CancelDrag()
+        {
+            if (!isDragging) return;
+
+            isDragging = false;
+            liftTween?.Kill();
+
+            if (blockGrid != null)
+            {
+                blockGrid.HideIndicator();
+            }
+
+            OnEndDragEvent?.Invoke(this);
+            ReturnToOrigin();
+        }
+
+        /// <summary>
+        /// Tính toán và cập nhật toạ độ khối gạch theo ngón tay (bám 1:1, không làm trễ)
         /// </summary>
         private void UpdateDragPosition()
         {
             Camera cam = GetCamera();
             if (cam == null) return;
 
-            Vector3 mouseScreen = Input.mousePosition;
-            float planeDistance = Mathf.Abs(cam.transform.position.z - transform.position.z);
-            mouseScreen.z = planeDistance;
-            Vector3 mouseWorld = cam.ScreenToWorldPoint(mouseScreen);
+            float planeDistance = Mathf.Abs(cam.transform.position.z - originalPosition.z);
+            Vector3 fingerWorld = cam.ScreenToWorldPoint(new Vector3(lastScreenPos.x, lastScreenPos.y, planeDistance));
 
             transform.position = new Vector3(
-                mouseWorld.x + dragOffset.x,
-                mouseWorld.y + dragOffset.y,
+                fingerWorld.x,
+                fingerWorld.y + currentLift,
                 originalPosition.z
             );
         }
@@ -192,8 +227,7 @@ namespace Gameplay.BlockDrag
         public void ReturnToOrigin(Action onComplete = null)
         {
             isReturning = true;
-            moveTween?.Kill();
-            scaleTween?.Kill();
+            KillTweens();
 
             scaleTween = transform.DOScale(originalScale, returnDuration).SetEase(returnEase);
             moveTween = transform.DOMove(originalPosition, returnDuration)
@@ -204,15 +238,22 @@ namespace Gameplay.BlockDrag
                     if (blockShape != null)
                     {
                         blockShape.SetSortingOrderOffset(0);
+                        blockShape.SetInputEnabled(true);
                     }
                     onComplete?.Invoke();
                 });
         }
 
-        private void OnDestroy()
+        private void KillTweens()
         {
             moveTween?.Kill();
             scaleTween?.Kill();
+            liftTween?.Kill();
+        }
+
+        private void OnDestroy()
+        {
+            KillTweens();
         }
     }
 }

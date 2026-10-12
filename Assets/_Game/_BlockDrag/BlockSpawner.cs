@@ -36,6 +36,11 @@ namespace Gameplay.BlockDrag
         [SerializeField, Range(0.1f, 1f)]
         private float spawnScaleRatio = 0.6f;
 
+        [Header("Touch Area")]
+        [Tooltip("Chiều cao vùng chạm của mỗi slot, tính theo % chiều cao màn hình (rộng = khoảng cách giữa 2 slot)")]
+        [SerializeField, Range(0.05f, 0.4f)]
+        private float touchAreaHeightPercent = 0.16f;
+
         [Header("Camera")]
         [Tooltip("Camera dùng để tính toạ độ (nếu để trống sẽ tự lấy Camera.main)")]
         [SerializeField] private Camera targetCamera;
@@ -50,6 +55,7 @@ namespace Gameplay.BlockDrag
 
         private const int SlotCount = 3;
         private Transform[] spawnSlots;
+        private Vector2 touchAreaWorldSize;
         private bool isGameOver = false;
         private Coroutine gameOverRoutine;
         private BlockColorPaletteSO colorPalette;
@@ -287,6 +293,16 @@ namespace Gameplay.BlockDrag
 
             spawnSlots = new Transform[SlotCount];
 
+            // Vùng chạm mỗi slot: rộng = khoảng cách 2 slot liền kề (không chồng nhau), cao theo % màn hình
+            Vector3 worldMin = cam.ViewportToWorldPoint(new Vector3(0f, 0f, cam.nearClipPlane));
+            Vector3 worldMax = cam.ViewportToWorldPoint(new Vector3(1f, 1f, cam.nearClipPlane));
+            float worldWidth = worldMax.x - worldMin.x;
+            float worldHeight = worldMax.y - worldMin.y;
+            touchAreaWorldSize = new Vector2(
+                worldWidth * (1f - 2f * sideMarginPercent) / (SlotCount - 1),
+                worldHeight * touchAreaHeightPercent
+            );
+
             for (int i = 0; i < SlotCount; i++)
             {
                 // Chia đều khoảng từ sideMarginPercent → (1 - sideMarginPercent)
@@ -360,6 +376,11 @@ namespace Gameplay.BlockDrag
             // Thu nhỏ container bằng localScale → hiển thị nhỏ tại slot chờ
             // Khi drag sẽ DOScale về Vector3.one → khớp hoàn hảo với grid
             newShapeObj.transform.localScale = Vector3.one * spawnScaleRatio;
+
+            if (shapeComp != null)
+            {
+                shapeComp.SetTouchArea(touchAreaWorldSize, spawnScaleRatio);
+            }
 
             // Ghi nhận toạ độ gốc và tỷ lệ gốc (scale nhỏ) cho BlockDragHandler
             // dragScale = 1 vì block đã được tạo đúng kích thước grid,
