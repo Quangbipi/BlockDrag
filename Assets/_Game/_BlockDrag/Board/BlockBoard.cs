@@ -12,6 +12,12 @@ namespace Gameplay.BlockDrag
     {
         private readonly bool[,] occupied;
 
+        // Buffer dùng lại cho FindLinesCompletedBy (gọi mỗi frame khi kéo) để không sinh rác GC
+        private readonly bool[,] footprintScratch;
+        private readonly bool[] rowScratch;
+        private readonly bool[] colScratch;
+        private readonly List<Vector2Int> footprintCells = new List<Vector2Int>();
+
         public int Rows { get; }
         public int Columns { get; }
 
@@ -23,6 +29,9 @@ namespace Gameplay.BlockDrag
             Rows = rows;
             Columns = columns;
             occupied = new bool[rows, columns];
+            footprintScratch = new bool[rows, columns];
+            rowScratch = new bool[rows];
+            colScratch = new bool[columns];
         }
 
         public bool IsInside(int row, int col)
@@ -143,6 +152,99 @@ namespace Gameplay.BlockDrag
             }
 
             return new LineClearResult(fullRows, fullCols, cells);
+        }
+
+        /// <summary>
+        /// Dự đoán các hàng/cột sẽ đầy nếu đặt shape tại baseCoord, không thay đổi bàn cờ.
+        /// Trả None nếu không đặt được.
+        /// </summary>
+        public LineClearResult FindLinesCompletedBy(IShapeFootprint shape, Vector2Int baseCoord)
+        {
+            if (!CanPlace(shape, baseCoord)) return LineClearResult.None;
+
+            List<int> fullRows = null;
+            List<int> fullCols = null;
+
+            try
+            {
+                for (int r = 0; r < shape.RowsCount; r++)
+                {
+                    for (int c = 0; c < shape.ColumnsCount; c++)
+                    {
+                        if (!shape.HasBlockAt(r, c)) continue;
+
+                        int targetR = baseCoord.x + r;
+                        int targetC = baseCoord.y + c;
+                        footprintScratch[targetR, targetC] = true;
+                        rowScratch[targetR] = true;
+                        colScratch[targetC] = true;
+                        footprintCells.Add(new Vector2Int(targetR, targetC));
+                    }
+                }
+
+                // Chỉ hàng/cột shape chạm vào mới có thể vừa đầy; duyệt theo chỉ số để kết quả tăng dần
+                for (int r = 0; r < Rows; r++)
+                {
+                    if (!rowScratch[r]) continue;
+
+                    bool full = true;
+                    for (int c = 0; c < Columns && full; c++)
+                    {
+                        full = occupied[r, c] || footprintScratch[r, c];
+                    }
+                    if (full) (fullRows ??= new List<int>()).Add(r);
+                }
+
+                for (int c = 0; c < Columns; c++)
+                {
+                    if (!colScratch[c]) continue;
+
+                    bool full = true;
+                    for (int r = 0; r < Rows && full; r++)
+                    {
+                        full = occupied[r, c] || footprintScratch[r, c];
+                    }
+                    if (full) (fullCols ??= new List<int>()).Add(c);
+                }
+            }
+            finally
+            {
+                for (int i = 0; i < footprintCells.Count; i++)
+                {
+                    Vector2Int cell = footprintCells[i];
+                    footprintScratch[cell.x, cell.y] = false;
+                    rowScratch[cell.x] = false;
+                    colScratch[cell.y] = false;
+                }
+                footprintCells.Clear();
+            }
+
+            if (fullRows == null && fullCols == null)
+            {
+                return LineClearResult.None;
+            }
+
+            IReadOnlyList<int> rows = fullRows ?? (IReadOnlyList<int>)Array.Empty<int>();
+            IReadOnlyList<int> cols = fullCols ?? (IReadOnlyList<int>)Array.Empty<int>();
+
+            HashSet<Vector2Int> cells = new HashSet<Vector2Int>();
+            for (int i = 0; i < rows.Count; i++)
+            {
+                for (int c = 0; c < Columns; c++)
+                {
+                    cells.Add(new Vector2Int(rows[i], c));
+                }
+            }
+
+            for (int i = 0; i < cols.Count; i++)
+            {
+                for (int r = 0; r < Rows; r++)
+                {
+                    cells.Add(new Vector2Int(r, cols[i]));
+                }
+            }
+
+            return new LineClearResult(rows, cols, cells);
         }
 
         /// <summary>

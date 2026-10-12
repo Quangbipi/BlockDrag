@@ -40,6 +40,9 @@ namespace Gameplay.BlockDrag
         [SerializeField] protected float indicatorAlpha = 0.4f;
         [Tooltip("Sorting Order của Indicator (nên lớn hơn cell nền nhưng nhỏ hơn khối đang kéo)")]
         [SerializeField] protected int indicatorSortingOrder = 5;
+        [Tooltip("Độ trong suốt của Indicator ở các ô nằm trong hàng/cột sắp bị phá")]
+        [Range(0f, 1f)]
+        [SerializeField] protected float clearPreviewGhostAlpha = 1f;
 
         [Header("Line Clearing Settings")]
         [Tooltip("Thời gian animation thu nhỏ khi phá hàng (giây)")]
@@ -53,6 +56,7 @@ namespace Gameplay.BlockDrag
         public event System.Action<int, int, int> OnLinesCleared; // (rowsCleared, colsCleared, totalCellsCleared)
         public event System.Action<int, int, int, Vector3> OnLinesClearedWithPos; // (rowsCleared, colsCleared, totalCellsCleared, placedCenterPos)
         public event System.Action<IReadOnlyList<Vector2Int>> OnShapePlacedCells; // (placedCellCoords) toạ độ (row, col) các ô khối vừa chiếm
+        public event System.Action<LineClearResult, Color> OnClearPreviewChanged; // (result, shapeColor) result.HasLines == false => tắt preview
 
         public Vector3 LastPlacedCenterPosition { get; private set; }
 
@@ -62,6 +66,12 @@ namespace Gameplay.BlockDrag
         protected BlockBoard board;
         protected Transform indicatorRoot;
         protected readonly List<GameObject> indicatorPool = new List<GameObject>();
+        protected LineClearResult clearPreview = LineClearResult.None;
+        protected Color clearPreviewColor;
+        // Cache vị trí đặt lần trước để không tính lại preview mỗi frame khi khối vẫn ở cùng ô
+        protected BlockShape previewShape;
+        protected Vector2Int previewBaseCoord;
+        protected bool hasPreviewCache;
         protected float cellSize;
         protected float gridWidth;
         protected float gridHeight;
@@ -72,6 +82,11 @@ namespace Gameplay.BlockDrag
         public int MaxColumn => maxColumn;
         public int MaxRow => maxRow;
         public float Spacing => spacing;
+
+        /// <summary>
+        /// Các hàng/cột sẽ bị phá nếu thả khối đang kéo tại vị trí indicator hiện tại
+        /// </summary>
+        public LineClearResult ClearPreview => clearPreview;
 
         /// <summary>
         /// Luật bàn cờ (trạng thái ô, kiểm tra đặt khối, phá hàng). Tự tạo bàn trống nếu grid chưa sinh.
@@ -260,6 +275,8 @@ namespace Gameplay.BlockDrag
         [ContextMenu("Clear Grid")]
         public void ClearGrid()
         {
+            SetClearPreview(LineClearResult.None, default);
+
             if (occupiedBlocks != null)
             {
                 for (int r = 0; r < occupiedBlocks.GetLength(0); r++)
@@ -412,6 +429,7 @@ namespace Gameplay.BlockDrag
         /// Cập nhật hiển thị indicator khi kéo khối gạch.
         /// Nếu vị trí hợp lệ: hiện preview indicator mờ.
         /// Nếu vị trí không hợp lệ (ngoài grid hoặc trùng ô đã có gạch): ẩn hoàn toàn indicator.
+        /// Bỏ qua khi shape và ô đặt không đổi so với lần gọi trước (không tính lại, không sinh rác GC).
         /// </summary>
         public void UpdateDragIndicator(BlockShape shape, Vector3 shapeWorldPos)
         {
@@ -425,7 +443,13 @@ namespace Gameplay.BlockDrag
             {
                 if (CanPlaceShape(shape, baseCoord))
                 {
+                    if (hasPreviewCache && previewShape == shape && previewBaseCoord == baseCoord) return;
+
+                    SetClearPreview(Board.FindLinesCompletedBy(shape, baseCoord), GetShapeColor(shape));
                     ShowIndicator(shape, baseCoord);
+                    previewShape = shape;
+                    previewBaseCoord = baseCoord;
+                    hasPreviewCache = true;
                     return;
                 }
             }
@@ -439,6 +463,9 @@ namespace Gameplay.BlockDrag
         /// </summary>
         public void ShowIndicator(BlockShape shape, Vector2Int baseCoord)
         {
+            // Gọi trực tiếp từ ngoài có thể đổi ghost => lần UpdateDragIndicator kế tiếp phải vẽ lại
+            hasPreviewCache = false;
+
             if (shape == null)
             {
                 HideIndicator();
@@ -467,8 +494,11 @@ namespace Gameplay.BlockDrag
                 indicatorPool.Add(CreateIndicatorCell());
             }
 
-            Color ghostColor = shape.shapeData != null ? shape.shapeData.shapeColor : Color.white;
+            Color ghostColor = GetShapeColor(shape);
             ghostColor.a = indicatorAlpha;
+            Color previewGhostColor = ghostColor;
+            previewGhostColor.a = clearPreviewGhostAlpha;
+            bool hasPreview = clearPreview.HasLines;
 
             int indicatorIdx = 0;
             for (int r = 0; r < rows; r++)
@@ -487,7 +517,8 @@ namespace Gameplay.BlockDrag
                         var sr = indObj.GetComponent<SpriteRenderer>();
                         if (sr != null)
                         {
-                            sr.color = ghostColor;
+                            bool inPreviewLine = hasPreview && IsInClearPreview(targetR, targetC);
+                            sr.color = inPreviewLine ? previewGhostColor : ghostColor;
                             sr.sortingOrder = indicatorSortingOrder;
                         }
 
@@ -508,6 +539,15 @@ namespace Gameplay.BlockDrag
         /// </summary>
         public void HideIndicator()
         {
+            SetClearPreview(LineClearResult.None, default);
+            HideIndicatorCells();
+        }
+
+        private void HideIndicatorCells()
+        {
+            hasPreviewCache = false;
+            previewShape = null;
+
             if (indicatorPool == null) return;
             for (int i = 0; i < indicatorPool.Count; i++)
             {
@@ -516,6 +556,54 @@ namespace Gameplay.BlockDrag
                     indicatorPool[i].SetActive(false);
                 }
             }
+        }
+
+        private static Color GetShapeColor(BlockShape shape)
+        {
+            return shape != null && shape.shapeData != null ? shape.shapeData.shapeColor : Color.white;
+        }
+
+        private bool IsInClearPreview(int row, int col)
+        {
+            for (int i = 0; i < clearPreview.Rows.Count; i++)
+            {
+                if (clearPreview.Rows[i] == row) return true;
+            }
+            for (int i = 0; i < clearPreview.Columns.Count; i++)
+            {
+                if (clearPreview.Columns[i] == col) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Cập nhật preview hàng/cột sắp phá, chỉ phát OnClearPreviewChanged khi tập hàng/cột hoặc màu thay đổi
+        /// </summary>
+        protected void SetClearPreview(LineClearResult result, Color color)
+        {
+            if (!result.HasLines && !clearPreview.HasLines) return;
+
+            if (result.HasLines && clearPreview.HasLines
+                && color == clearPreviewColor
+                && SameIndices(result.Rows, clearPreview.Rows)
+                && SameIndices(result.Columns, clearPreview.Columns))
+            {
+                return;
+            }
+
+            clearPreview = result.HasLines ? result : LineClearResult.None;
+            clearPreviewColor = color;
+            OnClearPreviewChanged?.Invoke(clearPreview, color);
+        }
+
+        private static bool SameIndices(IReadOnlyList<int> a, IReadOnlyList<int> b)
+        {
+            if (a.Count != b.Count) return false;
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (a[i] != b[i]) return false;
+            }
+            return true;
         }
 
         private void EnsureIndicatorRoot()
@@ -572,17 +660,14 @@ namespace Gameplay.BlockDrag
         /// </summary>
         public bool TryPlaceShape(BlockShape shape, Vector3 shapeWorldPos)
         {
-            HideIndicator();
+            // Giữ preview (màu hàng sắp phá) tới sau khi phá hàng để block vỡ ra đúng màu khối vừa thả
+            HideIndicatorCells();
 
-            if (shape == null) return false;
-
-            if (!TryGetPlacementCoordinate(shape, shapeWorldPos, out Vector2Int baseCoord))
+            if (shape == null
+                || !TryGetPlacementCoordinate(shape, shapeWorldPos, out Vector2Int baseCoord)
+                || !CanPlaceShape(shape, baseCoord))
             {
-                return false;
-            }
-
-            if (!CanPlaceShape(shape, baseCoord))
-            {
+                SetClearPreview(LineClearResult.None, default);
                 return false;
             }
 
@@ -647,6 +732,7 @@ namespace Gameplay.BlockDrag
 
             // Kiểm tra và phá hủy các hàng ngang / cột dọc đã lấp đầy
             CheckAndClearLines();
+            SetClearPreview(LineClearResult.None, default);
 
             // Bắn sự kiện đặt khối thành công
             OnShapePlaced?.Invoke();
@@ -725,6 +811,18 @@ namespace Gameplay.BlockDrag
                 return null;
 
             return gridCells[row, col];
+        }
+
+        /// <summary>
+        /// Lấy GameObject block đang chiếm ô (hàng, cột), null nếu ô trống hoặc ngoài grid
+        /// </summary>
+        public GameObject GetOccupiedBlock(int row, int col)
+        {
+            if (occupiedBlocks == null) return null;
+            if (row < 0 || row >= occupiedBlocks.GetLength(0) || col < 0 || col >= occupiedBlocks.GetLength(1))
+                return null;
+
+            return occupiedBlocks[row, col];
         }
 
         /// <summary>
