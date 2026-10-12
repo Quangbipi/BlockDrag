@@ -58,6 +58,60 @@ namespace Gameplay.BlockDrag
             Array.Clear(occupied, 0, occupied.Length);
         }
 
+        public int OccupiedCount
+        {
+            get
+            {
+                int count = 0;
+                for (int r = 0; r < Rows; r++)
+                {
+                    for (int c = 0; c < Columns; c++)
+                    {
+                        if (occupied[r, c]) count++;
+                    }
+                }
+                return count;
+            }
+        }
+
+        /// <summary>
+        /// Tỷ lệ ô đã bị chiếm (0..1)
+        /// </summary>
+        public float FilledRatio => (float)OccupiedCount / (Rows * Columns);
+
+        /// <summary>
+        /// Sao chép trạng thái ô từ bàn khác cùng kích thước (dùng cho mô phỏng, không sinh rác)
+        /// </summary>
+        public void CopyFrom(BlockBoard other)
+        {
+            if (other == null) throw new ArgumentNullException(nameof(other));
+            if (other.Rows != Rows || other.Columns != Columns)
+            {
+                throw new ArgumentException("Board size mismatch", nameof(other));
+            }
+
+            Array.Copy(other.occupied, occupied, occupied.Length);
+        }
+
+        /// <summary>
+        /// Đánh dấu chiếm các ô của shape tại baseCoord, không kiểm tra hợp lệ (gọi CanPlace trước)
+        /// </summary>
+        public void Place(IShapeFootprint shape, Vector2Int baseCoord)
+        {
+            if (shape == null) return;
+
+            for (int r = 0; r < shape.RowsCount; r++)
+            {
+                for (int c = 0; c < shape.ColumnsCount; c++)
+                {
+                    if (shape.HasBlockAt(r, c))
+                    {
+                        SetOccupied(baseCoord.x + r, baseCoord.y + c, true);
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Mọi ô của shape đặt tại baseCoord (row, col) đều nằm trong bàn và chưa bị chiếm
         /// </summary>
@@ -258,6 +312,40 @@ namespace Gameplay.BlockDrag
                 occupied[cell.x, cell.y] = false;
             }
             return result;
+        }
+
+        /// <summary>
+        /// Như ClearFullLines nhưng không cấp phát (dùng cho mô phỏng). Trả số hàng + cột đã phá.
+        /// </summary>
+        public int ClearFullLinesInPlace()
+        {
+            int lines = 0;
+            for (int r = 0; r < Rows; r++)
+            {
+                rowScratch[r] = IsRowFull(r);
+                if (rowScratch[r]) lines++;
+            }
+
+            for (int c = 0; c < Columns; c++)
+            {
+                colScratch[c] = IsColumnFull(c);
+                if (colScratch[c]) lines++;
+            }
+
+            if (lines > 0)
+            {
+                for (int r = 0; r < Rows; r++)
+                {
+                    for (int c = 0; c < Columns; c++)
+                    {
+                        if (rowScratch[r] || colScratch[c]) occupied[r, c] = false;
+                    }
+                }
+            }
+
+            Array.Clear(rowScratch, 0, rowScratch.Length);
+            Array.Clear(colScratch, 0, colScratch.Length);
+            return lines;
         }
 
         private bool IsRowFull(int row)

@@ -238,6 +238,53 @@ namespace Tests.EditMode
             Assert.IsFalse(board.FindLinesCompletedBy(Single, new Vector2Int(2, 2)).HasLines);
         }
 
+        [Test]
+        public void FilledRatio_AfterPlacingCells_ReturnsOccupiedFraction()
+        {
+            board.Place(Square2, new Vector2Int(0, 0));
+
+            Assert.AreEqual(4, board.OccupiedCount);
+            Assert.AreEqual(0.25f, board.FilledRatio, 1e-5f);
+        }
+
+        [Test]
+        public void CopyFrom_CopiesOccupancyIndependently()
+        {
+            board.SetOccupied(1, 2, true);
+            BlockBoard copy = new BlockBoard(4, 4);
+
+            copy.CopyFrom(board);
+            copy.SetOccupied(3, 3, true);
+
+            Assert.IsTrue(copy.IsOccupied(1, 2));
+            Assert.IsFalse(board.IsOccupied(3, 3));
+        }
+
+        [Test]
+        public void Place_MarksAllShapeCellsOccupied()
+        {
+            board.Place(LShape, new Vector2Int(1, 1));
+
+            Assert.IsTrue(board.IsOccupied(1, 1));
+            Assert.IsTrue(board.IsOccupied(2, 1));
+            Assert.IsTrue(board.IsOccupied(3, 1));
+            Assert.IsTrue(board.IsOccupied(3, 2));
+            Assert.IsFalse(board.IsOccupied(1, 2));
+            Assert.AreEqual(4, board.OccupiedCount);
+        }
+
+        [Test]
+        public void ClearFullLinesInPlace_ClearsRowAndColumnAndReturnsCount()
+        {
+            for (int c = 0; c < 4; c++) board.SetOccupied(0, c, true);
+            for (int r = 0; r < 4; r++) board.SetOccupied(r, 3, true);
+            board.SetOccupied(2, 1, true);
+
+            Assert.AreEqual(2, board.ClearFullLinesInPlace());
+            Assert.AreEqual(1, board.OccupiedCount);
+            Assert.IsTrue(board.IsOccupied(2, 1));
+        }
+
         private void FillAllExcept(Vector2Int free)
         {
             for (int r = 0; r < board.Rows; r++)

@@ -22,6 +22,9 @@ namespace Gameplay.BlockDrag
         [Header("Shape Data Pool")]
         public List<BlockShapeData> availableShapes;
 
+        [Tooltip("Trọng số shape và tham số độ khó. Để trống → dùng mặc định (trọng số đều)")]
+        [SerializeField] private SpawnConfigSO spawnConfig;
+
         [Header("Spawn Position – Screen Percentages")]
         [Tooltip("Khoảng cách từ cạnh dưới màn hình, tính theo % chiều cao (0 = sát đáy, 1 = đỉnh)")]
         [SerializeField, Range(0f, 1f)]
@@ -62,15 +65,31 @@ namespace Gameplay.BlockDrag
         private bool paletteWarningLogged;
         private readonly List<Color> usedColors = new List<Color>();
 
+        private HandGenerator handGenerator;
+        private SpawnSettings defaultSettings;
+        private BlockBoard fallbackBoard;
+        // HighScore chụp ở hand đầu tiên của ván: ScoreManager.HighScore cập nhật trực tiếp nên không dùng làm mốc được
+        private int runBaselineHighScore;
+        private bool baselineCaptured;
+
         public bool IsGameOver => isGameOver;
 
-        private static readonly BlockRotation[] AvailableRotations =
+        private SpawnSettings Settings
         {
-            BlockRotation.Rot_0,
-            BlockRotation.Rot_90,
-            BlockRotation.Rot_180,
-            BlockRotation.Rot_270
-        };
+            get
+            {
+                if (spawnConfig != null) return spawnConfig.Settings;
+                if (defaultSettings == null)
+                {
+                    defaultSettings = SpawnSettings.CreateDefault();
+                    Debug.LogWarning("[BlockSpawner] Chưa gán SpawnConfigSO, dùng tham số sinh khối mặc định.");
+                }
+                return defaultSettings;
+            }
+        }
+
+        private HandGenerator Generator => handGenerator ??= new HandGenerator(
+            availableShapes, Settings, spawnConfig != null ? spawnConfig.Weights : null, new System.Random());
 
         private void Awake()
         {
@@ -127,6 +146,7 @@ namespace Gameplay.BlockDrag
             }
 
             CreateSpawnSlots();
+            baselineCaptured = false;
             SpawnNewHand();
             CheckPlacementsAndGameOver();
         }
@@ -273,6 +293,7 @@ namespace Gameplay.BlockDrag
             }
 
             ClearHand();
+            baselineCaptured = false;
             SpawnNewHand();
             CheckPlacementsAndGameOver();
 
@@ -335,21 +356,64 @@ namespace Gameplay.BlockDrag
                 }
             }
 
+            // Khối còn trên tay tham gia chống trùng hình và kiểm tra đặt hết
+            List<Transform> emptySlots = new List<Transform>();
+            List<ShapeVariant> inHand = new List<ShapeVariant>();
             for (int i = 0; i < spawnSlots.Length; i++)
             {
-                if (spawnSlots[i].childCount == 0) // Slot đang trống
+                BlockShape existing = spawnSlots[i].childCount > 0 ? spawnSlots[i].GetComponentInChildren<BlockShape>() : null;
+                if (spawnSlots[i].childCount == 0)
                 {
-                    SpawnRandomShapeAt(spawnSlots[i]);
+                    emptySlots.Add(spawnSlots[i]);
                 }
+                else if (existing != null && existing.shapeData != null)
+                {
+                    inHand.Add(new ShapeVariant(existing.shapeData, existing.CurrentRotation));
+                }
+            }
+
+            if (emptySlots.Count == 0) return;
+
+            List<ShapeVariant> hand = Generator.Generate(GetBoard(), emptySlots.Count, EvaluateDifficulty(), inHand);
+            if (hand.Count < emptySlots.Count)
+            {
+                Debug.LogWarning("[BlockSpawner] availableShapes không đủ hình khác nhau để lấp khay.");
+            }
+
+            for (int i = 0; i < emptySlots.Count && i < hand.Count; i++)
+            {
+                SpawnShapeAt(emptySlots[i], hand[i]);
             }
         }
 
-        private void SpawnRandomShapeAt(Transform slot)
+        private BlockBoard GetBoard()
         {
-            if (availableShapes == null || availableShapes.Count == 0) return;
+            if (blockGrid != null) return blockGrid.Board;
+            return fallbackBoard ??= new BlockBoard(8, 8);
+        }
 
-            // Chọn ngẫu nhiên 1 hình khối
-            BlockShapeData randomData = availableShapes[Random.Range(0, availableShapes.Count)];
+        /// <summary>
+        /// Độ khó 0..1 theo điểm so với HighScore đầu ván. Hand đầu tiên của ván luôn = 0
+        /// (khi Restart, ScoreManager chỉ reset điểm sau khi hand mới đã sinh).
+        /// </summary>
+        private float EvaluateDifficulty()
+        {
+            IScoreService score = Locator.Score;
+            if (score == null) return 0f;
+
+            if (!baselineCaptured)
+            {
+                runBaselineHighScore = score.HighScore;
+                baselineCaptured = true;
+                return 0f;
+            }
+
+            return DifficultyCurve.Evaluate(score.CurrentScore, runBaselineHighScore, Settings);
+        }
+
+        private void SpawnShapeAt(Transform slot, ShapeVariant variant)
+        {
+            BlockShapeData shapeData = variant.Data;
 
             // Tạo khung chứa hình khối tại vị trí Slot
             GameObject newShapeObj = Instantiate(shapeContainerPrefab, slot.position, Quaternion.identity, slot);
@@ -367,10 +431,9 @@ namespace Gameplay.BlockDrag
             // Khởi tạo các ô gạch 1x1 với kích thước BẰNG grid (cellSize thật)
             if (shapeComp != null)
             {
-                BlockRotation randomRotation = AvailableRotations[Random.Range(0, AvailableRotations.Length)];
-                Color shapeColor = PickColor(randomData);
+                Color shapeColor = PickColor(shapeData);
                 usedColors.Add(shapeColor);
-                shapeComp.Initialize(randomData, singleBlockPrefab, rotation: randomRotation, cellSize: gridCellSize, color: shapeColor);
+                shapeComp.Initialize(shapeData, singleBlockPrefab, rotation: variant.Rotation, cellSize: gridCellSize, color: shapeColor);
             }
 
             // Thu nhỏ container bằng localScale → hiển thị nhỏ tại slot chờ
