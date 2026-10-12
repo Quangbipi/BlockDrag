@@ -18,6 +18,12 @@ namespace Gameplay.BlockDrag
         [Tooltip("Tỷ lệ cách đều lề trái/phải màn hình (mặc định 0.1 tương ứng 10%)")]
         [Range(0f, 0.4f)]
         [SerializeField] protected float marginPercent = 0.1f;
+        [Tooltip("Lề trái/phải khi chạy trên tablet / iPad")]
+        [Range(0f, 0.4f)]
+        [SerializeField] protected float tabletMarginPercent = 0.2f;
+        [Tooltip("Tỷ lệ cạnh ngắn/cạnh dài màn hình từ ngưỡng này trở lên được coi là tablet (điện thoại ≤ 0.56, iPad ≈ 0.75)")]
+        [Range(0.5f, 1f)]
+        [SerializeField] protected float tabletAspectThreshold = 0.6f;
         [Header("Positioning & Offset")]
         [Tooltip("Nếu bật, tự động căn vị trí Grid theo tỷ lệ màn hình Camera. Nếu tắt, giữ nguyên transform.position")]
         [SerializeField] protected bool centerOnCamera = true;
@@ -169,7 +175,7 @@ namespace Gameplay.BlockDrag
             }
 
             // Vùng chiều ngang khả dụng sau khi trừ đi lề 2 bên (ví dụ 10% mỗi bên => khả dụng = 80%)
-            float usableWidth = screenWorldWidth * Mathf.Clamp01(1f - 2f * marginPercent);
+            float usableWidth = screenWorldWidth * Mathf.Clamp01(1f - 2f * GetEffectiveMarginPercent());
 
             int cols = Mathf.Max(1, maxColumn);
             int rows = Mathf.Max(1, maxRow);
@@ -184,6 +190,27 @@ namespace Gameplay.BlockDrag
 
             // Cập nhật vị trí grid theo tỷ lệ màn hình Camera nếu được bật
             UpdateGridPosition();
+        }
+
+        /// <summary>
+        /// True nếu tỷ lệ cạnh ngắn/cạnh dài của màn hình đạt ngưỡng tablet (không phụ thuộc hướng xoay)
+        /// </summary>
+        public static bool IsTabletAspect(float width, float height, float threshold)
+        {
+            float longSide = Mathf.Max(width, height);
+            if (longSide <= 0f)
+            {
+                return false;
+            }
+            return Mathf.Min(width, height) / longSide >= threshold;
+        }
+
+        /// <summary>
+        /// Margin thực tế: tablet dùng tabletMarginPercent, thiết bị khác dùng marginPercent
+        /// </summary>
+        protected float GetEffectiveMarginPercent()
+        {
+            return IsTabletAspect(Screen.width, Screen.height, tabletAspectThreshold) ? tabletMarginPercent : marginPercent;
         }
 
         /// <summary>
@@ -896,6 +923,8 @@ namespace Gameplay.BlockDrag
             screenPositionX = Mathf.Clamp01(screenPositionX);
             screenPositionY = Mathf.Clamp01(screenPositionY);
             marginPercent = Mathf.Clamp(marginPercent, 0f, 0.4f);
+            tabletMarginPercent = Mathf.Clamp(tabletMarginPercent, 0f, 0.4f);
+            tabletAspectThreshold = Mathf.Clamp(tabletAspectThreshold, 0.5f, 1f);
 
             if (centerOnCamera)
             {
