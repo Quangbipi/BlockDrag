@@ -540,6 +540,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2898392526851360171, guid: 0ffe306fc159142fa8dfefc3f923b586, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 2898392526851360171, guid: 0ffe306fc159142fa8dfefc3f923b586, type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 0.13
+      objectReference: {fileID: 0}
+    - target: {fileID: 2898392526851360171, guid: 0ffe306fc159142fa8dfefc3f923b586, type: 3}
+      propertyPath: InitialModule.startSizeY.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2898392526851360171, guid: 0ffe306fc159142fa8dfefc3f923b586, type: 3}
+      propertyPath: InitialModule.startSizeZ.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2898392526851360171, guid: 0ffe306fc159142fa8dfefc3f923b586, type: 3}
+      propertyPath: InitialModule.startRotationX.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2898392526851360171, guid: 0ffe306fc159142fa8dfefc3f923b586, type: 3}
+      propertyPath: InitialModule.startRotationY.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5384859546949951657, guid: 0ffe306fc159142fa8dfefc3f923b586, type: 3}
       propertyPath: blockGrid
       value: 
