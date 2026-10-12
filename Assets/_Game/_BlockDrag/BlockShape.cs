@@ -22,6 +22,7 @@ namespace Gameplay.BlockDrag
         public BoxCollider2D BoxCollider => boxCollider;
         public BlockRotation CurrentRotation { get; private set; } = BlockRotation.Rot_0;
         public bool IsDimmed { get; private set; } = false;
+        public Color ShapeColor { get; private set; } = Color.white;
         public int RowsCount => shapeData != null ? shapeData.GetRotatedRowsCount(CurrentRotation) : 0;
         public int ColumnsCount => shapeData != null ? shapeData.GetRotatedColumnsCount(CurrentRotation) : 0;
         public IReadOnlyDictionary<Vector2Int, GameObject> BlockMap => blockMap;
@@ -42,9 +43,10 @@ namespace Gameplay.BlockDrag
             boxCollider = GetComponent<BoxCollider2D>();
         }
 
-        public void Initialize(BlockShapeData data, GameObject singleBlockPrefab, BlockRotation rotation = BlockRotation.Rot_0, float cellSize = 0f)
+        public void Initialize(BlockShapeData data, GameObject singleBlockPrefab, BlockRotation rotation = BlockRotation.Rot_0, float cellSize = 0f, Color? color = null)
         {
             this.shapeData = data;
+            this.ShapeColor = color ?? data.shapeColor;
             this.CurrentRotation = rotation;
             this.IsDimmed = false;
 
@@ -107,7 +109,7 @@ namespace Gameplay.BlockDrag
                         var spriteRenderer = block.GetComponent<SpriteRenderer>();
                         if (spriteRenderer != null)
                         {
-                            spriteRenderer.color = data.shapeColor;
+                            spriteRenderer.color = ShapeColor;
                             cachedRenderers.Add(spriteRenderer);
                             baseSortingOrder = spriteRenderer.sortingOrder;
                         }
@@ -190,7 +192,7 @@ namespace Gameplay.BlockDrag
                 boxCollider.enabled = !dimmed;
             }
 
-            Color originalColor = shapeData != null ? shapeData.shapeColor : Color.white;
+            Color originalColor = ShapeColor;
             Color targetColor;
 
             if (dimmed)

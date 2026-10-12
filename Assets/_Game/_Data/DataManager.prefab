@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelData: {fileID: 11400000, guid: efac10fe8021eaa44aa69795e61040fa, type: 2}
   gameplayData: {fileID: 11400000, guid: a5a284ac3af3e884197c646157404c0d, type: 2}
+  blockColorPalette: {fileID: 11400000, guid: c75b726c4aaec41f4a6ab1afe6b874c4, type: 2}
   iapData: {fileID: 11400000, guid: 48bcb4c20f3de154fa5a16cae06c202d, type: 2}
   poolData: {fileID: 11400000, guid: 1a5d30e66517fc747b49c09aa5ec1590, type: 2}
   gameConfig: {fileID: 11400000, guid: 76460b421a98f2243a1de4dc42f895ef, type: 2}

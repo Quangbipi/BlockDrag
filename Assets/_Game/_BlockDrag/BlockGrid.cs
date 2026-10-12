@@ -560,7 +560,7 @@ namespace Gameplay.BlockDrag
 
         private static Color GetShapeColor(BlockShape shape)
         {
-            return shape != null && shape.shapeData != null ? shape.shapeData.shapeColor : Color.white;
+            return shape != null ? shape.ShapeColor : Color.white;
         }
 
         private bool IsInClearPreview(int row, int col)

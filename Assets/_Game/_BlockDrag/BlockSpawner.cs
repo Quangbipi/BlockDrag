@@ -52,6 +52,9 @@ namespace Gameplay.BlockDrag
         private Transform[] spawnSlots;
         private bool isGameOver = false;
         private Coroutine gameOverRoutine;
+        private BlockColorPaletteSO colorPalette;
+        private bool paletteWarningLogged;
+        private readonly List<Color> usedColors = new List<Color>();
 
         public bool IsGameOver => isGameOver;
 
@@ -305,6 +308,17 @@ namespace Gameplay.BlockDrag
         {
             if (spawnSlots == null) return;
 
+            // Gom màu các khối còn trên tay để khối mới không trùng màu
+            usedColors.Clear();
+            for (int i = 0; i < spawnSlots.Length; i++)
+            {
+                BlockShape existing = spawnSlots[i].childCount > 0 ? spawnSlots[i].GetComponentInChildren<BlockShape>() : null;
+                if (existing != null)
+                {
+                    usedColors.Add(existing.ShapeColor);
+                }
+            }
+
             for (int i = 0; i < spawnSlots.Length; i++)
             {
                 if (spawnSlots[i].childCount == 0) // Slot đang trống
@@ -338,7 +352,9 @@ namespace Gameplay.BlockDrag
             if (shapeComp != null)
             {
                 BlockRotation randomRotation = AvailableRotations[Random.Range(0, AvailableRotations.Length)];
-                shapeComp.Initialize(randomData, singleBlockPrefab, rotation: randomRotation, cellSize: gridCellSize);
+                Color shapeColor = PickColor(randomData);
+                usedColors.Add(shapeColor);
+                shapeComp.Initialize(randomData, singleBlockPrefab, rotation: randomRotation, cellSize: gridCellSize, color: shapeColor);
             }
 
             // Thu nhỏ container bằng localScale → hiển thị nhỏ tại slot chờ
@@ -355,6 +371,30 @@ namespace Gameplay.BlockDrag
                 dragHandler.SetOrigin(newShapeObj.transform.position, newShapeObj.transform.localScale);
                 dragHandler.DragScale = 1f;
             }
+        }
+
+        /// <summary>
+        /// Lấy màu random từ palette trong DataManager, không trùng các màu đã dùng trên tay.
+        /// Không có palette → dùng màu mặc định của BlockShapeData.
+        /// </summary>
+        private Color PickColor(BlockShapeData data)
+        {
+            if (colorPalette == null)
+            {
+                colorPalette = Locator.Data?.GetSOData<BlockColorPaletteSO>();
+            }
+
+            if (colorPalette != null && colorPalette.TryGetRandomColor(usedColors, out Color color))
+            {
+                return color;
+            }
+
+            if (!paletteWarningLogged)
+            {
+                paletteWarningLogged = true;
+                Debug.LogWarning("[BlockSpawner] Chưa có BlockColorPaletteSO (hoặc list rỗng) trong DataManager, dùng màu của BlockShapeData.");
+            }
+            return data.shapeColor;
         }
     }
 }

@@ -12,7 +12,7 @@ Shared framework code ships as local `com.quang.*` packages (see `Packages/manif
 | `Quang.Utilities`, `Quang.Utilities.STimer`, `Quang.Utilities.Json` | package `com.quang.utilities` | Timers, JSON, math, logging, generic helpers |
 | `Quang.Persistence` | package `com.quang.persistence` | Save/load backend |
 | `Quang.Base` | package `com.quang.base` **+ `Assets/_Game/_BlockDrag/Base` via asmref** | `GameData`, service contracts, `Locator`, init, scene management |
-| `Quang.Data` | package `com.quang.data` **+ `Assets/_Game/_BlockDrag/Data` via asmref** | `DataManager`, `GameplayData` ScriptableObject, level loading |
+| `Quang.Data` | package `com.quang.data` **+ `Assets/_Game/_BlockDrag/Data` via asmref** | `DataManager`, `GameplayData` and `BlockColorPaletteSO` ScriptableObjects, level loading |
 | `Quang.Common` | package `com.quang.data/Common` | `GameEventManager` / `Dispatcher<EventID>` broadcasts |
 | `Quang.UI` | package `com.quang.ui` | `UIManager`, `UISCanvas`, UI components |
 | `Quang.Ads`, `Quang.IAP`, `Quang.Analytics`, `Quang.LiveOps.*` | `com.quang.services.*`, `com.quang.liveops.*` | Feature services; register their contracts with `Locator` |
@@ -50,6 +50,8 @@ Two folders inject game code into package assemblies. Keep them minimal — only
 
 - `_BlockDrag/Base` → `Quang.Base`: `partial class GameData` save fields, and game contracts exposed on `Locator` (`IScoreService`, `IBoardSessionService`, `Locator.BlockDrag.cs`).
 - `_BlockDrag/Data` → `Quang.Data`: `partial class GameplayData` tunables and the `ITEM` enum it uses (plus Odin type-name bindings for the pre-migration asset).
+  - `partial class DataManager` (`DataManager.BlockDrag.cs`): the game's single `TryGetGameSOData<T>` implementation. It serializes and returns `GameplayData` and `BlockColorPaletteSO`. Register any further game ScriptableObject that must be a `DataManager` field here.
+  - `BlockColorPaletteSO`: the random block colour set. It lives here, not in `BlockDrag/Config`, because a `DataManager` field must be a type `Quang.Data` can see. Gameplay reads it through `Locator.Data.GetSOData<BlockColorPaletteSO>()`.
 
 Everything else (shape data, score config, level schema, gameplay logic) belongs to the `BlockDrag` assembly.
 
