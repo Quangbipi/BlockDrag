@@ -15,4 +15,4 @@ MonoBehaviour:
   shapeColor: {r: 0, g: 1, b: 1, a: 1}
   rows:
   - 1,1
-  - 1,0
+  - 0,1

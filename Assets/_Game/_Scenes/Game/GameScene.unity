@@ -568,6 +568,22 @@ PrefabInstance:
       propertyPath: blockGrid
       value: 
       objectReference: {fileID: 1500020727}
+    - target: {fileID: 5384859546949951657, guid: 0ffe306fc159142fa8dfefc3f923b586, type: 3}
+      propertyPath: glowPadding
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5384859546949951657, guid: 0ffe306fc159142fa8dfefc3f923b586, type: 3}
+      propertyPath: pulseAlphaRange.x
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5384859546949951657, guid: 0ffe306fc159142fa8dfefc3f923b586, type: 3}
+      propertyPath: pulseAlphaRange.y
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5384859546949951657, guid: 0ffe306fc159142fa8dfefc3f923b586, type: 3}
+      propertyPath: glowLineEdgePixels
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 8204488183760905055, guid: 0ffe306fc159142fa8dfefc3f923b586, type: 3}
       propertyPath: m_Name
       value: LineClearPreviewEffect
@@ -735,19 +751,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 588958551757757700, guid: 7193fa59661634d4da7857acb852361d, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 588958551757757700, guid: 7193fa59661634d4da7857acb852361d, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 588958551757757700, guid: 7193fa59661634d4da7857acb852361d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 304.87842
       objectReference: {fileID: 0}
     - target: {fileID: 588958551757757700, guid: 7193fa59661634d4da7857acb852361d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -50.082947
       objectReference: {fileID: 0}
     - target: {fileID: 1075713626129277375, guid: 7193fa59661634d4da7857acb852361d, type: 3}
       propertyPath: m_Pivot.x
@@ -863,7 +879,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2965888070630131803, guid: 7193fa59661634d4da7857acb852361d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -0.6438091
       objectReference: {fileID: 0}
     - target: {fileID: 5175807529178770158, guid: 7193fa59661634d4da7857acb852361d, type: 3}
       propertyPath: m_AnchorMax.x
@@ -883,19 +899,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5225493812563854697, guid: 7193fa59661634d4da7857acb852361d, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5225493812563854697, guid: 7193fa59661634d4da7857acb852361d, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5225493812563854697, guid: 7193fa59661634d4da7857acb852361d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 65.5
       objectReference: {fileID: 0}
     - target: {fileID: 5225493812563854697, guid: 7193fa59661634d4da7857acb852361d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -50.082947
       objectReference: {fileID: 0}
     - target: {fileID: 5794410705904489601, guid: 7193fa59661634d4da7857acb852361d, type: 3}
       propertyPath: m_Name
@@ -3249,6 +3265,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2a81eca730a844421a8389f5b3c0631d, type: 2}
   - {fileID: 11400000, guid: 8e6dcc17d84b5401eaf4e98cfe585402, type: 2}
   - {fileID: 11400000, guid: b2d705e2ff93446e59f314bec0fd68a2, type: 2}
+  - {fileID: 11400000, guid: dc70562cac9474d3ea115b56ea7b481f, type: 2}
+  - {fileID: 11400000, guid: 9853c4d387ed648baa4b8befae6e043e, type: 2}
   bottomOffsetPercent: 0.2
   sideMarginPercent: 0.2
   spawnScaleRatio: 0.4
@@ -4277,7 +4295,7 @@ MonoBehaviour:
   screenPositionY: 0.52
   cellPrefab: {fileID: 6428341610429012991, guid: 309a7bc5b779944d2acaa26d69081231, type: 3}
   targetCamera: {fileID: 1981483883}
-  indicatorAlpha: 0.4
+  indicatorAlpha: 0.6
   indicatorSortingOrder: 5
   clearPreviewGhostAlpha: 1
   clearDuration: 0.25

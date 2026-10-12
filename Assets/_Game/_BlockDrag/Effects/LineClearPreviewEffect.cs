@@ -46,6 +46,26 @@ namespace Gameplay.BlockDrag
         [Tooltip("Tốc độ trôi ra ngoài viền (× cellSize / giây)")]
         [SerializeField] private Vector2 sparkleSpeedRange = new Vector2(0.15f, 0.5f);
 
+        [Header("Multi-Line")]
+        [Tooltip("Số hàng + cột tối thiểu để dùng viền cầu vồng")]
+        [SerializeField] private int multiLineThreshold = 2;
+        [Tooltip("Material mẫu dùng shader BlockDrag/LineClearRainbowGlow")]
+        [SerializeField] private Material rainbowGlowMaterial;
+        [SerializeField] private Gradient rainbowGradient = CreateDefaultRainbowGradient();
+        [Tooltip("Hướng đổi màu trên bàn (x: ngang, y: dọc)")]
+        [SerializeField] private Vector2 gradientDirection = new Vector2(0.6f, 1f);
+        [Tooltip("Tốc độ cuộn gradient (vòng / giây), 0 = đứng yên")]
+        [SerializeField] private float gradientScrollSpeed;
+        [Tooltip("Hạt lấp lánh lấy màu từ gradient khi phá nhiều đường")]
+        [SerializeField] private bool tintSparklesWithGradient;
+
+        private const int GradientTextureWidth = 256;
+        private static readonly int GradientTexId = Shader.PropertyToID("_GradientTex");
+        private static readonly int BoundsMinId = Shader.PropertyToID("_BoundsMin");
+        private static readonly int BoundsSizeId = Shader.PropertyToID("_BoundsSize");
+        private static readonly int GradientDirId = Shader.PropertyToID("_GradientDir");
+        private static readonly int ScrollSpeedId = Shader.PropertyToID("_ScrollSpeed");
+
         private readonly List<SpriteRenderer> glowPool = new List<SpriteRenderer>();
         private readonly List<Rect> activeLineRects = new List<Rect>();
         private readonly List<TintedBlock> tintedBlocks = new List<TintedBlock>();
@@ -55,8 +75,18 @@ namespace Gameplay.BlockDrag
         private float fade;
         private float pulseTime;
         private float sparkleAccumulator;
+        private Material defaultGlowMaterial;
+        private Material rainbowInstance;
+        private Texture2D gradientTexture;
+        private Color32[] gradientPixels;
+        private bool isMultiLine;
+
+        private bool UseRainbow => isMultiLine && rainbowInstance != null;
+        private Color CurrentGlowColor => UseRainbow ? Color.white : baseGlowColor;
 
         public bool IsPreviewing => isPreviewing;
+        public bool IsMultiLinePreview => UseRainbow;
+        public Material RainbowGlowMaterial => rainbowGlowMaterial;
         public ParticleSystem Sparkles => sparkles;
         public SpriteRenderer GlowTemplate => glowTemplate;
         public BlockGrid Grid
@@ -85,8 +115,42 @@ namespace Gameplay.BlockDrag
             }
 
             baseGlowColor = glowTemplate.color;
+            defaultGlowMaterial = glowTemplate.sharedMaterial;
             glowTemplate.gameObject.SetActive(false);
             sparkles.Play();
+
+            if (rainbowGlowMaterial != null)
+            {
+                gradientTexture = new Texture2D(GradientTextureWidth, 1, TextureFormat.RGBA32, false)
+                {
+                    name = "LineClearRainbowGradient",
+                    wrapMode = TextureWrapMode.Repeat,
+                    filterMode = FilterMode.Bilinear,
+                    hideFlags = HideFlags.DontSave
+                };
+                rainbowInstance = new Material(rainbowGlowMaterial) { hideFlags = HideFlags.DontSave };
+                BakeGradient();
+                ApplyRainbowParams();
+            }
+            else
+            {
+                Debug.LogWarning("[LineClearPreviewEffect] Thiếu Rainbow Glow Material, phá nhiều đường sẽ dùng viền thường.", this);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            DestroyRuntimeObject(rainbowInstance);
+            DestroyRuntimeObject(gradientTexture);
+            rainbowInstance = null;
+            gradientTexture = null;
+        }
+
+        private static void DestroyRuntimeObject(Object obj)
+        {
+            if (obj == null) return;
+            if (Application.isPlaying) Destroy(obj);
+            else DestroyImmediate(obj);
         }
 
         private void OnEnable()
@@ -148,6 +212,7 @@ namespace Gameplay.BlockDrag
                 ApplyTint(result, shapeColor);
             }
 
+            isMultiLine = IsMultiLine(result, multiLineThreshold);
             LayoutGlows(result);
             if (!isPreviewing)
             {
@@ -253,12 +318,18 @@ namespace Gameplay.BlockDrag
                 glowPool.Add(CreateGlowRenderer());
             }
 
+            Material glowMaterial = UseRainbow ? rainbowInstance : defaultGlowMaterial;
             for (int i = 0; i < glowPool.Count; i++)
             {
                 SpriteRenderer glow = glowPool[i];
                 bool active = i < activeLineRects.Count;
                 glow.gameObject.SetActive(active);
                 if (!active) continue;
+
+                if (glow.sharedMaterial != glowMaterial)
+                {
+                    glow.sharedMaterial = glowMaterial;
+                }
 
                 Rect rect = activeLineRects[i];
                 glow.transform.localPosition = rect.center;
@@ -267,7 +338,100 @@ namespace Gameplay.BlockDrag
                 glow.size = rect.size / scale;
             }
 
+            if (UseRainbow)
+            {
+                UpdateRainbowBounds();
+            }
             glowsVisible = activeLineRects.Count > 0;
+        }
+
+        /// <summary>
+        /// Khung gradient = hộp bao (world) của mọi viền đang bật, để các viền sát nhau liền màu
+        /// </summary>
+        private void UpdateRainbowBounds()
+        {
+            if (activeLineRects.Count == 0) return;
+
+            Rect bounds = activeLineRects[0];
+            for (int i = 1; i < activeLineRects.Count; i++)
+            {
+                Rect rect = activeLineRects[i];
+                bounds = Rect.MinMaxRect(
+                    Mathf.Min(bounds.xMin, rect.xMin), Mathf.Min(bounds.yMin, rect.yMin),
+                    Mathf.Max(bounds.xMax, rect.xMax), Mathf.Max(bounds.yMax, rect.yMax));
+            }
+
+            Vector2 worldA = transform.TransformPoint(bounds.min);
+            Vector2 worldB = transform.TransformPoint(bounds.max);
+            Vector2 min = Vector2.Min(worldA, worldB);
+            Vector2 size = Vector2.Max(worldA, worldB) - min;
+            rainbowInstance.SetVector(BoundsMinId, min);
+            rainbowInstance.SetVector(BoundsSizeId, size);
+        }
+
+        private void BakeGradient()
+        {
+            if (gradientTexture == null) return;
+
+            gradientPixels = BakeGradientPixels(rainbowGradient, GradientTextureWidth, gradientPixels);
+            gradientTexture.SetPixels32(gradientPixels);
+            gradientTexture.Apply(false);
+        }
+
+        private void ApplyRainbowParams()
+        {
+            if (rainbowInstance == null) return;
+
+            rainbowInstance.SetTexture(GradientTexId, gradientTexture);
+            rainbowInstance.SetVector(GradientDirId, gradientDirection);
+            rainbowInstance.SetFloat(ScrollSpeedId, gradientScrollSpeed);
+        }
+
+        /// <summary>
+        /// Đủ số hàng + cột để dùng viền cầu vồng (1 hàng + 1 cột cũng tính là 2)
+        /// </summary>
+        public static bool IsMultiLine(LineClearResult result, int threshold)
+        {
+            return result.Rows.Count + result.Columns.Count >= Mathf.Max(1, threshold);
+        }
+
+        /// <summary>
+        /// Lấy mẫu gradient thành dải pixel (dùng lại buffer nếu đúng kích thước)
+        /// </summary>
+        public static Color32[] BakeGradientPixels(Gradient gradient, int width, Color32[] buffer = null)
+        {
+            width = Mathf.Max(2, width);
+            if (buffer == null || buffer.Length != width)
+            {
+                buffer = new Color32[width];
+            }
+            for (int i = 0; i < width; i++)
+            {
+                buffer[i] = gradient.Evaluate(i / (width - 1f));
+            }
+            return buffer;
+        }
+
+        private static Gradient CreateDefaultRainbowGradient()
+        {
+            var gradient = new Gradient();
+            gradient.SetKeys(
+                new[]
+                {
+                    new GradientColorKey(new Color32(0xFF, 0x3D, 0xC8, 0xFF), 0f),
+                    new GradientColorKey(new Color32(0xFF, 0xD9, 0xA8, 0xFF), 0.15f),
+                    new GradientColorKey(new Color32(0x3D, 0xF2, 0xFF, 0xFF), 0.35f),
+                    new GradientColorKey(new Color32(0x3D, 0x7B, 0xFF, 0xFF), 0.5f),
+                    new GradientColorKey(new Color32(0x5C, 0xFF, 0x8A, 0xFF), 0.68f),
+                    new GradientColorKey(new Color32(0xFF, 0xE4, 0x5C, 0xFF), 0.84f),
+                    new GradientColorKey(new Color32(0xFF, 0x3D, 0xC8, 0xFF), 1f)
+                },
+                new[]
+                {
+                    new GradientAlphaKey(1f, 0f),
+                    new GradientAlphaKey(1f, 1f)
+                });
+            return gradient;
         }
 
         private SpriteRenderer CreateGlowRenderer()
@@ -284,8 +448,8 @@ namespace Gameplay.BlockDrag
             float pulse = pulseDuration > 0f
                 ? Mathf.Lerp(pulseAlphaRange.x, pulseAlphaRange.y, Mathf.PingPong(pulseTime / pulseDuration, 1f))
                 : pulseAlphaRange.y;
-            Color color = baseGlowColor;
-            color.a = baseGlowColor.a * pulse * fade;
+            Color color = CurrentGlowColor;
+            color.a *= pulse * fade;
             bool hideGlows = fade <= 0f && !isPreviewing;
 
             for (int i = 0; i < glowPool.Count; i++)
@@ -350,6 +514,14 @@ namespace Gameplay.BlockDrag
                 // Chỉ đặt vị trí + vận tốc; size, lifetime, màu, xoay lấy từ main module của ParticleSystem
                 emitParams.position = transform.TransformPoint(localPos);
                 emitParams.velocity = transform.TransformVector(localDir * speed);
+                if (tintSparklesWithGradient && UseRainbow)
+                {
+                    emitParams.startColor = rainbowGradient.Evaluate(Random.value);
+                }
+                else
+                {
+                    emitParams.ResetStartColor();
+                }
 
                 sparkles.Emit(emitParams, 1);
             }
@@ -390,6 +562,14 @@ namespace Gameplay.BlockDrag
             fadeDuration = Mathf.Max(0f, fadeDuration);
             sparklesPerSecondPerLine = Mathf.Max(0f, sparklesPerSecondPerLine);
             glowLineEdgePixels = Mathf.Max(0f, glowLineEdgePixels);
+            multiLineThreshold = Mathf.Max(1, multiLineThreshold);
+
+            // Chỉnh gradient trực tiếp lúc Play
+            if (Application.isPlaying && rainbowInstance != null)
+            {
+                BakeGradient();
+                ApplyRainbowParams();
+            }
         }
 #endif
     }

@@ -4980,3 +4980,38 @@ MonoBehaviour:
   fadeDuration: 0.1
   sparklesPerSecondPerLine: 14
   sparkleSpeedRange: {x: 0.15, y: 0.5}
+  multiLineThreshold: 2
+  rainbowGlowMaterial: {fileID: 2100000, guid: 98846207b7c374a858fba4f6a5ae9957, type: 2}
+  rainbowGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 0.23921569, b: 0.78431374, a: 1}
+    key1: {r: 1, g: 0.8509804, b: 0.65882355, a: 1}
+    key2: {r: 0.23921569, g: 0.9490196, b: 1, a: 0}
+    key3: {r: 0.23921569, g: 0.48235294, b: 1, a: 0}
+    key4: {r: 0.36078432, g: 1, b: 0.5411765, a: 0}
+    key5: {r: 1, g: 0.89411765, b: 0.36078432, a: 0}
+    key6: {r: 1, g: 0.23921569, b: 0.78431374, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 9830
+    ctime2: 22937
+    ctime3: 32768
+    ctime4: 44564
+    ctime5: 55049
+    ctime6: 65535
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 7
+    m_NumAlphaKeys: 2
+  gradientDirection: {x: 0.6, y: 1}
+  gradientScrollSpeed: 0
+  tintSparklesWithGradient: 0
