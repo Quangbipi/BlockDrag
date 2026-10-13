@@ -9,27 +9,17 @@ namespace Gameplay.BlockDrag
     /// </summary>
     public sealed class HandGenerator
     {
-        private sealed class Family
-        {
-            public string key;
-            public readonly List<ShapeVariant> variants = new List<ShapeVariant>();
-            public float earlyWeight;
-            public float lateWeight;
-            public int minCells = int.MaxValue;
-
-            public float Weight(float difficulty) => Mathf.Max(0f, Mathf.Lerp(earlyWeight, lateWeight, difficulty));
-        }
-
-        private readonly List<Family> families = new List<Family>();
+        private readonly List<ShapeFamily> families = new List<ShapeFamily>();
         private readonly SpawnSettings settings;
         private readonly System.Random rng;
+        private readonly AssistHandBuilder assistBuilder;
 
         // Buffer dùng lại giữa các lần Generate
         private readonly List<ShapeVariant> hand = new List<ShapeVariant>();
         private readonly List<IShapeFootprint> solverInput = new List<IShapeFootprint>();
         private readonly HashSet<string> excludedFamilies = new HashSet<string>();
-        private readonly Dictionary<Family, List<ShapeVariant>> clearingByFamily = new Dictionary<Family, List<ShapeVariant>>();
-        private readonly List<Family> candidates = new List<Family>();
+        private readonly Dictionary<ShapeFamily, List<ShapeVariant>> clearingByFamily = new Dictionary<ShapeFamily, List<ShapeVariant>>();
+        private readonly List<ShapeFamily> candidates = new List<ShapeFamily>();
 
         public int FamilyCount => families.Count;
 
@@ -38,12 +28,15 @@ namespace Gameplay.BlockDrag
             this.settings = settings ?? SpawnSettings.CreateDefault();
             this.rng = rng ?? new System.Random();
             BuildFamilies(shapes, weights);
+            assistBuilder = new AssistHandBuilder(families, this.settings, this.rng);
         }
 
         /// <summary>
         /// Sinh count khối mới. inHand là các khối còn trên khay (loại trùng hình và cùng tham gia kiểm tra đặt hết).
+        /// belowRecord = chưa vượt kỷ lục đầu ván → luôn dựng assist hand; sau đó theo DifficultyCurve.AssistChance.
         /// </summary>
-        public List<ShapeVariant> Generate(BlockBoard board, int count, float difficulty, IReadOnlyList<ShapeVariant> inHand = null)
+        public List<ShapeVariant> Generate(BlockBoard board, int count, float difficulty,
+                                           IReadOnlyList<ShapeVariant> inHand = null, bool belowRecord = false)
         {
             List<ShapeVariant> result = new List<ShapeVariant>();
             if (board == null || count <= 0 || families.Count == 0) return result;
@@ -57,6 +50,12 @@ namespace Gameplay.BlockDrag
                 {
                     if (inHand[i] != null) excludedFamilies.Add(inHand[i].FamilyKey);
                 }
+            }
+
+            if (rng.NextDouble() < DifficultyCurve.AssistChance(belowRecord, difficulty, settings)
+                && TryBuildAssistHand(board, count, difficulty, inHand, result))
+            {
+                return result;
             }
 
             float helpChance = Mathf.Clamp01(settings.helpChanceByFill.Evaluate(board.FilledRatio))
@@ -73,7 +72,7 @@ namespace Gameplay.BlockDrag
 
                 if (wantHelp && clearingByFamily.Count > 0)
                 {
-                    Family helper = PickWeighted(clearingByFamily.Keys, difficulty);
+                    ShapeFamily helper = PickWeighted(clearingByFamily.Keys, difficulty);
                     if (helper != null)
                     {
                         List<ShapeVariant> options = clearingByFamily[helper];
@@ -83,7 +82,7 @@ namespace Gameplay.BlockDrag
 
                 while (hand.Count < count)
                 {
-                    Family family = PickWeighted(families, difficulty);
+                    ShapeFamily family = PickWeighted(families, difficulty);
                     if (family == null) break;
                     hand.Add(family.variants[rng.Next(family.variants.Count)]);
                 }
@@ -100,11 +99,41 @@ namespace Gameplay.BlockDrag
             return result;
         }
 
+        /// <summary>
+        /// Dựng hand theo chuỗi phá hàng; thiếu khối thì bù random (khác hình) sao cho cả hand vẫn đặt hết được
+        /// </summary>
+        private bool TryBuildAssistHand(BlockBoard board, int count, float difficulty, IReadOnlyList<ShapeVariant> inHand, List<ShapeVariant> result)
+        {
+            List<ShapeVariant> chain = assistBuilder.Build(board, count, difficulty, excludedFamilies, inHand);
+            if (chain.Count == 0) return false;
+
+            for (int attempt = 0; attempt < settings.maxAttempts; attempt++)
+            {
+                hand.Clear();
+                hand.AddRange(chain);
+                while (hand.Count < count)
+                {
+                    ShapeFamily family = PickWeighted(families, difficulty);
+                    if (family == null) break;
+                    hand.Add(family.variants[rng.Next(family.variants.Count)]);
+                }
+
+                // Chuỗi đủ khối thì chắc chắn đặt hết được, khỏi chạy solver
+                if (hand.Count == count && (chain.Count == count || IsSolvable(board, inHand, hand)))
+                {
+                    Shuffle(hand);
+                    result.AddRange(hand);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private void BuildFamilies(IReadOnlyList<BlockShapeData> shapes, IReadOnlyList<ShapeWeight> weights)
         {
             if (shapes == null) return;
 
-            Dictionary<string, Family> byKey = new Dictionary<string, Family>();
+            Dictionary<string, ShapeFamily> byKey = new Dictionary<string, ShapeFamily>();
             for (int i = 0; i < shapes.Count; i++)
             {
                 BlockShapeData data = shapes[i];
@@ -116,9 +145,9 @@ namespace Gameplay.BlockDrag
                 float late = weight != null ? weight.lateWeight : 1f;
 
                 string familyKey = variants[0].FamilyKey;
-                if (!byKey.TryGetValue(familyKey, out Family family))
+                if (!byKey.TryGetValue(familyKey, out ShapeFamily family))
                 {
-                    family = new Family { key = familyKey, earlyWeight = early, lateWeight = late };
+                    family = new ShapeFamily { key = familyKey, earlyWeight = early, lateWeight = late };
                     byKey.Add(familyKey, family);
                     families.Add(family);
                 }
@@ -155,7 +184,7 @@ namespace Gameplay.BlockDrag
             clearingByFamily.Clear();
             for (int f = 0; f < families.Count; f++)
             {
-                Family family = families[f];
+                ShapeFamily family = families[f];
                 if (excludedFamilies.Contains(family.key)) continue;
 
                 List<ShapeVariant> clearing = null;
@@ -174,11 +203,11 @@ namespace Gameplay.BlockDrag
         /// <summary>
         /// Chọn family theo trọng số, bỏ qua family đã có trên khay hoặc trong hand đang sinh
         /// </summary>
-        private Family PickWeighted(IEnumerable<Family> source, float difficulty)
+        private ShapeFamily PickWeighted(IEnumerable<ShapeFamily> source, float difficulty)
         {
             candidates.Clear();
             float total = 0f;
-            foreach (Family family in source)
+            foreach (ShapeFamily family in source)
             {
                 if (excludedFamilies.Contains(family.key) || HandContains(family.key)) continue;
                 float w = family.Weight(difficulty);
@@ -232,12 +261,12 @@ namespace Gameplay.BlockDrag
         {
             hand.Clear();
 
-            List<Family> sorted = new List<Family>(families);
+            List<ShapeFamily> sorted = new List<ShapeFamily>(families);
             sorted.Sort((a, b) => a.minCells.CompareTo(b.minCells));
 
             for (int f = 0; f < sorted.Count && hand.Count < count; f++)
             {
-                Family family = sorted[f];
+                ShapeFamily family = sorted[f];
                 if (excludedFamilies.Contains(family.key)) continue;
 
                 for (int v = 0; v < family.variants.Count; v++)
@@ -250,7 +279,7 @@ namespace Gameplay.BlockDrag
 
             for (int f = 0; f < sorted.Count && hand.Count < count; f++)
             {
-                Family family = sorted[f];
+                ShapeFamily family = sorted[f];
                 if (excludedFamilies.Contains(family.key) || HandContains(family.key)) continue;
                 hand.Add(SmallestVariant(family));
             }
@@ -259,7 +288,7 @@ namespace Gameplay.BlockDrag
             return new List<ShapeVariant>(hand);
         }
 
-        private static ShapeVariant SmallestVariant(Family family)
+        private static ShapeVariant SmallestVariant(ShapeFamily family)
         {
             ShapeVariant best = family.variants[0];
             for (int i = 1; i < family.variants.Count; i++)

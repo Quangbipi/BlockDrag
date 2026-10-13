@@ -61,6 +61,7 @@ namespace Gameplay.BlockDrag
         public event System.Action<int> OnShapePlacedWithCount;
         public event System.Action<int, int, int> OnLinesCleared; // (rowsCleared, colsCleared, totalCellsCleared)
         public event System.Action<int, int, int, Vector3> OnLinesClearedWithPos; // (rowsCleared, colsCleared, totalCellsCleared, placedCenterPos)
+        public event System.Action<Vector3> OnBoardCleared; // (boardCenterWorldPos) phá hàng xong bàn trống hoàn toàn (Perfect Clear)
         public event System.Action<IReadOnlyList<Vector2Int>> OnShapePlacedCells; // (placedCellCoords) toạ độ (row, col) các ô khối vừa chiếm
         public event System.Action<LineClearResult, Color> OnClearPreviewChanged; // (result, shapeColor) result.HasLines == false => tắt preview
 
@@ -791,7 +792,18 @@ namespace Gameplay.BlockDrag
 
             OnLinesCleared?.Invoke(result.Rows.Count, result.Columns.Count, result.Cells.Count);
             OnLinesClearedWithPos?.Invoke(result.Rows.Count, result.Columns.Count, result.Cells.Count, LastPlacedCenterPosition);
+
+            if (Board.OccupiedCount == 0)
+            {
+                OnBoardCleared?.Invoke(BoardCenterPosition);
+            }
         }
+
+        /// <summary>
+        /// Tâm bàn cờ trong world space
+        /// </summary>
+        public Vector3 BoardCenterPosition =>
+            (GetCellWorldPosition(0, 0) + GetCellWorldPosition(Board.Rows - 1, Board.Columns - 1)) * 0.5f;
 
         /// <summary>
         /// Tính tâm hình học thế giới từ danh sách toạ độ các ô trên Grid

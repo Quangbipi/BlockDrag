@@ -374,7 +374,8 @@ namespace Gameplay.BlockDrag
 
             if (emptySlots.Count == 0) return;
 
-            List<ShapeVariant> hand = Generator.Generate(GetBoard(), emptySlots.Count, EvaluateDifficulty(), inHand);
+            EvaluateRunState(out float difficulty, out bool belowRecord);
+            List<ShapeVariant> hand = Generator.Generate(GetBoard(), emptySlots.Count, difficulty, inHand, belowRecord);
             if (hand.Count < emptySlots.Count)
             {
                 Debug.LogWarning("[BlockSpawner] availableShapes không đủ hình khác nhau để lấp khay.");
@@ -393,22 +394,27 @@ namespace Gameplay.BlockDrag
         }
 
         /// <summary>
-        /// Độ khó 0..1 theo điểm so với HighScore đầu ván. Hand đầu tiên của ván luôn = 0
-        /// (khi Restart, ScoreManager chỉ reset điểm sau khi hand mới đã sinh).
+        /// Độ khó 0..1 và trạng thái chưa vượt kỷ lục, so với HighScore chụp đầu ván.
+        /// Hand đầu tiên của ván tính với điểm 0 (khi Restart, ScoreManager chỉ reset điểm sau khi hand mới đã sinh).
         /// </summary>
-        private float EvaluateDifficulty()
+        private void EvaluateRunState(out float difficulty, out bool belowRecord)
         {
-            IScoreService score = Locator.Score;
-            if (score == null) return 0f;
+            difficulty = 0f;
+            belowRecord = true;
 
+            IScoreService score = Locator.Score;
+            if (score == null) return;
+
+            int currentScore = score.CurrentScore;
             if (!baselineCaptured)
             {
                 runBaselineHighScore = score.HighScore;
                 baselineCaptured = true;
-                return 0f;
+                currentScore = 0;
             }
 
-            return DifficultyCurve.Evaluate(score.CurrentScore, runBaselineHighScore, Settings);
+            difficulty = DifficultyCurve.Evaluate(currentScore, runBaselineHighScore, Settings);
+            belowRecord = DifficultyCurve.IsBelowRecord(currentScore, runBaselineHighScore, Settings);
         }
 
         private void SpawnShapeAt(Transform slot, ShapeVariant variant)

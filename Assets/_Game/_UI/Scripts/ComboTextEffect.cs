@@ -162,6 +162,14 @@ namespace UI
         /// </summary>
         public void Play(int comboCount, Vector3 spawnPosition, Action onComplete = null)
         {
+            Play("COMBO", $"x{comboCount}", spawnPosition, onComplete);
+        }
+
+        /// <summary>
+        /// Cùng animation với combo nhưng tự chọn chữ, vd ("PERFECT", "+900")
+        /// </summary>
+        public void Play(string label, string value, Vector3 spawnPosition, Action onComplete = null)
+        {
             KillSequence();
             EnsureReferences();
 
@@ -207,13 +215,13 @@ namespace UI
             // Cập nhật text
             if (comboLabelText != null)
             {
-                comboLabelText.text = "COMBO";
+                comboLabelText.text = label;
                 comboLabelText.alpha = 1f;
             }
 
             if (comboNumberText != null)
             {
-                comboNumberText.text = $"x{comboCount}";
+                comboNumberText.text = value;
                 comboNumberText.alpha = 1f;
             }
 

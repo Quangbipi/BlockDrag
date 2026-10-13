@@ -29,6 +29,25 @@ namespace Gameplay.BlockDrag
         [Tooltip("Khoảng điểm tối thiểu sau khi vượt kỷ lục để đạt độ khó tối đa")]
         [Min(1)] public int minOverRange = 500;
 
+        [Header("Assist (dựng hand theo chuỗi phá hàng)")]
+        [Tooltip("Sau khi vượt kỷ lục: true = assist giảm dần từ assistChanceAtRecord về 0, false = tắt assist ngay")]
+        public bool fadeAssistAfterRecord = true;
+
+        [Tooltip("Xác suất assist ngay khi vừa vượt kỷ lục (chỉ dùng khi fadeAssistAfterRecord = true)")]
+        [Range(0f, 1f)] public float assistChanceAtRecord = 0.5f;
+
+        [Tooltip("Chọn ngẫu nhiên trong các placement có điểm ≥ top × (1 - tolerance). Lớn hơn = đa dạng hơn, kém tối ưu hơn")]
+        [Range(0f, 1f)] public float assistTolerance = 0.15f;
+
+        [Tooltip("Điểm placement cho mỗi hàng/cột phá được")]
+        [Min(0f)] public float clearLineScore = 100f;
+
+        [Tooltip("Điểm placement khi đặt xong làm bàn trống hoàn toàn")]
+        [Min(0f)] public float perfectClearScore = 10000f;
+
+        [Tooltip("Điểm placement cho mỗi cạnh ô khối giáp ô đã chiếm hoặc mép bàn")]
+        [Min(0f)] public float contactScore = 0.5f;
+
         [Header("Generator")]
         [Tooltip("Số lần thử sinh hand trước khi dùng fallback khối nhỏ")]
         [Min(1)] public int maxAttempts = 30;

@@ -36,6 +36,7 @@ namespace Gameplay.BlockDrag
         public event Action<int> OnHighScoreChanged;
         public event Action<int, int> OnComboChanged; // (comboCount, bonusScoreAwarded)
         public event Action<int, Vector3> OnComboTriggered; // (comboCount, worldPos) khi combo >= 2
+        public event Action<int, Vector3> OnPerfectClear;   // (bonus, worldPos) khi dọn sạch bàn
         public event Action<float> OnComboTimerUpdated; // (remainingTime)
         public event Action OnComboExpired;
 
@@ -170,6 +171,9 @@ namespace Gameplay.BlockDrag
 
                 blockGrid.OnLinesClearedWithPos -= HandleLinesClearedWithPos;
                 blockGrid.OnLinesClearedWithPos += HandleLinesClearedWithPos;
+
+                blockGrid.OnBoardCleared -= HandlePerfectClear;
+                blockGrid.OnBoardCleared += HandlePerfectClear;
             }
 
             if (blockSpawner != null)
@@ -188,6 +192,7 @@ namespace Gameplay.BlockDrag
             {
                 blockGrid.OnShapePlacedWithCount -= HandleShapePlacedWithCount;
                 blockGrid.OnLinesClearedWithPos -= HandleLinesClearedWithPos;
+                blockGrid.OnBoardCleared -= HandlePerfectClear;
             }
 
             if (blockSpawner != null)
@@ -266,6 +271,20 @@ namespace Gameplay.BlockDrag
             {
                 OnComboTriggered?.Invoke(currentCombo, placedPos);
             }
+        }
+
+        /// <summary>
+        /// Phá hàng xong bàn trống hoàn toàn: cộng perfectClearBonus (× combo hiện tại nếu bật).
+        /// BlockGrid bắn OnBoardCleared sau OnLinesClearedWithPos nên currentCombo đã gồm lần phá này.
+        /// </summary>
+        public void HandlePerfectClear(Vector3 boardCenter)
+        {
+            int multiplier = Config.PerfectClearMultiplyByCombo ? Mathf.Max(1, currentCombo) : 1;
+            int bonus = Config.PerfectClearBonus * multiplier;
+            if (bonus <= 0) return;
+
+            AddScore(bonus);
+            OnPerfectClear?.Invoke(bonus, boardCenter);
         }
 
         /// <summary>

@@ -108,6 +108,7 @@ namespace UI
 
             boundScore = score;
             boundScore.OnComboTriggered += HandleComboTriggered;
+            boundScore.OnPerfectClear += HandlePerfectClear;
         }
 
         private void UnbindScore()
@@ -115,6 +116,7 @@ namespace UI
             if (boundScore == null) return;
 
             boundScore.OnComboTriggered -= HandleComboTriggered;
+            boundScore.OnPerfectClear -= HandlePerfectClear;
             boundScore = null;
         }
 
@@ -243,6 +245,17 @@ namespace UI
             if (effect != null)
             {
                 effect.Play(comboCount, spawnPosition);
+            }
+        }
+
+        public void HandlePerfectClear(int bonus, Vector3 spawnPosition)
+        {
+            EnsurePoolContainer();
+
+            ComboTextEffect effect = GetFromPool();
+            if (effect != null)
+            {
+                effect.Play("PERFECT", $"+{bonus}", spawnPosition);
             }
         }
     }

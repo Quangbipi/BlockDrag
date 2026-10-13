@@ -17,3 +17,5 @@ MonoBehaviour:
   initialComboDuration: 15
   comboBonusDuration: 3
   comboBonusMultiplier: 25
+  perfectClearBonus: 300
+  perfectClearMultiplyByCombo: 1

@@ -61,7 +61,7 @@ Everything else (shape data, score config, level schema, gameplay logic) belongs
 - `BlockGrid` — presentation of the board: cell GameObjects, indicator, clear animations. Delegates rules to `BlockBoard`.
 - `BlockShape` (implements `IShapeFootprint`), `BlockDragHandler`, `BlockSpawner` (implements `IBoardSessionService`).
 - `ScoreManager` (implements `IScoreService`), `Timer/CountdownManager`, `Effects/BlockPlaceEffect`.
-- `Spawn/` — pure C# hand generation: `HandGenerator` (weighted, no duplicate shape family, optional line-clear help), `HandSolver` (hand placeability simulation on a `BlockBoard` copy), `ShapeVariant`, `DifficultyCurve` (difficulty vs. run-start HighScore), `SpawnSettings`, `ShapeWeight`. Unit-tested.
+- `Spawn/` — pure C# hand generation: `HandGenerator` (weighted, no duplicate shape family, optional line-clear help; routes to assist below the run-start HighScore), `AssistHandBuilder` (builds a hand from a simulated chain of line-clearing placements), `ShapeFamily`, `HandSolver` (hand placeability simulation on a `BlockBoard` copy), `ShapeVariant`, `DifficultyCurve` (difficulty vs. run-start HighScore), `SpawnSettings`, `ShapeWeight`. Unit-tested.
 - `Config/` — `BlockShapeData`, `ScoreConfigSO`, `ScoreConfig.asset`, `SpawnConfigSO`, `SpawnConfig.asset`. `Level/` — legacy `LevelData` / `LevelDataSO` schema still read by `HomeCanvas`.
 - Namespace: `Gameplay.BlockDrag` for all gameplay types.
 

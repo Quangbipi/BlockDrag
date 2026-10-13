@@ -319,5 +319,49 @@ namespace Tests.EditMode
 
             Assert.AreEqual(1, highScoreStore.SaveCallCount);
         }
+
+        [Test]
+        public void HandlePerfectClear_WithCombo3_AwardsBonusTimesCombo()
+        {
+            scoreManager.HandleLinesCleared(2, 1, 20); // 125 điểm, combo 3
+            int before = scoreManager.CurrentScore;
+
+            scoreManager.HandlePerfectClear(Vector3.zero);
+
+            Assert.AreEqual(before + 300 * 3, scoreManager.CurrentScore);
+        }
+
+        [Test]
+        public void HandlePerfectClear_MultiplyDisabled_AwardsBaseBonus()
+        {
+            var so = new UnityEditor.SerializedObject(config);
+            so.FindProperty("perfectClearMultiplyByCombo").boolValue = false;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            scoreManager.HandleLinesCleared(2, 1, 20);
+            int before = scoreManager.CurrentScore;
+
+            scoreManager.HandlePerfectClear(Vector3.zero);
+
+            Assert.AreEqual(before + 300, scoreManager.CurrentScore);
+        }
+
+        [Test]
+        public void HandlePerfectClear_RaisesOnPerfectClearWithBonusAndPosition()
+        {
+            int receivedBonus = 0;
+            Vector3 receivedPos = Vector3.zero;
+            scoreManager.OnPerfectClear += (bonus, pos) =>
+            {
+                receivedBonus = bonus;
+                receivedPos = pos;
+            };
+
+            scoreManager.HandleLinesCleared(1, 0, 8); // combo 1
+            scoreManager.HandlePerfectClear(new Vector3(1f, 2f, 0f));
+
+            Assert.AreEqual(300, receivedBonus);
+            Assert.AreEqual(new Vector3(1f, 2f, 0f), receivedPos);
+        }
     }
 }

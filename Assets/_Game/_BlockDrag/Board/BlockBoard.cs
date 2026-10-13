@@ -315,6 +315,23 @@ namespace Gameplay.BlockDrag
         }
 
         /// <summary>
+        /// Số hàng + cột đang đầy, không cấp phát và không thay đổi bàn
+        /// </summary>
+        public int CountFullLines()
+        {
+            int lines = 0;
+            for (int r = 0; r < Rows; r++)
+            {
+                if (IsRowFull(r)) lines++;
+            }
+            for (int c = 0; c < Columns; c++)
+            {
+                if (IsColumnFull(c)) lines++;
+            }
+            return lines;
+        }
+
+        /// <summary>
         /// Như ClearFullLines nhưng không cấp phát (dùng cho mô phỏng). Trả số hàng + cột đã phá.
         /// </summary>
         public int ClearFullLinesInPlace()

@@ -97,6 +97,16 @@ namespace Tests.EditMode
         }
 
         [Test]
+        public void ComboTextEffect_PlayWithLabelAndValue_SetsCustomTexts()
+        {
+            var item = effectManager.GetFromPool();
+            item.Play("PERFECT", "+900", new Vector3(5f, 6f, 0f));
+            Assert.AreEqual("PERFECT", item.ComboLabelText.text);
+            Assert.AreEqual("+900", item.ComboNumberText.text);
+            Assert.IsTrue(item.gameObject.activeSelf);
+        }
+
+        [Test]
         public void ComboTextEffect_ClampToParentBounds_RestrictsExtremesToSafeMargins()
         {
             var item = effectManager.GetFromPool();

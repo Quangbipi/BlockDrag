@@ -79,7 +79,7 @@ namespace Tests.EditMode
         [Test]
         public void DifficultyCurve_BelowRecord_ScalesUpToBelowRecordMaxT()
         {
-            SpawnSettings settings = SpawnSettings.CreateDefault();
+            SpawnSettings settings = RandomOnlySettings();
 
             Assert.AreEqual(0f, DifficultyCurve.Evaluate(0, 4000, settings), 1e-5f);
             Assert.AreEqual(0.15f, DifficultyCurve.Evaluate(2000, 4000, settings), 1e-5f);
@@ -89,7 +89,7 @@ namespace Tests.EditMode
         [Test]
         public void DifficultyCurve_AboveRecordByRange_ReturnsOne()
         {
-            SpawnSettings settings = SpawnSettings.CreateDefault();
+            SpawnSettings settings = RandomOnlySettings();
 
             Assert.AreEqual(0.65f, DifficultyCurve.Evaluate(5000, 4000, settings), 1e-5f);
             Assert.AreEqual(1f, DifficultyCurve.Evaluate(6000, 4000, settings), 1e-5f);
@@ -99,7 +99,7 @@ namespace Tests.EditMode
         [Test]
         public void DifficultyCurve_NoRecord_UsesMinBaseline()
         {
-            SpawnSettings settings = SpawnSettings.CreateDefault();
+            SpawnSettings settings = RandomOnlySettings();
 
             Assert.AreEqual(0.15f, DifficultyCurve.Evaluate(500, 0, settings), 1e-5f);
             // Vượt mốc 1000, range = max(500, 1000 * 0.5) = 500
@@ -177,7 +177,7 @@ namespace Tests.EditMode
         {
             for (int seed = 0; seed < 500; seed++)
             {
-                HandGenerator generator = new HandGenerator(pool, SpawnSettings.CreateDefault(), null, new System.Random(seed));
+                HandGenerator generator = new HandGenerator(pool, RandomOnlySettings(), null, new System.Random(seed));
                 BlockBoard board = RandomBoard(seed, 0f, 0.4f);
 
                 List<ShapeVariant> hand = generator.Generate(board, 3, (seed % 10) / 9f);
@@ -192,7 +192,7 @@ namespace Tests.EditMode
         {
             for (int seed = 0; seed < 500; seed++)
             {
-                HandGenerator generator = new HandGenerator(pool, SpawnSettings.CreateDefault(), null, new System.Random(seed));
+                HandGenerator generator = new HandGenerator(pool, RandomOnlySettings(), null, new System.Random(seed));
                 BlockBoard board = RandomBoard(seed, 0.3f, 0.5f);
 
                 List<ShapeVariant> hand = generator.Generate(board, 3, (seed % 10) / 9f);
@@ -204,7 +204,7 @@ namespace Tests.EditMode
         [Test]
         public void Generate_HelpChanceOne_ContainsClearingPiece()
         {
-            SpawnSettings settings = SpawnSettings.CreateDefault();
+            SpawnSettings settings = RandomOnlySettings();
             settings.helpChanceByFill = AnimationCurve.Constant(0f, 1f, 1f);
             settings.lateHelpMultiplier = 1f;
 
@@ -232,7 +232,7 @@ namespace Tests.EditMode
 
             for (int seed = 0; seed < 200; seed++)
             {
-                HandGenerator generator = new HandGenerator(pool, SpawnSettings.CreateDefault(), null, new System.Random(seed));
+                HandGenerator generator = new HandGenerator(pool, RandomOnlySettings(), null, new System.Random(seed));
 
                 List<ShapeVariant> hand = generator.Generate(new BlockBoard(8, 8), 1, 0f, inHand);
 
@@ -252,7 +252,7 @@ namespace Tests.EditMode
 
             for (int seed = 0; seed < 300; seed++)
             {
-                HandGenerator generator = new HandGenerator(pool, SpawnSettings.CreateDefault(), weights, new System.Random(seed));
+                HandGenerator generator = new HandGenerator(pool, RandomOnlySettings(), weights, new System.Random(seed));
 
                 List<ShapeVariant> hand = generator.Generate(new BlockBoard(8, 8), 3, 0.5f);
 
@@ -263,7 +263,7 @@ namespace Tests.EditMode
         [Test]
         public void Generate_HelpChanceZeroAndEmptyBoard_ReturnsCountShapes()
         {
-            SpawnSettings settings = SpawnSettings.CreateDefault();
+            SpawnSettings settings = RandomOnlySettings();
             settings.helpChanceByFill = AnimationCurve.Constant(0f, 1f, 0f);
             HandGenerator generator = new HandGenerator(pool, settings, null, new System.Random(1));
 
@@ -286,7 +286,7 @@ namespace Tests.EditMode
             board.SetOccupied(2, 2, false);
 
             List<BlockShapeData> smallPool = new List<BlockShapeData> { square, i2, single };
-            HandGenerator generator = new HandGenerator(smallPool, SpawnSettings.CreateDefault(), null, new System.Random(7));
+            HandGenerator generator = new HandGenerator(smallPool, RandomOnlySettings(), null, new System.Random(7));
 
             List<ShapeVariant> hand = generator.Generate(board, 3, 0f);
 
@@ -306,7 +306,79 @@ namespace Tests.EditMode
             Assert.AreEqual(2, generator.FamilyCount);
         }
 
+        // ---------- Assist chance ----------
+
+        [Test]
+        public void AssistChance_BelowRecord_IsOne()
+        {
+            SpawnSettings settings = SpawnSettings.CreateDefault();
+            settings.fadeAssistAfterRecord = false;
+
+            Assert.AreEqual(1f, DifficultyCurve.AssistChance(true, 0.2f, settings), 1e-5f);
+        }
+
+        [Test]
+        public void AssistChance_AfterRecord_FadeOff_IsZero()
+        {
+            SpawnSettings settings = SpawnSettings.CreateDefault();
+            settings.fadeAssistAfterRecord = false;
+
+            Assert.AreEqual(0f, DifficultyCurve.AssistChance(false, 0.3f, settings), 1e-5f);
+        }
+
+        [Test]
+        public void AssistChance_AfterRecord_FadeOn_LerpsFromAtRecordToZero()
+        {
+            SpawnSettings settings = SpawnSettings.CreateDefault(); // belowRecordMaxT 0.3, assistChanceAtRecord 0.5
+
+            Assert.AreEqual(0.5f, DifficultyCurve.AssistChance(false, 0.3f, settings), 1e-5f);
+            Assert.AreEqual(0.25f, DifficultyCurve.AssistChance(false, 0.65f, settings), 1e-5f);
+            Assert.AreEqual(0f, DifficultyCurve.AssistChance(false, 1f, settings), 1e-5f);
+        }
+
+        [Test]
+        public void IsBelowRecord_UsesMinBaselineForNewPlayer()
+        {
+            SpawnSettings settings = SpawnSettings.CreateDefault(); // minBaseline 1000
+
+            Assert.IsTrue(DifficultyCurve.IsBelowRecord(999, 0, settings));
+            Assert.IsFalse(DifficultyCurve.IsBelowRecord(1000, 0, settings));
+            Assert.IsTrue(DifficultyCurve.IsBelowRecord(3999, 4000, settings));
+            Assert.IsFalse(DifficultyCurve.IsBelowRecord(4000, 4000, settings));
+        }
+
+        [Test]
+        public void Generate_BelowRecord_AlwaysContainsClearingPiece()
+        {
+            // Help qua pHelp tắt hẳn: khối phá hàng chỉ có thể đến từ assist
+            SpawnSettings settings = RandomOnlySettings();
+            settings.helpChanceByFill = AnimationCurve.Constant(0f, 1f, 0f);
+
+            BlockBoard board = new BlockBoard(8, 8);
+            for (int c = 3; c < 8; c++) board.SetOccupied(7, c, true);
+
+            for (int seed = 0; seed < 50; seed++)
+            {
+                HandGenerator generator = new HandGenerator(pool, settings, null, new System.Random(seed));
+
+                List<ShapeVariant> hand = generator.Generate(board, 3, 0.1f, null, belowRecord: true);
+
+                Assert.AreEqual(3, hand.Count, $"seed {seed}");
+                Assert.IsTrue(hand.Any(v => HandSolver.CanClearAnyLine(board, v)), $"seed {seed}");
+            }
+        }
+
         // ---------- Helpers ----------
+
+        /// <summary>
+        /// Settings mặc định nhưng tắt assist sau kỷ lục: Generate(belowRecord: false) đi thẳng luồng random
+        /// </summary>
+        private static SpawnSettings RandomOnlySettings()
+        {
+            SpawnSettings settings = SpawnSettings.CreateDefault();
+            settings.fadeAssistAfterRecord = false;
+            return settings;
+        }
 
         private BlockShapeData Shape(params string[] rows)
         {

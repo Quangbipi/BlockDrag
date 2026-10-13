@@ -15,5 +15,6 @@ namespace Quang.Base
         event Action<int> OnScoreChanged;
         event Action<int> OnHighScoreChanged;
         event Action<int, Vector3> OnComboTriggered; // (comboCount, worldPos) khi combo >= 2
+        event Action<int, Vector3> OnPerfectClear;   // (bonus, worldPos) khi phá hàng làm bàn trống hoàn toàn
     }
 }
