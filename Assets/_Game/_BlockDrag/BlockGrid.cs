@@ -37,6 +37,13 @@ namespace Gameplay.BlockDrag
         [Header("Prefabs & References")]
         [Tooltip("Prefab ô nền vuông 1x1")]
         [SerializeField] protected GameObject cellPrefab;
+        [Tooltip("Prefab ghost khi kéo khối. Để trống => dùng cellPrefab")]
+        [SerializeField] protected GameObject indicatorCellPrefab;
+        [Tooltip("Prefab khung board (SpriteRenderer Draw Mode = Sliced). Để trống => không vẽ khung")]
+        [SerializeField] protected GameObject boardFramePrefab;
+        [Tooltip("Độ dày viền khung mỗi cạnh, tính theo tỉ lệ cellSize")]
+        [Range(0f, 1f)]
+        [SerializeField] protected float framePaddingRatio = 0.12f;
         [Tooltip("Camera chính dùng để đo kích thước màn hình (nếu để trống sẽ tự lấy Camera.main)")]
         [SerializeField] protected Camera targetCamera;
 
@@ -72,6 +79,7 @@ namespace Gameplay.BlockDrag
         protected GameObject[,] occupiedBlocks; // GameObject hiển thị tại mỗi ô; luật chiếm ô nằm ở board
         protected BlockBoard board;
         protected Transform indicatorRoot;
+        protected GameObject boardFrame;
         protected readonly List<GameObject> indicatorPool = new List<GameObject>();
         protected LineClearResult clearPreview = LineClearResult.None;
         protected Color clearPreviewColor;
@@ -262,6 +270,37 @@ namespace Gameplay.BlockDrag
                     gridCells[r, c] = cellObj;
                 }
             }
+
+            CreateBoardFrame();
+        }
+
+        /// <summary>
+        /// Kích thước khung board = kích thước grid + viền (cellSize * paddingRatio) mỗi cạnh
+        /// </summary>
+        public static Vector2 ComputeFrameSize(float gridWidth, float gridHeight, float cellSize, float paddingRatio)
+        {
+            float padding = 2f * cellSize * Mathf.Max(0f, paddingRatio);
+            return new Vector2(gridWidth + padding, gridHeight + padding);
+        }
+
+        /// <summary>
+        /// Tạo khung bo góc nằm sau các ô nền, co giãn theo kích thước grid
+        /// </summary>
+        private void CreateBoardFrame()
+        {
+            if (boardFramePrefab == null) return;
+
+            boardFrame = Instantiate(boardFramePrefab, transform);
+            boardFrame.name = "BoardFrame";
+            boardFrame.transform.localPosition = Vector3.zero;
+            boardFrame.transform.localScale = Vector3.one;
+
+            var sr = boardFrame.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                sr.drawMode = SpriteDrawMode.Sliced;
+                sr.size = ComputeFrameSize(gridWidth, gridHeight, cellSize, framePaddingRatio);
+            }
         }
 
         /// <summary>
@@ -347,6 +386,9 @@ namespace Gameplay.BlockDrag
                 }
                 indicatorPool.Clear();
             }
+
+            // Khung board là child của grid nên được xoá cùng các child còn sót bên dưới
+            boardFrame = null;
 
             // Xóa bất kỳ child nào còn sót lại
             List<GameObject> toDestroy = new List<GameObject>();
@@ -657,9 +699,10 @@ namespace Gameplay.BlockDrag
         private GameObject CreateIndicatorCell()
         {
             GameObject obj;
-            if (cellPrefab != null)
+            GameObject prefab = indicatorCellPrefab != null ? indicatorCellPrefab : cellPrefab;
+            if (prefab != null)
             {
-                obj = Instantiate(cellPrefab, indicatorRoot);
+                obj = Instantiate(prefab, indicatorRoot);
             }
             else
             {

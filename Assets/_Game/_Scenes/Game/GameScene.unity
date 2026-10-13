@@ -4815,7 +4815,10 @@ MonoBehaviour:
   centerOnCamera: 1
   screenPositionX: 0.5
   screenPositionY: 0.52
-  cellPrefab: {fileID: 6428341610429012991, guid: 309a7bc5b779944d2acaa26d69081231, type: 3}
+  cellPrefab: {fileID: 5024521764866380978, guid: 81cde9233de614ec6853c1dc9c663d62, type: 3}
+  indicatorCellPrefab: {fileID: 6428341610429012991, guid: 309a7bc5b779944d2acaa26d69081231, type: 3}
+  boardFramePrefab: {fileID: 1066868259475774710, guid: 89cd13557d9d9407986902d99e780a51, type: 3}
+  framePaddingRatio: 0.12
   targetCamera: {fileID: 1981483883}
   indicatorAlpha: 0.6
   indicatorSortingOrder: 5
