@@ -12,9 +12,14 @@ Read `.agents/rules/architecture.md` before architectural or cross-module change
 
 ## Task Workflow & Design Guidelines
 
-Read and follow `.agents/rules/task_planning.md`. Whenever a task is assigned:
+Read and follow `.agents/rules/task_planning.md`. Whenever a task is assigned, follow these gated steps **in order**, and **stop and wait for explicit user approval at each gate**. Do not combine gates in one turn, and do not touch code, prefabs, scenes, or packages before Gate 2 is approved:
 1. **Planning & Design**: Analyze requirements, outline architectural design, **always include a clear visual diagram (Mermaid)**, and save to a separate markdown file: `Docs/designs/YYYY-MM-DD-<task-name>-design.md`.
-2. **Implementation Plan**: Provide a concrete step-by-step implementation plan with impacted files and verification steps before coding, and save to a separate markdown file: `Docs/plans/YYYY-MM-DD-<task-name>-implementation-plan.md`.
+   - **GATE 1 — STOP.** Send the design link and wait for the user to approve it (or request changes). Do not write the plan yet.
+2. **Implementation Plan**: After the design is approved, provide a concrete step-by-step implementation plan with impacted files and verification steps, and save to a separate markdown file: `Docs/plans/YYYY-MM-DD-<task-name>-implementation-plan.md`.
+   - **GATE 2 — STOP.** Send the plan link and wait for the user to approve it. Do not implement yet.
+3. **Implementation**: Only after the plan is approved, implement and verify it as written. If the scope changes, update the design or plan and get approval again.
+
+These gates apply to every task, including small fixes and tasks phrased as direct instructions ("fix X", "change Y"). Skip them only when the user explicitly says to skip them for that task.
 
 
 ## Build, Test, and Development Commands
