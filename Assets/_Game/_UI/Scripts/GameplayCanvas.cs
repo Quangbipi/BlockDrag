@@ -24,9 +24,15 @@ namespace UI
 
         [SerializeField] private TMP_Text ScoreTxt;
 
+        [Header("Background (màu nền Main Camera)")]
+        [SerializeField] private Color[] _bgColors;
+        [SerializeField] private float _bgFadeDuration = 0.5f;
+
 
         protected ToastCanvas toastCanvas;
         private Tween scorePunchTween;
+        private Tween bgColorTween;
+        private int bgColorIndex;
         private IScoreService boundScore;
         private IBoardSessionService boundSession;
 
@@ -36,6 +42,13 @@ namespace UI
             {
                 _settingBtn._OnClick += OnSettingBtnClick;
             }
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+            // Canvas được đặt sẵn trong GameScene nên Open() không chạy lúc vào game
+            ResetBgColor();
         }
 
         private void OnEnable()
@@ -67,6 +80,7 @@ namespace UI
             }
 
             scorePunchTween?.Kill();
+            bgColorTween?.Kill();
             Locator.ScoreChanged -= BindScore;
             Locator.BoardSessionChanged -= BindSession;
             UnbindScore();
@@ -85,6 +99,7 @@ namespace UI
 
             BindScore(Locator.Score);
             BindSession(Locator.BoardSession);
+            ResetBgColor();
         }
 
         /// <summary>
@@ -100,6 +115,7 @@ namespace UI
 
             boundSession = session;
             boundSession.OnGameOver += HandleGameOver;
+            boundSession.OnGameRestarted += ResetBgColor;
         }
 
         private void UnbindSession()
@@ -107,6 +123,7 @@ namespace UI
             if (boundSession == null) return;
 
             boundSession.OnGameOver -= HandleGameOver;
+            boundSession.OnGameRestarted -= ResetBgColor;
             boundSession = null;
         }
 
@@ -129,6 +146,7 @@ namespace UI
             boundScore = score;
             boundScore.OnScoreChanged += UpdateScoreText;
             boundScore.OnHighScoreChanged += UpdateHighScoreText;
+            boundScore.OnPerfectClear += HandlePerfectClear;
 
             if (ScoreTxt != null)
             {
@@ -143,7 +161,37 @@ namespace UI
 
             boundScore.OnScoreChanged -= UpdateScoreText;
             boundScore.OnHighScoreChanged -= UpdateHighScoreText;
+            boundScore.OnPerfectClear -= HandlePerfectClear;
             boundScore = null;
+        }
+
+        /// <summary>
+        /// Dọn sạch bàn: chuyển mượt màu nền camera gameplay sang màu kế tiếp trong _bgColors (xoay vòng).
+        /// Dùng màu nền camera vì UICamera là Overlay camera (URP stack) nên mọi Image trong UI đều che board.
+        /// </summary>
+        private void HandlePerfectClear(int bonus, Vector3 worldPos)
+        {
+            Camera cam = Camera.main;
+            if (cam == null || _bgColors == null || _bgColors.Length == 0) return;
+
+            bgColorIndex = (bgColorIndex + 1) % _bgColors.Length;
+            bgColorTween?.Kill();
+            bgColorTween = cam.DOColor(_bgColors[bgColorIndex], _bgFadeDuration);
+        }
+
+        /// <summary>
+        /// Ván mới: đưa màu nền camera về màu đầu tiên ngay lập tức
+        /// </summary>
+        private void ResetBgColor()
+        {
+            bgColorTween?.Kill();
+            bgColorIndex = 0;
+
+            Camera cam = Camera.main;
+            if (cam != null && _bgColors != null && _bgColors.Length > 0)
+            {
+                cam.backgroundColor = _bgColors[0];
+            }
         }
 
         private void UpdateScoreText(int score)
