@@ -8,11 +8,11 @@ namespace UI
     using Quang.Data;
     using Quang.Base;
     using Quang.UI;
-    using Quang.Common;
+    using Quang.Utilities.Timer;
     using System;
     using System.Data;
     using TMPro;
-    using Quang.Utilities.Timer;
+    using DG.Tweening;
 
     public class LoseCanvas : UISCanvas
     {
@@ -23,15 +23,14 @@ namespace UI
         [SerializeField]
         UIButton nextLevelButton;
         [SerializeField]
-        TMP_Text levelTxt;
+        TMP_Text scoreTxt;
         [SerializeField]
-        ListItemShow starList;
+        TMP_Text highScoreTxt;
         [SerializeField]
-        RectTransform startGoldTf;
-        [SerializeField]
-        TMP_Text titleTxt;
-        [SerializeField]
-        TMP_Text descriptionTxt;
+        float scoreCountDuration = 0.5f;
+        Tween scoreTween;
+
+        
         [SerializeField]
         TMP_Text blockGoldTxt;
         List<float> loadingTimes;
@@ -85,6 +84,7 @@ namespace UI
         protected override void OnDestroy()
         {
             base.OnDestroy();
+            KillScoreTween();
             tryAgainButton._OnClick -= OnTryAgain;
             goHomeButton._OnClick -= OnGoHome;
             nextLevelButton._OnClick -= OnNextLevel;
@@ -97,8 +97,8 @@ namespace UI
             //Locator.Audio.PlaySfx(SFX_TYPE.LOSE);
             //Locator.Analytics?.LevelTrackEvent(LEVEL_STATE.FAIL, gameData.user.normalLevelIndex, gameData.level.Star, false, false);
             //topCanvas = UIManager.Ins.OpenUI<TopCanvas>();
-            starList.SetMaxItems(3);
-            starList.ActiveItems(gameData.level.Star, 1);
+            // starList.SetMaxItems(3);
+            // starList.ActiveItems(gameData.level.Star, 1);
             //BASE_GOLD = gameplayData.WinLevelGold * gameData.level.DeltaStar;
 
             if (isWin)
@@ -108,21 +108,58 @@ namespace UI
                 nextLevelButton.SetData($"{BASE_GOLD}");
                 blockGoldTxt.text = (gameplayData.WinLevelGold
                 * (3 - gameData.level.LevelStars[gameData.user.normalLevelIndex])).ToString();
-                titleTxt.text = $"Level Complete!";
-                descriptionTxt.text = $"Earn 3 stars to recieve full reward!";
+                // titleTxt.text = $"Level Complete!";
+                // descriptionTxt.text = $"Earn 3 stars to recieve full reward!";
             }
             else
             {
                 goHomeButton.gameObject.SetActive(true);
                 nextLevelButton.gameObject.SetActive(false);
-                titleTxt.text = $"No Stars Earn";
-                descriptionTxt.text = "You will not receive any reward!";
+                // titleTxt.text = $"No Stars Earn";
+                // descriptionTxt.text = "You will not receive any reward!";
             }
+            ShowScore();
+        }
+        protected override void OnClose()
+        {
+            base.OnClose();
+            KillScoreTween();
+        }
+        /// <summary>
+        /// Hiện HighScore ngay và chạy điểm ván vừa chơi tăng dần từ 0
+        /// </summary>
+        void ShowScore()
+        {
+            KillScoreTween();
+            IScoreService score = Locator.Score;
+            int finalScore = score != null ? score.CurrentScore : 0;
+            // Max để đúng cả khi ScoreManager chưa kịp SaveHighScore lúc Game Over
+            int highScore = score != null ? Mathf.Max(finalScore, score.HighScore) : 0;
+
+            highScoreTxt.text = highScore.ToString();
+            scoreTxt.text = "0";
+            if (finalScore <= 0) return;
+
+            int shown = 0;
+            scoreTween = DOTween.To(() => shown, v =>
+                {
+                    shown = v;
+                    scoreTxt.SetText("{0}", v);
+                }, finalScore, scoreCountDuration)
+                .SetEase(Ease.OutQuad)
+                .SetUpdate(true)
+                .SetTarget(this);
+        }
+        void KillScoreTween()
+        {
+            scoreTween?.Kill();
+            scoreTween = null;
         }
         public override void UpdateUI()
         {
             base.UpdateUI();
-            levelTxt.text = $"Level {gameData.user.normalLevelIndex + 1}";
+            //levelTxt.text = $"Level {gameData.user.normalLevelIndex + 1}";
+            
         }
         /// <summary>
         /// Chơi lại ván mới (giống nút Replay của GameOverUI cũ)
@@ -147,7 +184,7 @@ namespace UI
         protected void OnNextLevel(int index)
         {
             Locator.Items.ClaimItem(ITEM.GOLD.ToItemId(), BASE_GOLD);
-            topCanvas.FlyGoldReward(startGoldTf.position, BASE_GOLD);
+            //topCanvas.FlyGoldReward(startGoldTf.position, BASE_GOLD);
             Database.Save(gameData);
             isNextLevel = true;
             TimerManager.Ins.WaitForTime(1.5f, () =>
