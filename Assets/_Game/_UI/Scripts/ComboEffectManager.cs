@@ -255,7 +255,7 @@ namespace UI
             ComboTextEffect effect = GetFromPool();
             if (effect != null)
             {
-                effect.Play("PERFECT", $"+{bonus}", spawnPosition);
+                effect.Play("PERFECT", string.Empty, spawnPosition);
             }
         }
     }

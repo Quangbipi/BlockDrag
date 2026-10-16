@@ -2,6 +2,7 @@ using System;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
@@ -13,6 +14,8 @@ namespace UI
         [SerializeField] private Transform labelContainer;
         [SerializeField] private Transform numberContainer;
         [SerializeField] private CanvasGroup canvasGroup;
+        [Tooltip("VFX luôn căn giữa text số combo; bị ẩn khi không có số (PERFECT)")]
+        [SerializeField] private Transform numberVfx;
 
         [Header("Animation Settings")]
         [SerializeField] private float labelScaleDuration = 0.25f;
@@ -33,9 +36,12 @@ namespace UI
         private Vector3 initialPosition;
         private Vector2 initialAnchoredPosition;
         private RectTransform rectTransform;
+        private HorizontalAlignmentOptions labelDefaultAlignment;
+        private bool labelAlignmentCached;
 
         public TMP_Text ComboLabelText => comboLabelText;
         public TMP_Text ComboNumberText => comboNumberText;
+        public Transform NumberVfx => numberVfx;
         public float HorizontalPadding => horizontalPadding;
         public float TopPadding => topPadding;
         public float BottomPadding => bottomPadding;
@@ -79,16 +85,29 @@ namespace UI
             {
                 numberContainer = comboNumberText.transform;
             }
+
+            CacheLabelAlignment();
         }
 
-        public void InitReferences(TMP_Text label, TMP_Text number, Transform labelTf, Transform numberTf, CanvasGroup cvg = null)
+        private void CacheLabelAlignment()
+        {
+            if (labelAlignmentCached || comboLabelText == null) return;
+
+            labelDefaultAlignment = comboLabelText.horizontalAlignment;
+            labelAlignmentCached = true;
+        }
+
+        public void InitReferences(TMP_Text label, TMP_Text number, Transform labelTf, Transform numberTf, CanvasGroup cvg = null, Transform vfx = null)
         {
             comboLabelText = label;
             comboNumberText = number;
             labelContainer = labelTf != null ? labelTf : (label != null ? label.transform : null);
             numberContainer = numberTf != null ? numberTf : (number != null ? number.transform : null);
             canvasGroup = cvg;
+            numberVfx = vfx;
             rectTransform = GetComponent<RectTransform>();
+            labelAlignmentCached = false;
+            CacheLabelAlignment();
         }
 
         private void OnDisable()
@@ -154,6 +173,29 @@ namespace UI
         }
 
         /// <summary>
+        /// Đặt VFX vào giữa phần chữ thật của text số (text căn trái nên tâm dịch theo độ dài, vd x2 vs x10).
+        /// Giả định VFX là con trực tiếp của root; chỉ chỉnh X, giữ nguyên Y/Z đã set trong prefab.
+        /// Phải gọi trước khi scale numberContainer về 0.
+        /// </summary>
+        private void AlignVfxToNumber(bool hasValue)
+        {
+            if (numberVfx == null) return;
+
+            numberVfx.gameObject.SetActive(hasValue);
+            if (!hasValue || comboNumberText == null || numberContainer == null) return;
+
+            comboNumberText.ForceMeshUpdate();
+            if (rectTransform != null)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
+            }
+
+            float centerX = numberContainer.localPosition.x + comboNumberText.textBounds.center.x;
+            Vector3 vfxPos = numberVfx.localPosition;
+            numberVfx.localPosition = new Vector3(centerX, vfxPos.y, vfxPos.z);
+        }
+
+        /// <summary>
         /// Kích hoạt chuỗi hoạt họa Combo UI:
         /// 1. "COMBO" scale từ 0 lên 1 trước (Ease.OutBack)
         /// 2. Số combo (vd "x2") scale nảy từ 0 lên 1.2 -> 1.0 (Ease.OutBack)
@@ -166,7 +208,8 @@ namespace UI
         }
 
         /// <summary>
-        /// Cùng animation với combo nhưng tự chọn chữ, vd ("PERFECT", "+900")
+        /// Cùng animation với combo nhưng tự chọn chữ, vd ("COMBO", "x2").
+        /// value rỗng (vd PERFECT) -> ẩn text số và VFX, chữ label được căn giữa.
         /// </summary>
         public void Play(string label, string value, Vector3 spawnPosition, Action onComplete = null)
         {
@@ -225,6 +268,20 @@ namespace UI
                 comboNumberText.alpha = 1f;
             }
 
+            bool hasValue = !string.IsNullOrEmpty(value);
+
+            if (numberContainer != null)
+            {
+                numberContainer.gameObject.SetActive(hasValue);
+            }
+
+            if (comboLabelText != null && labelAlignmentCached)
+            {
+                comboLabelText.horizontalAlignment = hasValue ? labelDefaultAlignment : HorizontalAlignmentOptions.Center;
+            }
+
+            AlignVfxToNumber(hasValue);
+
             if (canvasGroup != null)
             {
                 canvasGroup.alpha = 1f;
@@ -248,7 +305,7 @@ namespace UI
             }
 
             // Bước 2: Số combo nảy scale xuất hiện ngay sau đó
-            if (numberContainer != null)
+            if (numberContainer != null && hasValue)
             {
                 animSequence.Append(numberContainer.DOScale(Vector3.one * 1.25f, numberScaleDuration * 0.7f).SetEase(Ease.OutBack));
                 animSequence.Append(numberContainer.DOScale(Vector3.one, numberScaleDuration * 0.3f).SetEase(Ease.OutQuad));

@@ -28,7 +28,10 @@ namespace Tests.EditMode
             numberGo.transform.SetParent(prefabGo.transform);
             var numberTmp = numberGo.AddComponent<TextMeshProUGUI>();
 
-            effectPrefab.InitReferences(labelTmp, numberTmp, labelGo.transform, numberGo.transform, prefabGo.GetComponent<CanvasGroup>());
+            GameObject vfxGo = new GameObject("Vfx");
+            vfxGo.transform.SetParent(prefabGo.transform);
+
+            effectPrefab.InitReferences(labelTmp, numberTmp, labelGo.transform, numberGo.transform, prefabGo.GetComponent<CanvasGroup>(), vfxGo.transform);
 
             // Tạo Manager
             managerGo = new GameObject("ComboEffectManager_Test", typeof(RectTransform));
@@ -100,10 +103,47 @@ namespace Tests.EditMode
         public void ComboTextEffect_PlayWithLabelAndValue_SetsCustomTexts()
         {
             var item = effectManager.GetFromPool();
-            item.Play("PERFECT", "+900", new Vector3(5f, 6f, 0f));
-            Assert.AreEqual("PERFECT", item.ComboLabelText.text);
+            item.Play("BONUS", "+900", new Vector3(5f, 6f, 0f));
+            Assert.AreEqual("BONUS", item.ComboLabelText.text);
             Assert.AreEqual("+900", item.ComboNumberText.text);
+            Assert.IsTrue(item.ComboNumberText.gameObject.activeSelf);
             Assert.IsTrue(item.gameObject.activeSelf);
+        }
+
+        [Test]
+        public void Play_WithEmptyValue_HidesNumberAndVfx()
+        {
+            var item = effectManager.GetFromPool();
+            item.Play("PERFECT", string.Empty, new Vector3(5f, 6f, 0f));
+            Assert.AreEqual("PERFECT", item.ComboLabelText.text);
+            Assert.IsFalse(item.ComboNumberText.gameObject.activeSelf);
+            Assert.IsFalse(item.NumberVfx.gameObject.activeSelf);
+        }
+
+        [Test]
+        public void Play_ComboAfterPerfect_ShowsNumberAndVfxAgain()
+        {
+            var item = effectManager.GetFromPool();
+            item.Play("PERFECT", string.Empty, new Vector3(5f, 6f, 0f));
+            item.Play(12, new Vector3(5f, 6f, 0f));
+            Assert.AreEqual("x12", item.ComboNumberText.text);
+            Assert.IsTrue(item.ComboNumberText.gameObject.activeSelf);
+            Assert.IsTrue(item.NumberVfx.gameObject.activeSelf);
+        }
+
+        [Test]
+        public void HandlePerfectClear_DoesNotShowBonus()
+        {
+            effectManager.HandlePerfectClear(900, new Vector3(5f, 6f, 0f));
+            ComboTextEffect shown = null;
+            foreach (var item in effectManager.Pool)
+            {
+                if (item.gameObject.activeSelf) shown = item;
+            }
+
+            Assert.IsNotNull(shown);
+            Assert.AreEqual("PERFECT", shown.ComboLabelText.text);
+            Assert.IsFalse(shown.ComboNumberText.gameObject.activeSelf);
         }
 
         [Test]
