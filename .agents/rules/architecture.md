@@ -17,7 +17,7 @@ Shared framework code ships as local `com.quang.*` packages (see `Packages/manif
 | `Quang.UI` | package `com.quang.ui` | `UIManager`, `UISCanvas`, UI components |
 | `Quang.Ads`, `Quang.IAP`, `Quang.Analytics`, `Quang.LiveOps.*` | `com.quang.services.*`, `com.quang.liveops.*` | Feature services; register their contracts with `Locator` |
 | `BlockDrag` | `Assets/_Game/_BlockDrag` | Gameplay: board, shapes, spawner, score, combo timer, effects |
-| `BlockDrag.UI` | `Assets/_Game/_UI` | Game canvases, popups, combo text, debug UI |
+| `BlockDrag.UI` | `Assets/_Game/_UI` | Game canvases, popups, combo text, score fly text (`ScoreFly/`), debug UI |
 | `EditModeTests` | `Assets/Tests/EditMode` | EditMode tests for gameplay and UI logic |
 
 `Assets/_Game/_Base`, `_Data`, `_Utilities` hold only prefabs, ScriptableObject assets and input actions — no code.
@@ -48,7 +48,7 @@ Foundation          Quang.DesignPattern, Quang.Utilities.*, Quang.Persistence
 
 Two folders inject game code into package assemblies. Keep them minimal — only code that **must** live there:
 
-- `_BlockDrag/Base` → `Quang.Base`: `partial class GameData` save fields, and game contracts exposed on `Locator` (`IScoreService`, `IBoardSessionService`, `Locator.BlockDrag.cs`).
+- `_BlockDrag/Base` → `Quang.Base`: `partial class GameData` save fields, and game contracts exposed on `Locator` (`IScoreService`, `IBoardSessionService`, `Locator.BlockDrag.cs`), plus `ScoreGain`/`ScoreSource` carried by `IScoreService.OnScoreGained`.
 - `_BlockDrag/Data` → `Quang.Data`: `partial class GameplayData` tunables and the `ITEM` enum it uses (plus Odin type-name bindings for the pre-migration asset).
   - `partial class DataManager` (`DataManager.BlockDrag.cs`): the game's single `TryGetGameSOData<T>` implementation. It serializes and returns `GameplayData` and `BlockColorPaletteSO`. Register any further game ScriptableObject that must be a `DataManager` field here.
   - `BlockColorPaletteSO`: the random block colour set. It lives here, not in `BlockDrag/Config`, because a `DataManager` field must be a type `Quang.Data` can see. Gameplay reads it through `Locator.Data.GetSOData<BlockColorPaletteSO>()`.
@@ -60,7 +60,7 @@ Everything else (shape data, score config, level schema, gameplay logic) belongs
 - `Board/BlockBoard` — pure C# board rules: occupancy, placement checks, full-line detection. Unit-tested; no Unity objects.
 - `BlockGrid` — presentation of the board: cell GameObjects, indicator, clear animations. Delegates rules to `BlockBoard`.
 - `BlockShape` (implements `IShapeFootprint`), `BlockDragHandler`, `BlockSpawner` (implements `IBoardSessionService`).
-- `ScoreManager` (implements `IScoreService`), `Timer/CountdownManager`, `Effects/BlockPlaceEffect`.
+- `ScoreManager` (implements `IScoreService`; raises `OnScoreGained(ScoreGain)` before `OnScoreChanged` so UI can fly `+N` text — `BlockDrag.UI/ScoreFly`: `ScoreFlyManager` pools `TextScoreFly` via `MiniPool`, `GameplayCanvas` counts the score up with `ScoreCountUp`), `Timer/CountdownManager`, `Effects/BlockPlaceEffect`.
 - `Spawn/` — pure C# hand generation: `HandGenerator` (weighted, no duplicate shape family, optional line-clear help; routes to assist below the run-start HighScore), `AssistHandBuilder` (builds a hand from a simulated chain of line-clearing placements), `ShapeFamily`, `HandSolver` (hand placeability simulation on a `BlockBoard` copy), `ShapeVariant`, `DifficultyCurve` (difficulty vs. run-start HighScore), `SpawnSettings`, `ShapeWeight`. Unit-tested.
 - `Config/` — `BlockShapeData`, `ScoreConfigSO`, `ScoreConfig.asset`, `SpawnConfigSO`, `SpawnConfig.asset`. `Level/` — legacy `LevelData` / `LevelDataSO` schema still read by `HomeCanvas`.
 - Namespace: `Gameplay.BlockDrag` for all gameplay types.

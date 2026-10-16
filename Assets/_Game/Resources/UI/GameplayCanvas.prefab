@@ -344,6 +344,7 @@ GameObject:
   - component: {fileID: 7603813252843807922}
   - component: {fileID: -3769252905682145067}
   - component: {fileID: 8123456789012345678}
+  - component: {fileID: 3130481884375092853}
   m_Layer: 5
   m_Name: GameplayCanvas
   m_TagString: Untagged
@@ -398,6 +399,8 @@ MonoBehaviour:
   _settingBtn: {fileID: 2291506608405534301}
   HightScoreTxt: {fileID: 8431971346446506458}
   ScoreTxt: {fileID: 7402970994263996535}
+  countUpDuration: 1
+  scoreFlyManager: {fileID: 3130481884375092853}
   _bgColors:
   - {r: 0.5754717, g: 0.462801, b: 0.23616058, a: 1}
   - {r: 0.18039216, g: 0.29411766, b: 0.54901963, a: 1}
@@ -460,6 +463,27 @@ MonoBehaviour:
   effectPrefab: {fileID: 3293881922519177827, guid: 6dd2ab9fb8c4541979193fadd1298e80, type: 3}
   initialPoolSize: 4
   poolContainer: {fileID: 0}
+--- !u!114 &3130481884375092853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5794410705904489601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f59f52fb78c5f4f3d9f26a43f98aebd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flyPrefab: {fileID: 991664745957374944, guid: d3e9bc3ea68324b28855189a57bc8de2, type: 3}
+  flyTarget: {fileID: 1987394793220897961}
+  poolContainer: {fileID: 0}
+  initialPoolSize: 4
+  flySources: 0100000002000000
+  spawnOffset: {x: 0, y: 90}
+  lineClearDelay: 0.3
+  perfectClearExtraDelay: 0.25
+  screenEdgePadding: 80
 --- !u!1 &6181115904491868049
 GameObject:
   m_ObjectHideFlags: 0

@@ -24,6 +24,13 @@ namespace UI
 
         [SerializeField] private TMP_Text ScoreTxt;
 
+        [Header("Score Count-Up")]
+        [Tooltip("Thời gian (giây) Score chạy từ số đang hiển thị lên số cuối; 0 = nhảy số ngay")]
+        [SerializeField] private float countUpDuration = 1f;
+
+        [Tooltip("Quản lý chữ điểm bay lên Score (để trống sẽ lấy trên cùng GameObject)")]
+        [SerializeField] private ScoreFlyManager scoreFlyManager;
+
         [Header("Background (màu nền Main Camera)")]
         [SerializeField] private Color[] _bgColors;
         [SerializeField] private float _bgFadeDuration = 0.5f;
@@ -35,12 +42,30 @@ namespace UI
         private int bgColorIndex;
         private IScoreService boundScore;
         private IBoardSessionService boundSession;
+        private readonly ScoreCountUp scoreCounter = new ScoreCountUp();
 
         void Awake()
         {
             if (_settingBtn != null)
             {
                 _settingBtn._OnClick += OnSettingBtnClick;
+            }
+
+            if (scoreFlyManager == null)
+            {
+                scoreFlyManager = GetComponent<ScoreFlyManager>();
+            }
+            if (scoreFlyManager != null)
+            {
+                scoreFlyManager.OnFlyArrived += HandleFlyArrived;
+            }
+        }
+
+        private void Update()
+        {
+            if (ScoreTxt != null && scoreCounter.Tick(Time.unscaledDeltaTime))
+            {
+                ScoreTxt.text = scoreCounter.Displayed.ToString();
             }
         }
 
@@ -77,6 +102,11 @@ namespace UI
             if (_settingBtn != null)
             {
                 _settingBtn._OnClick -= OnSettingBtnClick;
+            }
+
+            if (scoreFlyManager != null)
+            {
+                scoreFlyManager.OnFlyArrived -= HandleFlyArrived;
             }
 
             scorePunchTween?.Kill();
@@ -116,6 +146,7 @@ namespace UI
             boundSession = session;
             boundSession.OnGameOver += HandleGameOver;
             boundSession.OnGameRestarted += ResetBgColor;
+            boundSession.OnGameRestarted += ResetScoreDisplay;
         }
 
         private void UnbindSession()
@@ -124,6 +155,7 @@ namespace UI
 
             boundSession.OnGameOver -= HandleGameOver;
             boundSession.OnGameRestarted -= ResetBgColor;
+            boundSession.OnGameRestarted -= ResetScoreDisplay;
             boundSession = null;
         }
 
@@ -144,14 +176,11 @@ namespace UI
             if (score == null) return;
 
             boundScore = score;
-            boundScore.OnScoreChanged += UpdateScoreText;
+            boundScore.OnScoreChanged += HandleScoreChanged;
             boundScore.OnHighScoreChanged += UpdateHighScoreText;
             boundScore.OnPerfectClear += HandlePerfectClear;
 
-            if (ScoreTxt != null)
-            {
-                ScoreTxt.text = boundScore.CurrentScore.ToString();
-            }
+            ResetScoreDisplay();
             UpdateHighScoreText(boundScore.HighScore);
         }
 
@@ -159,7 +188,7 @@ namespace UI
         {
             if (boundScore == null) return;
 
-            boundScore.OnScoreChanged -= UpdateScoreText;
+            boundScore.OnScoreChanged -= HandleScoreChanged;
             boundScore.OnHighScoreChanged -= UpdateHighScoreText;
             boundScore.OnPerfectClear -= HandlePerfectClear;
             boundScore = null;
@@ -194,14 +223,60 @@ namespace UI
             }
         }
 
-        private void UpdateScoreText(int score)
+        /// <summary>
+        /// Điểm giảm (ván mới) thì gán ngay; điểm tăng thì chạy số tới điểm thật trừ phần đang bay
+        /// </summary>
+        private void HandleScoreChanged(int score)
         {
+            if (score < scoreCounter.Displayed)
+            {
+                ResetScoreDisplay();
+                return;
+            }
+
+            RefreshScoreTarget();
+        }
+
+        private void RefreshScoreTarget()
+        {
+            if (boundScore == null) return;
+
+            int pending = scoreFlyManager != null ? scoreFlyManager.PendingAmount : 0;
+            scoreCounter.Duration = countUpDuration;
+            scoreCounter.SetTarget(Mathf.Max(0, boundScore.CurrentScore - pending));
+        }
+
+        /// <summary>
+        /// Chữ điểm bay chạm Score: chạy số lên và nảy chữ Score
+        /// </summary>
+        private void HandleFlyArrived(int amount)
+        {
+            RefreshScoreTarget();
+
             if (ScoreTxt != null)
             {
-                ScoreTxt.text = score.ToString();
                 scorePunchTween?.Kill();
                 ScoreTxt.transform.localScale = Vector3.one;
                 scorePunchTween = ScoreTxt.transform.DOPunchScale(Vector3.one * 0.2f, 0.2f, 5, 0.5f);
+            }
+        }
+
+        /// <summary>
+        /// Huỷ chữ đang bay và hiển thị ngay điểm hiện tại (bind lần đầu, ván mới)
+        /// </summary>
+        private void ResetScoreDisplay()
+        {
+            if (scoreFlyManager != null)
+            {
+                scoreFlyManager.CancelAll();
+            }
+
+            int score = boundScore != null ? boundScore.CurrentScore : 0;
+            scoreCounter.Snap(score);
+
+            if (ScoreTxt != null)
+            {
+                ScoreTxt.text = score.ToString();
             }
         }
 

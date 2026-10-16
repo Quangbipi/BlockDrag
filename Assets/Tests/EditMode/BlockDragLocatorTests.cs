@@ -15,6 +15,7 @@ namespace Tests.EditMode
             public event Action<int> OnHighScoreChanged { add { } remove { } }
             public event Action<int, Vector3> OnComboTriggered { add { } remove { } }
             public event Action<int, Vector3> OnPerfectClear { add { } remove { } }
+            public event Action<ScoreGain> OnScoreGained { add { } remove { } }
         }
 
         private sealed class FakeBoardSession : IBoardSessionService

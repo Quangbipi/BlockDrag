@@ -33,6 +33,7 @@ namespace Gameplay.BlockDrag
 
         // Events
         public event Action<int> OnScoreChanged;
+        public event Action<ScoreGain> OnScoreGained; // phát TRƯỚC OnScoreChanged
         public event Action<int> OnHighScoreChanged;
         public event Action<int, int> OnComboChanged; // (comboCount, bonusScoreAwarded)
         public event Action<int, Vector3> OnComboTriggered; // (comboCount, worldPos) khi combo >= 2
@@ -211,7 +212,7 @@ namespace Gameplay.BlockDrag
             if (singleBlockCount <= 0) return;
 
             int points = singleBlockCount * Config.PointsPerSingleBlock;
-            AddScore(points);
+            AddScore(new ScoreGain(points, ScoreSource.Placement));
         }
 
         /// <summary>
@@ -221,6 +222,11 @@ namespace Gameplay.BlockDrag
         /// - Điểm combo thưởng: +25 * (combo - 1)
         /// </summary>
         public void HandleLinesCleared(int rowsCleared, int colsCleared, int totalCellsCleared)
+        {
+            ApplyLinesCleared(rowsCleared, colsCleared, null);
+        }
+
+        private void ApplyLinesCleared(int rowsCleared, int colsCleared, Vector3? placedPos)
         {
             int linesCleared = rowsCleared + colsCleared;
             if (linesCleared <= 0) return;
@@ -253,7 +259,9 @@ namespace Gameplay.BlockDrag
             }
 
             int totalEarned = basePoints + comboBonusPoints;
-            AddScore(totalEarned);
+            AddScore(placedPos.HasValue
+                ? new ScoreGain(totalEarned, ScoreSource.LineClear, placedPos.Value)
+                : new ScoreGain(totalEarned, ScoreSource.LineClear));
 
             OnComboChanged?.Invoke(currentCombo, comboBonusPoints);
             OnComboTimerUpdated?.Invoke(comboTimer);
@@ -265,7 +273,7 @@ namespace Gameplay.BlockDrag
         /// </summary>
         public void HandleLinesClearedWithPos(int rowsCleared, int colsCleared, int totalCellsCleared, Vector3 placedPos)
         {
-            HandleLinesCleared(rowsCleared, colsCleared, totalCellsCleared);
+            ApplyLinesCleared(rowsCleared, colsCleared, placedPos);
 
             if (currentCombo >= 2)
             {
@@ -283,7 +291,7 @@ namespace Gameplay.BlockDrag
             int bonus = Config.PerfectClearBonus * multiplier;
             if (bonus <= 0) return;
 
-            AddScore(bonus);
+            AddScore(new ScoreGain(bonus, ScoreSource.PerfectClear, boardCenter));
             OnPerfectClear?.Invoke(bonus, boardCenter);
         }
 
@@ -357,9 +365,18 @@ namespace Gameplay.BlockDrag
         /// </summary>
         public void AddScore(int amount)
         {
-            if (amount <= 0) return;
+            AddScore(new ScoreGain(amount, ScoreSource.Placement));
+        }
 
-            currentScore += amount;
+        /// <summary>
+        /// Cộng điểm kèm nguồn và toạ độ để UI hiển thị chữ điểm bay
+        /// </summary>
+        public void AddScore(ScoreGain gain)
+        {
+            if (gain.Amount <= 0) return;
+
+            currentScore += gain.Amount;
+            OnScoreGained?.Invoke(gain);
             OnScoreChanged?.Invoke(currentScore);
 
             if (currentScore > highScore)
