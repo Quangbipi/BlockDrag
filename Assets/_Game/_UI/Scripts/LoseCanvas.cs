@@ -174,12 +174,14 @@ namespace UI
 
         protected void OnGoHome(int index)
         {
-            Locator.Ads.Inter.Show(Loading, Placement.NONE);
-            UIManager.Ins.CloseUI<TopCanvas>();
-            void Loading()
-            {
-                UIManager.Ins.OpenUI<LoadingCanvas>(new object[] { loadingTimes, loadingAction2s });
-            }
+            // Locator.Ads.Inter.Show(Loading, Placement.NONE);
+            // UIManager.Ins.CloseUI<TopCanvas>();
+            // void Loading()
+            // {
+            //     UIManager.Ins.OpenUI<LoadingCanvas>(new object[] { loadingTimes, loadingAction2s });
+            // }
+            Close();
+            Locator.UI.OpenUI<HomeCanvas>();
         }
         protected void OnNextLevel(int index)
         {

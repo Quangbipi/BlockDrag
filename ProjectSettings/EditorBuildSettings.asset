@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/_Game/_Scenes/Game/CryptoLoader.unity
     guid: 4289ad8456d7074408ce148a05201853
   - enabled: 1
+    path: Assets/_Game/_Scenes/Game/LoadStart.unity
+    guid: 121fe6c389c5ed84f8befb1d3fba3b7c
+  - enabled: 1
     path: Assets/_Game/_Scenes/Game/GameScene.unity
     guid: 1daf1b777f40a854e996aff2568d46d8
   m_configObjects: {}

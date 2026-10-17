@@ -27,28 +27,45 @@ namespace UI
         UIButton settingButton;
         [SerializeField]
         TMP_Text highScoreTxt;
-        
+        [Tooltip("Thời gian (giây) HighScore chạy từ 0 lên số cuối mỗi lần Home mở")]
+        [SerializeField]
+        float highScoreCountDuration = 0.5f;
 
-        GameData gameData;
-        GameplayData gameplayData;
+        readonly ScoreCountUp highScoreCounter = new ScoreCountUp();
 
         void Awake()
         {
             startButton._OnClick += OnStartGame;
             settingButton._OnClick += OnSetting;
-            
         }
-        
-        protected override void Start()
+
+        void OnEnable()
         {
-            base.Start();
-           
-            //highScoreTxt.text = $"{gameData.highScore}";
+            // Canvas được bật mỗi lần Open/Show → chạy lại HighScore từ 0
+            highScoreCounter.Duration = highScoreCountDuration;
+            highScoreCounter.Snap(0);
+            highScoreTxt.text = "0";
+            highScoreCounter.SetTarget(Locator.Score != null ? Locator.Score.HighScore : 0);
+        }
+
+        void Update()
+        {
+            if (highScoreCounter.Tick(Time.unscaledDeltaTime))
+            {
+                highScoreTxt.text = highScoreCounter.Displayed.ToString();
+            }
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            startButton._OnClick -= OnStartGame;
+            settingButton._OnClick -= OnSetting;
         }
 
         private void OnSetting(int obj)
         {
-            throw new NotImplementedException();
+            // TODO: mở SettingPopup khi có
         }
 
         private void OnStartGame(int obj)

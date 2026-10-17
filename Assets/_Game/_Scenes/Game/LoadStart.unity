@@ -560,7 +560,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 898683754}
-  - component: {fileID: 898683755}
   m_Layer: 0
   m_Name: LoadStart
   m_TagString: Untagged
@@ -583,18 +582,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &898683755
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 898683753}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efdc061bbc02ed841ae7647a3ef708ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1380840600
 GameObject:
   m_ObjectHideFlags: 0
@@ -678,6 +665,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 294332377}
     m_Modifications:
+    - target: {fileID: 2183818358948884782, guid: a75db23344797b846bb5305fbe540dd3, type: 3}
+      propertyPath: fakeLoadDuration
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218083981041134512, guid: a75db23344797b846bb5305fbe540dd3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5123449265576772877, guid: a75db23344797b846bb5305fbe540dd3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
