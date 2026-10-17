@@ -1,10 +1,12 @@
 using DG.Tweening;
+using Quang.Base;
+using Solo.MOST_IN_ONE;
 using UnityEngine;
 
 namespace Gameplay.BlockDrag
 {
     /// <summary>
-    /// Phản hồi va chạm khi phá hàng/cột: rung toàn màn hình và viền sáng gradient loé lên quanh khung board rồi mờ dần (giống Block Blast)
+    /// Phản hồi va chạm khi phá hàng/cột: rung toàn màn hình, rung thiết bị (haptic) và viền sáng gradient loé lên quanh khung board rồi mờ dần (giống Block Blast)
     /// </summary>
     [AddComponentMenu("Gameplay/Line Clear Impact Effect")]
     public class LineClearImpactEffect : MonoBehaviour
@@ -22,6 +24,13 @@ namespace Gameplay.BlockDrag
         [Header("Toggle")]
         [SerializeField] private bool enableShake = true;
         [SerializeField] private bool enableGlow = true;
+        [SerializeField] private bool enableHaptic = true;
+
+        [Header("Haptic")]
+        [Tooltip("Số đường phá cùng lúc từ mức này trở lên dùng rung mạnh (HeavyImpact)")]
+        [SerializeField] private int heavyHapticLineCount = 2;
+        [Tooltip("Khoảng nghỉ tối thiểu giữa hai lần rung (giây)")]
+        [SerializeField] private float hapticCooldown = 0.1f;
 
         [Header("Glow Layout")]
         [Tooltip("Độ tràn quầng sáng ra ngoài khung board (× cellSize)")]
@@ -180,6 +189,27 @@ namespace Gameplay.BlockDrag
             {
                 PlayGlow(lineCount);
             }
+
+            if (enableHaptic)
+            {
+                PlayHaptic(lineCount);
+            }
+        }
+
+        private void PlayHaptic(int lineCount)
+        {
+            if (IsHapticOff()) return;
+
+            MOST_HapticFeedback.GenerateWithCooldown(GetHapticType(lineCount, heavyHapticLineCount), hapticCooldown);
+        }
+
+        /// <summary>
+        /// Người chơi tắt rung trong Setting (thiếu Locator.Data thì coi như đang bật)
+        /// </summary>
+        private static bool IsHapticOff()
+        {
+            GameData data = Locator.Data?.GetData<GameData>();
+            return data?.setting != null && data.setting.hapticOff;
         }
 
         private void PlayGlow(int lineCount)
@@ -269,6 +299,16 @@ namespace Gameplay.BlockDrag
             if (maxLines <= 1) return range.y;
             float t = Mathf.Clamp01((lineCount - 1f) / (maxLines - 1f));
             return Mathf.Lerp(range.x, range.y, t);
+        }
+
+        /// <summary>
+        /// Loại rung theo số đường phá: dưới heavyLineCount = MediumImpact, từ heavyLineCount trở lên = HeavyImpact
+        /// </summary>
+        public static MOST_HapticFeedback.HapticTypes GetHapticType(int lineCount, int heavyLineCount)
+        {
+            return lineCount >= heavyLineCount
+                ? MOST_HapticFeedback.HapticTypes.HeavyImpact
+                : MOST_HapticFeedback.HapticTypes.MediumImpact;
         }
 
         private static Gradient CreateDefaultGradient()

@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 using Gameplay.BlockDrag;
+using Solo.MOST_IN_ONE;
 
 namespace Tests.EditMode
 {
@@ -113,6 +114,19 @@ namespace Tests.EditMode
             Assert.AreEqual(0.4f, LineClearImpactEffect.GetFadeDuration(3, range, 3), 1e-5f);
             Assert.AreEqual(0.4f, LineClearImpactEffect.GetFadeDuration(8, range, 3), 1e-5f);
             Assert.AreEqual(0.25f, LineClearImpactEffect.GetFadeDuration(0, range, 3), 1e-5f);
+        }
+
+        [Test]
+        public void GetHapticType_WhenSingleLine_ReturnsMediumImpact()
+        {
+            Assert.AreEqual(MOST_HapticFeedback.HapticTypes.MediumImpact, LineClearImpactEffect.GetHapticType(1, 2));
+        }
+
+        [Test]
+        public void GetHapticType_WhenLinesReachHeavyThreshold_ReturnsHeavyImpact()
+        {
+            Assert.AreEqual(MOST_HapticFeedback.HapticTypes.HeavyImpact, LineClearImpactEffect.GetHapticType(2, 2));
+            Assert.AreEqual(MOST_HapticFeedback.HapticTypes.HeavyImpact, LineClearImpactEffect.GetHapticType(4, 2));
         }
 
         [Test]
