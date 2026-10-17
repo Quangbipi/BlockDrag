@@ -26,6 +26,14 @@ namespace Gameplay.BlockDrag
         [Tooltip("Thời gian tween scale và khoảng nâng khi nhấc khối")]
         [SerializeField] private float pickUpDuration = 0.15f;
 
+        [Header("Drag Speed")]
+        [Tooltip("Hệ số nhân quãng đường khối đi so với ngón tay (1 = bám 1:1)")]
+        [Range(1f, 2.5f)]
+        [SerializeField] private float dragSpeedMultiplier = 1.3f;
+
+        [Tooltip("Giữ tâm khối trong vùng camera nhìn thấy khi kéo nhanh hơn ngón tay")]
+        [SerializeField] private bool clampToScreen = true;
+
         [Header("Return Animation")]
         [Tooltip("Thời gian bay về lại Slot khi thả tay ra ngoài")]
         [SerializeField] private float returnDuration = 0.2f;
@@ -60,6 +68,7 @@ namespace Gameplay.BlockDrag
         private Tween liftTween;
         private float currentLift;
         private Vector2 lastScreenPos;
+        private Vector2 dragAnchorWorld;
 
         public bool IsDragging => isDragging;
         public BlockShape BlockShape => blockShape;
@@ -114,6 +123,13 @@ namespace Gameplay.BlockDrag
             isDragging = true;
             isReturning = false;
             lastScreenPos = screenPos;
+
+            // Neo điểm bắt đầu kéo: khối đi theo delta ngón tay tính từ đây
+            Camera cam = GetCamera();
+            if (cam != null)
+            {
+                dragAnchorWorld = GetFingerWorld(cam);
+            }
 
             // Kill các tween cũ (kể cả tween bay về slot)
             KillTweens();
@@ -204,21 +220,44 @@ namespace Gameplay.BlockDrag
         }
 
         /// <summary>
-        /// Tính toán và cập nhật toạ độ khối gạch theo ngón tay (bám 1:1, không làm trễ)
+        /// Vị trí khối theo delta ngón tay so với điểm neo, nhân hệ số tốc độ
+        /// </summary>
+        public static Vector2 ComputeDragPosition(Vector2 anchor, Vector2 finger, float multiplier)
+        {
+            return anchor + (finger - anchor) * multiplier;
+        }
+
+        private float GetPlaneDistance(Camera cam)
+        {
+            return Mathf.Abs(cam.transform.position.z - originalPosition.z);
+        }
+
+        private Vector2 GetFingerWorld(Camera cam)
+        {
+            return cam.ScreenToWorldPoint(new Vector3(lastScreenPos.x, lastScreenPos.y, GetPlaneDistance(cam)));
+        }
+
+        /// <summary>
+        /// Tính toán và cập nhật toạ độ khối gạch theo ngón tay (nhanh hơn ngón tay theo dragSpeedMultiplier, không làm trễ)
         /// </summary>
         private void UpdateDragPosition()
         {
             Camera cam = GetCamera();
             if (cam == null) return;
 
-            float planeDistance = Mathf.Abs(cam.transform.position.z - originalPosition.z);
-            Vector3 fingerWorld = cam.ScreenToWorldPoint(new Vector3(lastScreenPos.x, lastScreenPos.y, planeDistance));
+            Vector2 xy = ComputeDragPosition(dragAnchorWorld, GetFingerWorld(cam), dragSpeedMultiplier);
+            float y = xy.y + currentLift;
 
-            transform.position = new Vector3(
-                fingerWorld.x,
-                fingerWorld.y + currentLift,
-                originalPosition.z
-            );
+            if (clampToScreen)
+            {
+                float planeDistance = GetPlaneDistance(cam);
+                Vector3 min = cam.ViewportToWorldPoint(new Vector3(0f, 0f, planeDistance));
+                Vector3 max = cam.ViewportToWorldPoint(new Vector3(1f, 1f, planeDistance));
+                xy.x = Mathf.Clamp(xy.x, min.x, max.x);
+                y = Mathf.Clamp(y, min.y, max.y);
+            }
+
+            transform.position = new Vector3(xy.x, y, originalPosition.z);
         }
 
         /// <summary>

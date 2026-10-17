@@ -109,6 +109,8 @@ MonoBehaviour:
   dragLiftCells: 3
   dragScale: 0.5
   pickUpDuration: 0.15
+  dragSpeedMultiplier: 1.6
+  clampToScreen: 1
   returnDuration: 0.2
   returnEase: 6
   dragSortingOrderOffset: 10
