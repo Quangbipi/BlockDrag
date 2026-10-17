@@ -110,7 +110,7 @@ namespace UI
         protected void OnStartLevelClick()
         {
             GameData.user.normalLevelIndex = int.Parse(levelInputField.text);
-            UIManager.Ins.GetUI<HomeCanvas>().SnapToLevel(GameData.user.normalLevelIndex);
+            //UIManager.Ins.GetUI<HomeCanvas>().SnapToLevel(GameData.user.normalLevelIndex);
             // UIManager.Ins.UpdateAllUI();
         }
         protected void OnMaxAdsClick()

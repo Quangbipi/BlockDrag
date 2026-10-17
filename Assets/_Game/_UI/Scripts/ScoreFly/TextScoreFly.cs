@@ -16,6 +16,13 @@ namespace UI
         [SerializeField] private TMP_Text amountText;
         [SerializeField] private CanvasGroup canvasGroup;
 
+        [Header("Glow")]
+        [Tooltip("Ảnh glow mềm phía sau chữ, tự co giãn theo độ dài chữ (để trống = không glow)")]
+        [SerializeField] private RectTransform glow;
+
+        [Tooltip("Phần glow tràn ra ngoài khung chữ (tổng 2 bên, Canvas unit)")]
+        [SerializeField] private Vector2 glowPadding = new Vector2(110f, 90f);
+
         [Header("Pop In")]
         [SerializeField] private float popInDuration = 0.15f;
         [SerializeField] private float popInStartScale = 0.5f;
@@ -66,6 +73,7 @@ namespace UI
             {
                 amountText.text = "+" + amount;
             }
+            FitGlowToText();
 
             RectTransform rt = RectTf;
             rt.anchoredPosition = startAnchoredPos;
@@ -114,6 +122,22 @@ namespace UI
         public void ForceComplete()
         {
             KillSequence();
+        }
+
+        /// <summary>
+        /// Đặt glow ôm theo phần chữ thật (tâm + kích thước) cộng thêm glowPadding
+        /// </summary>
+        private void FitGlowToText()
+        {
+            if (glow == null || amountText == null) return;
+
+            amountText.ForceMeshUpdate();
+            Bounds bounds = amountText.textBounds;
+            Vector3 center = glow.parent.InverseTransformPoint(amountText.transform.TransformPoint(bounds.center));
+
+            glow.anchorMin = glow.anchorMax = new Vector2(0.5f, 0.5f);
+            glow.sizeDelta = (Vector2)bounds.size + glowPadding;
+            glow.localPosition = new Vector3(center.x, center.y, glow.localPosition.z);
         }
 
         private Vector2 GetTargetAnchoredPos(RectTransform target, Vector2 fallback)

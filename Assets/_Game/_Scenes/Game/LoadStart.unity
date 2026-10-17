@@ -678,14 +678,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 294332377}
     m_Modifications:
-    - target: {fileID: 2218083981041134512, guid: a75db23344797b846bb5305fbe540dd3, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3680238438691637631, guid: a75db23344797b846bb5305fbe540dd3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5123449265576772877, guid: a75db23344797b846bb5305fbe540dd3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -770,19 +762,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: InitLoadingCanvas
       objectReference: {fileID: 0}
-    - target: {fileID: 7550182023825381837, guid: a75db23344797b846bb5305fbe540dd3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7952313362145021212, guid: a75db23344797b846bb5305fbe540dd3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 7550182023825381837, guid: a75db23344797b846bb5305fbe540dd3, type: 3}
-    - {fileID: 3256889949479633767, guid: a75db23344797b846bb5305fbe540dd3, type: 3}
-    - {fileID: 6100776703118917428, guid: a75db23344797b846bb5305fbe540dd3, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a75db23344797b846bb5305fbe540dd3, type: 3}
@@ -857,7 +838,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1763528120}
-  - component: {fileID: 1763528119}
   m_Layer: 0
   m_Name: FirebaseManager
   m_TagString: Untagged
@@ -865,20 +845,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1763528119
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1763528118}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46748ce55a525394e9ec0f529aea03c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _keyConfigs:
-  - AdsConfig
 --- !u!4 &1763528120
 Transform:
   m_ObjectHideFlags: 0
