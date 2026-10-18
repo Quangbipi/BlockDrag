@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "994902363451",
+    "project_id": "block-drag-7a49f",
+    "storage_bucket": "block-drag-7a49f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994902363451:android:6e424aa8d8209bad5ffb1e",
+        "android_client_info": {
+          "package_name": "com.bipibupu.ComboBlockInfiniteGrid"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9zVK8dNhbjqFrvkFHuBa9VYH-aL6PpNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
