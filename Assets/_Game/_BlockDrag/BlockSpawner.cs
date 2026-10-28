@@ -63,7 +63,7 @@ namespace Gameplay.BlockDrag
         private Coroutine gameOverRoutine;
         private BlockColorPaletteSO colorPalette;
         private bool paletteWarningLogged;
-        private readonly List<Color> usedColors = new List<Color>();
+        private readonly List<BlockSkin> usedSkins = new List<BlockSkin>();
 
         private HandGenerator handGenerator;
         private SpawnSettings defaultSettings;
@@ -346,13 +346,13 @@ namespace Gameplay.BlockDrag
             if (spawnSlots == null) return;
 
             // Gom màu các khối còn trên tay để khối mới không trùng màu
-            usedColors.Clear();
+            usedSkins.Clear();
             for (int i = 0; i < spawnSlots.Length; i++)
             {
                 BlockShape existing = spawnSlots[i].childCount > 0 ? spawnSlots[i].GetComponentInChildren<BlockShape>() : null;
                 if (existing != null)
                 {
-                    usedColors.Add(existing.ShapeColor);
+                    usedSkins.Add(existing.Skin);
                 }
             }
 
@@ -437,9 +437,9 @@ namespace Gameplay.BlockDrag
             // Khởi tạo các ô gạch 1x1 với kích thước BẰNG grid (cellSize thật)
             if (shapeComp != null)
             {
-                Color shapeColor = PickColor(shapeData);
-                usedColors.Add(shapeColor);
-                shapeComp.Initialize(shapeData, singleBlockPrefab, rotation: variant.Rotation, cellSize: gridCellSize, color: shapeColor);
+                BlockSkin skin = PickSkin(shapeData);
+                usedSkins.Add(skin);
+                shapeComp.Initialize(shapeData, singleBlockPrefab, variant.Rotation, gridCellSize, skin);
             }
 
             // Thu nhỏ container bằng localScale → hiển thị nhỏ tại slot chờ
@@ -464,19 +464,19 @@ namespace Gameplay.BlockDrag
         }
 
         /// <summary>
-        /// Lấy màu random từ palette trong DataManager, không trùng các màu đã dùng trên tay.
+        /// Lấy skin (sprite hoặc màu) random từ palette trong DataManager, không trùng các skin đã dùng trên tay.
         /// Không có palette → dùng màu mặc định của BlockShapeData.
         /// </summary>
-        private Color PickColor(BlockShapeData data)
+        private BlockSkin PickSkin(BlockShapeData data)
         {
             if (colorPalette == null)
             {
                 colorPalette = Locator.Data?.GetSOData<BlockColorPaletteSO>();
             }
 
-            if (colorPalette != null && colorPalette.TryGetRandomColor(usedColors, out Color color))
+            if (colorPalette != null && colorPalette.TryGetRandomSkin(usedSkins, out BlockSkin skin))
             {
-                return color;
+                return skin;
             }
 
             if (!paletteWarningLogged)
@@ -484,7 +484,7 @@ namespace Gameplay.BlockDrag
                 paletteWarningLogged = true;
                 Debug.LogWarning("[BlockSpawner] Chưa có BlockColorPaletteSO (hoặc list rỗng) trong DataManager, dùng màu của BlockShapeData.");
             }
-            return data.shapeColor;
+            return BlockSkin.FromColor(data.shapeColor);
         }
     }
 }

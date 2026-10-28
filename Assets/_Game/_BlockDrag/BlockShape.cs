@@ -24,7 +24,8 @@ namespace Gameplay.BlockDrag
         public BoxCollider2D BoxCollider => boxCollider;
         public BlockRotation CurrentRotation { get; private set; } = BlockRotation.Rot_0;
         public bool IsDimmed { get; private set; } = false;
-        public Color ShapeColor { get; private set; } = Color.white;
+        public BlockSkin Skin { get; private set; } = BlockSkin.FromColor(Color.white);
+        public Color ShapeColor => Skin.color;
         public int RowsCount => shapeData != null ? shapeData.GetRotatedRowsCount(CurrentRotation) : 0;
         public int ColumnsCount => shapeData != null ? shapeData.GetRotatedColumnsCount(CurrentRotation) : 0;
         public IReadOnlyDictionary<Vector2Int, GameObject> BlockMap => blockMap;
@@ -47,8 +48,13 @@ namespace Gameplay.BlockDrag
 
         public void Initialize(BlockShapeData data, GameObject singleBlockPrefab, BlockRotation rotation = BlockRotation.Rot_0, float cellSize = 0f, Color? color = null)
         {
+            Initialize(data, singleBlockPrefab, rotation, cellSize, BlockSkin.FromColor(color ?? data.shapeColor));
+        }
+
+        public void Initialize(BlockShapeData data, GameObject singleBlockPrefab, BlockRotation rotation, float cellSize, BlockSkin skin)
+        {
             this.shapeData = data;
-            this.ShapeColor = color ?? data.shapeColor;
+            this.Skin = skin;
             this.CurrentRotation = rotation;
             this.IsDimmed = false;
 
@@ -104,17 +110,25 @@ namespace Gameplay.BlockDrag
                         GameObject block = Instantiate(singleBlockPrefab, transform);
                         block.transform.localPosition = localPos;
 
-                        // Đồng bộ scale với cellObj trong BlockGrid
-                        ApplyBlockScale(block, blockSize.x);
-
-                        // Đổi màu block con
+                        // Đổi sprite/màu block con (trước khi scale vì scale tính theo sprite.bounds)
                         var spriteRenderer = block.GetComponent<SpriteRenderer>();
                         if (spriteRenderer != null)
                         {
-                            spriteRenderer.color = ShapeColor;
+                            if (Skin.HasSprite)
+                            {
+                                spriteRenderer.sprite = Skin.sprite;
+                                spriteRenderer.color = Color.white;
+                            }
+                            else
+                            {
+                                spriteRenderer.color = ShapeColor;
+                            }
                             cachedRenderers.Add(spriteRenderer);
                             baseSortingOrder = spriteRenderer.sortingOrder;
                         }
+
+                        // Đồng bộ scale với cellObj trong BlockGrid
+                        ApplyBlockScale(block, blockSize.x);
 
                         activeBlocks.Add(block);
                         blockMap[new Vector2Int(r, c)] = block;
@@ -244,7 +258,8 @@ namespace Gameplay.BlockDrag
             IsDimmed = dimmed;
             RefreshColliderEnabled();
 
-            Color originalColor = ShapeColor;
+            // Chế độ sprite: làm tối sprite thay vì nhuộm màu
+            Color originalColor = Skin.HasSprite ? Color.white : ShapeColor;
             Color targetColor;
 
             if (dimmed)

@@ -15,6 +15,8 @@ namespace Gameplay.BlockDrag
             public GameObject Block;
             public SpriteRenderer Renderer;
             public Color OriginalColor;
+            public Sprite OriginalSprite;
+            public Vector3 OriginalScale;
         }
 
         [Header("References")]
@@ -183,11 +185,11 @@ namespace Gameplay.BlockDrag
             }
         }
 
-        private void HandleClearPreviewChanged(LineClearResult result, Color shapeColor)
+        private void HandleClearPreviewChanged(LineClearResult result, BlockSkin shapeSkin)
         {
             if (result.HasLines)
             {
-                Show(result, shapeColor);
+                Show(result, shapeSkin);
             }
             else
             {
@@ -196,9 +198,9 @@ namespace Gameplay.BlockDrag
         }
 
         /// <summary>
-        /// Bật preview cho các hàng/cột trong result, đổi màu ô sang shapeColor
+        /// Bật preview cho các hàng/cột trong result, đổi ô sang sprite/màu của shapeSkin
         /// </summary>
-        public void Show(LineClearResult result, Color shapeColor)
+        public void Show(LineClearResult result, BlockSkin shapeSkin)
         {
             if (blockGrid == null || !result.HasLines)
             {
@@ -209,7 +211,7 @@ namespace Gameplay.BlockDrag
             RestoreTint();
             if (tintBlocks)
             {
-                ApplyTint(result, shapeColor);
+                ApplyTint(result, shapeSkin);
             }
 
             isMultiLine = IsMultiLine(result, multiLineThreshold);
@@ -248,7 +250,7 @@ namespace Gameplay.BlockDrag
             }
         }
 
-        private void ApplyTint(LineClearResult result, Color shapeColor)
+        private void ApplyTint(LineClearResult result, BlockSkin shapeSkin)
         {
             foreach (Vector2Int cell in result.Cells)
             {
@@ -263,12 +265,24 @@ namespace Gameplay.BlockDrag
                     Cell = cell,
                     Block = block,
                     Renderer = sr,
-                    OriginalColor = sr.color
+                    OriginalColor = sr.color,
+                    OriginalSprite = sr.sprite,
+                    OriginalScale = block.transform.localScale
                 });
 
-                Color tint = shapeColor;
-                tint.a = sr.color.a;
-                sr.color = tint;
+                if (shapeSkin.HasSprite)
+                {
+                    // Chế độ sprite: đổi sang sprite khối đang kéo, scale lại theo sprite mới
+                    sr.sprite = shapeSkin.sprite;
+                    sr.color = new Color(1f, 1f, 1f, sr.color.a);
+                    BlockGrid.ApplyScale(block, blockGrid.CellSize);
+                }
+                else
+                {
+                    Color tint = shapeSkin.color;
+                    tint.a = sr.color.a;
+                    sr.color = tint;
+                }
             }
         }
 
@@ -281,7 +295,9 @@ namespace Gameplay.BlockDrag
                 if (tinted.Renderer == null || blockGrid == null) continue;
                 if (blockGrid.GetOccupiedBlock(tinted.Cell.x, tinted.Cell.y) != tinted.Block) continue;
 
+                tinted.Renderer.sprite = tinted.OriginalSprite;
                 tinted.Renderer.color = tinted.OriginalColor;
+                tinted.Block.transform.localScale = tinted.OriginalScale;
             }
             tintedBlocks.Clear();
         }

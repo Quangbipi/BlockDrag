@@ -70,7 +70,7 @@ namespace Gameplay.BlockDrag
         public event System.Action<int, int, int, Vector3> OnLinesClearedWithPos; // (rowsCleared, colsCleared, totalCellsCleared, placedCenterPos)
         public event System.Action<Vector3> OnBoardCleared; // (boardCenterWorldPos) phá hàng xong bàn trống hoàn toàn (Perfect Clear)
         public event System.Action<IReadOnlyList<Vector2Int>> OnShapePlacedCells; // (placedCellCoords) toạ độ (row, col) các ô khối vừa chiếm
-        public event System.Action<LineClearResult, Color> OnClearPreviewChanged; // (result, shapeColor) result.HasLines == false => tắt preview
+        public event System.Action<LineClearResult, BlockSkin> OnClearPreviewChanged; // (result, shapeSkin) result.HasLines == false => tắt preview
 
         public Vector3 LastPlacedCenterPosition { get; private set; }
 
@@ -82,7 +82,8 @@ namespace Gameplay.BlockDrag
         protected GameObject boardFrame;
         protected readonly List<GameObject> indicatorPool = new List<GameObject>();
         protected LineClearResult clearPreview = LineClearResult.None;
-        protected Color clearPreviewColor;
+        protected BlockSkin clearPreviewSkin;
+        protected Sprite defaultIndicatorSprite; // sprite gốc của indicator, dùng lại khi khối ở chế độ màu
         // Cache vị trí đặt lần trước để không tính lại preview mỗi frame khi khối vẫn ở cùng ô
         protected BlockShape previewShape;
         protected Vector2Int previewBaseCoord;
@@ -515,7 +516,7 @@ namespace Gameplay.BlockDrag
                 {
                     if (hasPreviewCache && previewShape == shape && previewBaseCoord == baseCoord) return;
 
-                    SetClearPreview(Board.FindLinesCompletedBy(shape, baseCoord), GetShapeColor(shape));
+                    SetClearPreview(Board.FindLinesCompletedBy(shape, baseCoord), GetShapeSkin(shape));
                     ShowIndicator(shape, baseCoord);
                     previewShape = shape;
                     previewBaseCoord = baseCoord;
@@ -564,7 +565,10 @@ namespace Gameplay.BlockDrag
                 indicatorPool.Add(CreateIndicatorCell());
             }
 
-            Color ghostColor = GetShapeColor(shape);
+            BlockSkin skin = GetShapeSkin(shape);
+            // Chế độ sprite: ghost dùng sprite của khối (tint trắng), chế độ màu: tint sprite gốc
+            Sprite ghostSprite = skin.HasSprite ? skin.sprite : defaultIndicatorSprite;
+            Color ghostColor = skin.HasSprite ? Color.white : skin.color;
             ghostColor.a = indicatorAlpha;
             Color previewGhostColor = ghostColor;
             previewGhostColor.a = clearPreviewGhostAlpha;
@@ -582,15 +586,17 @@ namespace Gameplay.BlockDrag
 
                         GameObject indObj = indicatorPool[indicatorIdx];
                         indObj.transform.position = GetCellWorldPosition(targetR, targetC);
-                        indObj.transform.localScale = CellScale;
 
                         var sr = indObj.GetComponent<SpriteRenderer>();
                         if (sr != null)
                         {
+                            sr.sprite = ghostSprite;
                             bool inPreviewLine = hasPreview && IsInClearPreview(targetR, targetC);
                             sr.color = inPreviewLine ? previewGhostColor : ghostColor;
                             sr.sortingOrder = indicatorSortingOrder;
                         }
+                        // Scale theo sprite đang gán (sprite khối có thể khác kích thước sprite ô)
+                        ApplyScale(indObj, cellSize);
 
                         indObj.SetActive(true);
                         indicatorIdx++;
@@ -628,9 +634,9 @@ namespace Gameplay.BlockDrag
             }
         }
 
-        private static Color GetShapeColor(BlockShape shape)
+        private static BlockSkin GetShapeSkin(BlockShape shape)
         {
-            return shape != null ? shape.ShapeColor : Color.white;
+            return shape != null ? shape.Skin : BlockSkin.FromColor(Color.white);
         }
 
         private bool IsInClearPreview(int row, int col)
@@ -647,14 +653,15 @@ namespace Gameplay.BlockDrag
         }
 
         /// <summary>
-        /// Cập nhật preview hàng/cột sắp phá, chỉ phát OnClearPreviewChanged khi tập hàng/cột hoặc màu thay đổi
+        /// Cập nhật preview hàng/cột sắp phá, chỉ phát OnClearPreviewChanged khi tập hàng/cột hoặc skin thay đổi
         /// </summary>
-        protected void SetClearPreview(LineClearResult result, Color color)
+        protected void SetClearPreview(LineClearResult result, BlockSkin skin)
         {
             if (!result.HasLines && !clearPreview.HasLines) return;
 
             if (result.HasLines && clearPreview.HasLines
-                && color == clearPreviewColor
+                && skin.SameAs(clearPreviewSkin)
+                && skin.color == clearPreviewSkin.color
                 && SameIndices(result.Rows, clearPreview.Rows)
                 && SameIndices(result.Columns, clearPreview.Columns))
             {
@@ -662,8 +669,8 @@ namespace Gameplay.BlockDrag
             }
 
             clearPreview = result.HasLines ? result : LineClearResult.None;
-            clearPreviewColor = color;
-            OnClearPreviewChanged?.Invoke(clearPreview, color);
+            clearPreviewSkin = skin;
+            OnClearPreviewChanged?.Invoke(clearPreview, skin);
         }
 
         private static bool SameIndices(IReadOnlyList<int> a, IReadOnlyList<int> b)
@@ -720,6 +727,12 @@ namespace Gameplay.BlockDrag
                 colliders[i].enabled = false;
             }
 
+            var indicatorRenderer = obj.GetComponent<SpriteRenderer>();
+            if (defaultIndicatorSprite == null && indicatorRenderer != null)
+            {
+                defaultIndicatorSprite = indicatorRenderer.sprite;
+            }
+
             ApplyCellScale(obj, cellSize);
             obj.SetActive(false);
             return obj;
@@ -769,7 +782,8 @@ namespace Gameplay.BlockDrag
                             // Chuyển block sang làm con của Grid
                             blockObj.transform.SetParent(transform);
                             blockObj.transform.position = GetCellWorldPosition(targetR, targetC);
-                            blockObj.transform.localScale = CellScale;
+                            // Scale theo sprite của chính block (sprite khối có thể khác kích thước sprite ô)
+                            ApplyScale(blockObj, cellSize);
 
                             var sr = blockObj.GetComponent<SpriteRenderer>();
                             if (sr != null)

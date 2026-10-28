@@ -19,3 +19,18 @@ MonoBehaviour:
   - {r: 0.29803923, g: 0.78039217, b: 0.39215687, a: 1}
   - {r: 0.22745098, g: 0.5529412, b: 0.87058824, a: 1}
   - {r: 0.60784316, g: 0.34901962, b: 0.7137255, a: 1}
+  sprites:
+  - sprite: {fileID: 21300000, guid: 43a4124ff40ed46418ca99fabe8d2dce, type: 3}
+    color: {r: 0.23529412, g: 0.47843137, b: 1, a: 1}
+  - sprite: {fileID: 21300000, guid: 02438c382fb2f4d588e68c33b1a4eb7f, type: 3}
+    color: {r: 0.1254902, g: 0.827451, b: 0.9372549, a: 1}
+  - sprite: {fileID: 21300000, guid: 527567df050324bcbb9e03adb0cf9a96, type: 3}
+    color: {r: 0.23529412, g: 0.8666667, b: 0.34901962, a: 1}
+  - sprite: {fileID: 21300000, guid: 4eb906a88425a4f7b936fbfe5c069b92, type: 3}
+    color: {r: 1, g: 0.54509807, b: 0.17254902, a: 1}
+  - sprite: {fileID: 21300000, guid: b20708ad3d0c248e98ef386b56177768, type: 3}
+    color: {r: 0.654902, g: 0.32941177, b: 0.9764706, a: 1}
+  - sprite: {fileID: 21300000, guid: b5f5d9c5d2ebf43449fddf114ed92bf4, type: 3}
+    color: {r: 1, g: 0.29803923, b: 0.3647059, a: 1}
+  - sprite: {fileID: 21300000, guid: dd85822f8a9434207bc8fa4dc7947771, type: 3}
+    color: {r: 1, g: 0.78431374, b: 0.23137255, a: 1}
