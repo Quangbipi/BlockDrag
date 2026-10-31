@@ -66,7 +66,7 @@ namespace UI
 
         private void OnSetting(int obj)
         {
-            // TODO: mở SettingPopup khi có
+            Locator.UI.OpenUI<SettingPopup>(0);
         }
 
         private void OnStartGame(int obj)

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
@@ -17,15 +18,16 @@ namespace UI
         [SerializeField]
         UIButton homeButton;
         [SerializeField]
+        UIButton restartButton;
+        [SerializeField]
         GameObject bottomGroup;
         [SerializeField]
         UIButton[] functionButtons;
+        [Tooltip("Panel co giãn theo nội dung (ContentSizeFitter), rebuild layout khi ẩn/hiện bottomGroup")]
+        [SerializeField]
+        RectTransform panel;
 
         GameData.SettingData settingData;
-
-        List<float> loadingTimes;
-        List<Action> loadingActions;
-        List<Action> confirmActions;
 
         private void Awake()
         {
@@ -33,27 +35,11 @@ namespace UI
 
             resumeButton._OnClick += OnResumeButtonClick;
             homeButton._OnClick += OnHomeButtonClick;
+            restartButton._OnClick += OnRestartButtonClick;
             for (int i = 0; i < functionButtons.Length; i++)
             {
                 functionButtons[i]._OnClick += OnFunctionButtonClick;
             }
-
-            loadingTimes = new List<float>() { 1.2f, 1.5f };
-            loadingActions = new List<Action>()
-            {
-                () =>
-                {
-                    Locator.Gameplay.DestructLevel();
-                    Locator.Gameplay.ConstructLevel(-1);
-                    UIManager.Ins.CloseAll();
-                    UIManager.Ins.OpenUI<MainMenuCanvas>();
-                },
-                () => UIManager.Ins.GetUI<LoadingCanvas>().Close()
-            };
-            confirmActions = new List<Action>()
-            {
-                OnGoHome
-            };
         }
 
         protected override void OnDestroy()
@@ -61,6 +47,7 @@ namespace UI
             base.OnDestroy();
             resumeButton._OnClick -= OnResumeButtonClick;
             homeButton._OnClick -= OnHomeButtonClick;
+            restartButton._OnClick -= OnRestartButtonClick;
             for (int i = 0; i < functionButtons.Length; i++)
             {
                 functionButtons[i]._OnClick -= OnFunctionButtonClick;
@@ -94,18 +81,11 @@ namespace UI
         }
         protected void SetupState(int state)
         {
-            switch (state)
+            // 0: mở từ Home (chỉ toggle), 1: pause trong Gameplay (Resume / Restart / Home)
+            bottomGroup.SetActive(state == 1);
+            if (panel != null)
             {
-                case 0:
-                    homeButton.gameObject.SetActive(false);
-                    resumeButton.gameObject.SetActive(false);
-                    bottomGroup.SetActive(false);
-                    break;
-                case 1:
-                    homeButton.gameObject.SetActive(true);
-                    resumeButton.gameObject.SetActive(true);
-                    bottomGroup.SetActive(true);
-                    break;
+                LayoutRebuilder.ForceRebuildLayoutImmediate(panel);
             }
         }
 
@@ -115,11 +95,11 @@ namespace UI
             {
                 case 0:
                     settingData.isSfxMute = !settingData.isSfxMute;
-                    Locator.Audio.ToggleSfxVolume(settingData.isSfxMute);
+                    Locator.Audio?.ToggleSfxVolume(settingData.isSfxMute);
                     break;
                 case 1:
                     settingData.isBgmMute = !settingData.isBgmMute;
-                    Locator.Audio.ToggleBgmVolume(settingData.isBgmMute);
+                    Locator.Audio?.ToggleBgmVolume(settingData.isBgmMute);
                     break;
                 case 2:
                     settingData.hapticOff = !settingData.hapticOff;
@@ -132,20 +112,16 @@ namespace UI
             Close();
         }
 
-        protected void OnHomeButtonClick(int index)
+        protected void OnRestartButtonClick(int index)
         {
-            UIManager.Ins.OpenUI<ConfirmPopup>(confirmActions);
             Close();
+            Locator.BoardSession?.RestartGame();
         }
 
-        protected void OnGoHome()
+        protected void OnHomeButtonClick(int index)
         {
-            Locator.Ads.Inter.Show(Loading, Placement.NONE);
-            void Loading()
-            {
-                UIManager.Ins.OpenUI<LoadingCanvas>(new object[] { loadingTimes, loadingActions });
-            }
-
+            Close();
+            Locator.UI.OpenUI<HomeCanvas>();
         }
     }
 }

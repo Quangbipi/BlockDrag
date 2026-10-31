@@ -8,7 +8,8 @@ namespace UI
     using Gameplay.BlockDrag;
 
     /// <summary>
-    /// Vào GameScene thì mở HomeCanvas trước, khoá kéo khối cho tới khi Home đóng (nhấn Start)
+    /// Vào GameScene thì mở HomeCanvas trước, khoá kéo khối cho tới khi Home đóng (nhấn Start).
+    /// Kéo khối cũng bị khoá khi SettingPopup đang mở.
     /// </summary>
     public class GameSceneFlow : MonoBehaviour
     {
@@ -20,6 +21,9 @@ namespace UI
         int settleFrames = 2;
 
         HomeCanvas homeCanvas;
+        SettingPopup settingPopup;
+        bool homeOpen;
+        bool settingOpen;
 
         void Awake()
         {
@@ -38,9 +42,16 @@ namespace UI
                 yield break;
             }
 
-            SetInputEnabled(false);
+            homeOpen = true;
+            RefreshInput();
             // Preload inactive: hitch instantiate rơi vào lúc loading còn che màn hình
             Locator.UI.GetUI<HomeCanvas>();
+            settingPopup = Locator.UI.GetUI<SettingPopup>();
+            if (settingPopup != null)
+            {
+                settingPopup._OnOpen += OnSettingOpened;
+                settingPopup._OnClose += OnSettingClosed;
+            }
             for (int i = 0; i < settleFrames; i++)
             {
                 yield return null;
@@ -51,7 +62,8 @@ namespace UI
             DismissLoading();
             if (homeCanvas == null)
             {
-                SetInputEnabled(true);
+                homeOpen = false;
+                RefreshInput();
                 yield break;
             }
             homeCanvas._OnOpen += OnHomeOpened;
@@ -65,6 +77,11 @@ namespace UI
                 homeCanvas._OnOpen -= OnHomeOpened;
                 homeCanvas._OnClose -= OnHomeClosed;
             }
+            if (settingPopup != null)
+            {
+                settingPopup._OnOpen -= OnSettingOpened;
+                settingPopup._OnClose -= OnSettingClosed;
+            }
         }
 
         /// <summary>
@@ -72,7 +89,8 @@ namespace UI
         /// </summary>
         void OnHomeOpened(UISCanvas canvas)
         {
-            SetInputEnabled(false);
+            homeOpen = true;
+            RefreshInput();
             IBoardSessionService session = Locator.BoardSession;
             if (session != null && session.IsGameOver)
             {
@@ -83,7 +101,25 @@ namespace UI
         void OnHomeClosed(UISCanvas canvas)
         {
             Locator.UI.OpenUI<GameplayCanvas>();
-            SetInputEnabled(true);
+            homeOpen = false;
+            RefreshInput();
+        }
+
+        void OnSettingOpened(UISCanvas canvas)
+        {
+            settingOpen = true;
+            RefreshInput();
+        }
+
+        void OnSettingClosed(UISCanvas canvas)
+        {
+            settingOpen = false;
+            RefreshInput();
+        }
+
+        void RefreshInput()
+        {
+            SetInputEnabled(!homeOpen && !settingOpen);
         }
 
         static void DismissLoading()

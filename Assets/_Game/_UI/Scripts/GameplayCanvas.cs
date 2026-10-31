@@ -290,7 +290,7 @@ namespace UI
 
         protected void OnSettingBtnClick(int index)
         {
-            //UIManager.Ins.OpenUI<SettingPopup>();
+            Locator.UI.OpenUI<SettingPopup>(1);
         }
 
     }
