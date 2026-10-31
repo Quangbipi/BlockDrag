@@ -109,4 +109,4 @@ InitTestScene*.unity*
 /[Aa]ssets/[Ss]ceneDependencyCache*
 
 # Junction to .agents/skills (local, per machine)
-/.claude/skills/
+/.claude/skills
