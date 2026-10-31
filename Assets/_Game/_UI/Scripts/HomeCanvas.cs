@@ -11,6 +11,7 @@ namespace UI
     using Quang.Base;
     using Quang.Base.Init;
     using System;
+    using System.Globalization;
     using PolyAndCode.UI;
     using DG.Tweening;
     using Quang.Utilities.Timer;
@@ -52,7 +53,7 @@ namespace UI
         {
             if (highScoreCounter.Tick(Time.unscaledDeltaTime))
             {
-                highScoreTxt.text = highScoreCounter.Displayed.ToString();
+                highScoreTxt.text = highScoreCounter.Displayed.ToString("N0", CultureInfo.InvariantCulture);
             }
         }
 
