@@ -77,7 +77,12 @@ namespace UI
         {
             value = Mathf.Clamp01(value);
             loadingBar.value = value;
-            loadingText.text = $"{(int)(value * 100)}%";
+            loadingText.text = FormatLoadingText(value);
+        }
+
+        public static string FormatLoadingText(float value)
+        {
+            return $"LOADING... {(int)(Mathf.Clamp01(value) * 100)}%";
         }
 
         void LoadGameScene()
