@@ -19,7 +19,7 @@ Worked example: `Assets/_Game/Resources/UI/HomeCanvas.prefab`, design `Docs/desi
 | Mockups | `Assets/_Game/_BlockDrag/Resource/ComboBlock_UI_assets/UI Preview/*.png`, 360×640 → **mockup px × 3 = canvas units** |
 | UI sprites | `ComboBlock_UI_assets/{buttons,icons,tiles}` — check here before generating anything |
 | Styled text | `Fredoka-Bold Title SDF` + `Fredoka-Bold Title Material` (face color from vertex color) |
-| Safe area | `UI.SafeAreaFitter` (`BlockDrag.UI`) drives anchors from `Screen.safeArea` |
+| Safe area | `Quang.UI.SafeAreaFitter` (package `com.quang.ui` ≥ 0.9.0, `Runtime/Core`) drives anchors from `Screen.safeArea` — available in every project using Quang UI |
 | Canvases | `Assets/_Game/Resources/UI/*.prefab`, loaded by `UIManager`; keep `UISCanvas` refs + `UIScaleAnim` |
 
 Canvas size each device actually gets (match 0.5):
@@ -82,7 +82,7 @@ return System.IO.File.ReadAllText(path).Contains("m_Name: <NewNode>"); // proves
 ```
 
 - Reuse existing nodes that carry serialized refs or `UIScaleAnim` (move them, don't recreate).
-- In `execute_code` (CodeDom, C# 6): write `UnityEngine.Object`, not `Object`; get game types with `System.Type.GetType("UI.SafeAreaFitter, BlockDrag.UI")`.
+- In `execute_code` (CodeDom, C# 6): write `UnityEngine.Object`, not `Object`; get types by name with `System.Type.GetType("Quang.UI.SafeAreaFitter, Quang.UI")` (game types: `"UI.HomeCanvas, BlockDrag.UI"`).
 
 ## Verification checklist
 

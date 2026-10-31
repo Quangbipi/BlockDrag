@@ -14,7 +14,7 @@ Shared framework code ships as local `com.quang.*` packages (see `Packages/manif
 | `Quang.Base` | package `com.quang.base` **+ `Assets/_Game/_BlockDrag/Base` via asmref** | `GameData`, service contracts, `Locator`, init, scene management |
 | `Quang.Data` | package `com.quang.data` **+ `Assets/_Game/_BlockDrag/Data` via asmref** | `DataManager`, `GameplayData` and `BlockColorPaletteSO` ScriptableObjects, level loading |
 | `Quang.Common` | package `com.quang.data/Common` | `GameEventManager` / `Dispatcher<EventID>` broadcasts |
-| `Quang.UI` | package `com.quang.ui` | `UIManager`, `UISCanvas`, UI components |
+| `Quang.UI` | package `com.quang.ui` | `UIManager`, `UISCanvas`, UI components, `SafeAreaFitter` (notch-safe layout root, since 0.9.0) |
 | `Quang.Ads`, `Quang.IAP`, `Quang.Analytics`, `Quang.LiveOps.*` | `com.quang.services.*`, `com.quang.liveops.*` | Feature services; register their contracts with `Locator` |
 | `BlockDrag` | `Assets/_Game/_BlockDrag` | Gameplay: board, shapes, spawner, score, combo timer, effects |
 | `BlockDrag.UI` | `Assets/_Game/_UI` | Game canvases, popups, combo text, score fly text (`ScoreFly/`), debug UI |
