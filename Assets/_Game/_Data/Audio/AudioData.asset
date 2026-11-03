@@ -1,0 +1,163 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b2c07b4edd0545a08d91a5255e65bed, type: 3}
+  m_Name: AudioData
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 8300000, guid: 0f983934accad4946b2db349aa6f1666, type: 3}
+    - {fileID: 8300000, guid: dc52315fcd5034d60beb2bf4f90b794d, type: 3}
+    - {fileID: 8300000, guid: 95d279f17776c4facb4cfee789f6c225, type: 3}
+    - {fileID: 8300000, guid: 18f9a7c61472a45608a132174e75dabe, type: 3}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: _bgmAudioDict
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[Quang.Base.BGM_TYPE, Quang.Base],[Quang.Audio.Audio,
+        Quang.Audio]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[Quang.Base.BGM_TYPE,
+        Quang.Base]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 2
+    - Name: $v
+      Entry: 7
+      Data: 2|Quang.Audio.Audio, Quang.Audio
+    - Name: clip
+      Entry: 10
+      Data: 0
+    - Name: multiplier
+      Entry: 4
+      Data: 0.5
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: _sfxAudioDict
+      Entry: 7
+      Data: 3|System.Collections.Generic.Dictionary`2[[Quang.Base.SFX_TYPE, Quang.Base],[Quang.Audio.Audio,
+        Quang.Audio]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 4|System.Collections.Generic.EnumEqualityComparer`1[[Quang.Base.SFX_TYPE,
+        Quang.Base]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 112
+    - Name: $v
+      Entry: 7
+      Data: 5|Quang.Audio.Audio, Quang.Audio
+    - Name: clip
+      Entry: 10
+      Data: 1
+    - Name: multiplier
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 113
+    - Name: $v
+      Entry: 7
+      Data: 6|Quang.Audio.Audio, Quang.Audio
+    - Name: clip
+      Entry: 10
+      Data: 2
+    - Name: multiplier
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 25
+    - Name: $v
+      Entry: 7
+      Data: 7|Quang.Audio.Audio, Quang.Audio
+    - Name: clip
+      Entry: 10
+      Data: 3
+    - Name: multiplier
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 

@@ -15,7 +15,7 @@ Shared framework code ships as local `com.quang.*` packages (see `Packages/manif
 | `Quang.Data` | package `com.quang.data` **+ `Assets/_Game/_BlockDrag/Data` via asmref** | `DataManager`, `GameplayData` and `BlockColorPaletteSO` ScriptableObjects, level loading |
 | `Quang.Common` | package `com.quang.data/Common` | `GameEventManager` / `Dispatcher<EventID>` broadcasts |
 | `Quang.UI` | package `com.quang.ui` | `UIManager`, `UISCanvas`, UI components, `SafeAreaFitter` (notch-safe layout root, since 0.9.0) |
-| `Quang.Audio` | package `com.quang.audio` | `AudioManager` implements `IAudioService` (registers `Locator.Audio`; pooled SFX, BGM crossfade, mute), `AudioLibrarySO` maps `SFX_TYPE`/`BGM_TYPE` to clips |
+| `Quang.Audio` | package `com.quang.audio` | `AudioManager` (`Singleton`, implements `IAudioService`, registers `Locator.Audio`; `AudioSourceData` channels `bgm`/`sfx` on child `BGM`/`SFX` sources, `ObjectContainer` SFX pool, DOTween fades, reads mute from `GameData`), `AudioData` (Odin dictionaries `BGM_TYPE`/`SFX_TYPE` → `Audio { clip, multiplier }`). Depends on `Quang.Base`, `Quang.Data`, `Quang.DesignPattern` |
 | `Quang.Ads`, `Quang.IAP`, `Quang.Analytics`, `Quang.LiveOps.*` | `com.quang.services.*`, `com.quang.liveops.*` | Feature services; register their contracts with `Locator` |
 | `BlockDrag` | `Assets/_Game/_BlockDrag` | Gameplay: board, shapes, spawner, score, combo timer, effects |
 | `BlockDrag.UI` | `Assets/_Game/_UI` | Game canvases, popups, combo text, score fly text (`ScoreFly/`), debug UI |
@@ -64,7 +64,7 @@ Everything else (shape data, score config, level schema, gameplay logic) belongs
 - `BlockShape` (implements `IShapeFootprint`), `BlockDragHandler`, `BlockSpawner` (implements `IBoardSessionService`).
 - `ScoreManager` (implements `IScoreService`; raises `OnScoreGained(ScoreGain)` before `OnScoreChanged` so UI can fly `+N` text — `BlockDrag.UI/ScoreFly`: `ScoreFlyManager` pools `TextScoreFly` via `MiniPool`, `GameplayCanvas` counts the score up with `ScoreCountUp`), `Timer/CountdownManager`, `Effects/BlockPlaceEffect`.
 - `Spawn/` — pure C# hand generation: `HandGenerator` (weighted, no duplicate shape family, optional line-clear help; routes to assist below the run-start HighScore), `AssistHandBuilder` (builds a hand from a simulated chain of line-clearing placements), `ShapeFamily`, `HandSolver` (hand placeability simulation on a `BlockBoard` copy), `ShapeVariant`, `DifficultyCurve` (difficulty vs. run-start HighScore), `SpawnSettings`, `ShapeWeight`. Unit-tested.
-- `Audio/BlockDragAudio` — gameplay sound through `Locator.Audio`: `BLOCK_PLACE` on `BlockGrid.OnShapePlaced`, `LINE_CLEAR` on `OnLinesCleared`, gameplay BGM and saved mute state at `Start`. Clips in `Resource/Audio`, mapping in `_Data/Audio/AudioLibrary.asset`, `_Base/AudioManager.prefab` placed in `GameScene`.
+- `Audio/BlockDragAudio` — gameplay sound through `Locator.Audio`: `BLOCK_PLACE` on `BlockGrid.OnShapePlaced`, `LINE_CLEAR` on `OnLinesCleared`, gameplay BGM at `Start`. Clips in `Resource/Audio`, mapping in `_Data/Audio/AudioData.asset`, `_Base/AudioManager.prefab` placed in `LoadStart` (and `GameScene` as an Editor fallback that destroys itself when one already exists).
 - `Config/` — `BlockShapeData`, `ScoreConfigSO`, `ScoreConfig.asset`, `SpawnConfigSO`, `SpawnConfig.asset`. `Level/` — legacy `LevelData` / `LevelDataSO` schema still read by `HomeCanvas`.
 - Namespace: `Gameplay.BlockDrag` for all gameplay types.
 

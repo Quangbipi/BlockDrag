@@ -5,7 +5,7 @@ namespace Gameplay.BlockDrag
 {
     /// <summary>
     /// Âm thanh gameplay qua Locator.Audio: tiếng đặt khối, tiếng phá hàng (1 lần mỗi lượt), nhạc nền khi vào game.
-    /// Áp trạng thái mute đã lưu trong GameData.setting lúc Start (AudioManager không tự đọc GameData).
+    /// Trạng thái mute đã lưu do AudioManager tự đọc từ GameData.
     /// </summary>
     [AddComponentMenu("Gameplay/Block Drag Audio")]
     public class BlockDragAudio : MonoBehaviour
@@ -38,16 +38,7 @@ namespace Gameplay.BlockDrag
 
         private void Start()
         {
-            IAudioService audio = Locator.Audio;
-            if (audio == null) return;
-
-            GameData data = Locator.Data?.GetData<GameData>();
-            if (data != null)
-            {
-                audio.ToggleSfxVolume(data.setting.isSfxMute);
-                audio.ToggleBgmVolume(data.setting.isBgmMute);
-            }
-            audio.PlayBgm(gameplayBgm);
+            Locator.Audio?.PlayBgm(gameplayBgm);
         }
 
         private void HandleShapePlaced()

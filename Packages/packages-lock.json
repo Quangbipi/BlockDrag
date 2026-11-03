@@ -40,16 +40,18 @@
       }
     },
     "com.quang.audio": {
-      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.audio#release-2026.11.03.1",
+      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.audio#release-2026.11.03.2",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.quang.base": "0.27.0"
+        "com.quang.base": "0.27.0",
+        "com.quang.data": "0.12.6",
+        "com.quang.designpattern": "0.4.5"
       },
-      "hash": "aafac9dd957c7a9f69043087e29aeaeacd0e9333"
+      "hash": "0be04a7e31763cc09a04d4746a3b6d6c1a9d5c8b"
     },
     "com.quang.base": {
-      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.base#release-2026.11.03.1",
+      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.base#release-2026.11.03.2",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -59,10 +61,10 @@
         "com.unity.nuget.newtonsoft-json": "3.2.1",
         "com.unity.inputsystem": "1.18.0"
       },
-      "hash": "aafac9dd957c7a9f69043087e29aeaeacd0e9333"
+      "hash": "0be04a7e31763cc09a04d4746a3b6d6c1a9d5c8b"
     },
     "com.quang.data": {
-      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.data#release-2026.11.03.1",
+      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.data#release-2026.11.03.2",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -72,26 +74,26 @@
         "com.quang.persistence": "0.1.0",
         "com.unity.nuget.newtonsoft-json": "3.2.1"
       },
-      "hash": "aafac9dd957c7a9f69043087e29aeaeacd0e9333"
+      "hash": "0be04a7e31763cc09a04d4746a3b6d6c1a9d5c8b"
     },
     "com.quang.designpattern": {
-      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.designpattern#release-2026.11.03.1",
+      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.designpattern#release-2026.11.03.2",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "aafac9dd957c7a9f69043087e29aeaeacd0e9333"
+      "hash": "0be04a7e31763cc09a04d4746a3b6d6c1a9d5c8b"
     },
     "com.quang.persistence": {
-      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.persistence#release-2026.11.03.1",
+      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.persistence#release-2026.11.03.2",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.nuget.newtonsoft-json": "3.2.1"
       },
-      "hash": "aafac9dd957c7a9f69043087e29aeaeacd0e9333"
+      "hash": "0be04a7e31763cc09a04d4746a3b6d6c1a9d5c8b"
     },
     "com.quang.ui": {
-      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.ui#release-2026.11.03.1",
+      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.ui#release-2026.11.03.2",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -100,16 +102,16 @@
         "com.quang.base": "0.26.0",
         "com.unity.addressables": "1.22.3"
       },
-      "hash": "aafac9dd957c7a9f69043087e29aeaeacd0e9333"
+      "hash": "0be04a7e31763cc09a04d4746a3b6d6c1a9d5c8b"
     },
     "com.quang.utilities": {
-      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.utilities#release-2026.11.03.1",
+      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.utilities#release-2026.11.03.2",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.quang.designpattern": "0.4.5"
       },
-      "hash": "aafac9dd957c7a9f69043087e29aeaeacd0e9333"
+      "hash": "0be04a7e31763cc09a04d4746a3b6d6c1a9d5c8b"
     },
     "com.unity.2d.animation": {
       "version": "9.2.0",
