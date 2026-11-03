@@ -166,3 +166,47 @@ sequenceDiagram
 
 1. Is adding `BLOCK_PLACE` / `LINE_CLEAR` to `com.quang.base` OK? (Alternative: reuse existing values such as `POP` / `PERFECT`, which needs no base bump but gives misleading names.)
 2. Should the BlockDrag integration (step 3) be part of this task, or should this task stop once the package is released?
+
+## Addendum (2026-11-04) — no sound when playing from `LoadStart`
+
+### Findings
+
+| Item | State |
+|---|---|
+| `GameScene` → `Camera` → `AudioListener` | **disabled** (`m_Enabled: 0`). After `LoadStart` hands over to `GameScene`, the scene has no enabled listener → Unity logs *"There are no audio listeners in the scene"* and nothing is audible. (Earlier verification counted the component with `FindObjectsOfType`, which also returns disabled components, so this was missed.) |
+| `LoadStart` → `Camera` | has an enabled `AudioListener`, but the scene is unloaded when `GameScene` loads (single mode) |
+| `DataManager` | prefab instance in `LoadStart`, `DontDestroyOnLoad` → lives for the whole session |
+| `AudioManager` | only in `GameScene` (it also uses `DontDestroyOnLoad`) |
+
+### Change
+
+```mermaid
+flowchart LR
+    subgraph LS["LoadStart.unity"]
+        DM["DataManager (prefab)"]
+        AM1["AudioManager (prefab) — NEW"]
+    end
+    subgraph GS["GameScene.unity"]
+        CAM["Camera · AudioListener → enabled"]
+        AM2["AudioManager (prefab) — kept as fallback"]
+        BDA["BlockGrid · BlockDragAudio"]
+    end
+    DDOL[("DontDestroyOnLoad")]
+    AM1 -- "Awake: Locator.Audio = this" --> DDOL
+    DM --> DDOL
+    AM2 -. "Awake: Locator.Audio already set → destroys itself" .-> DDOL
+    BDA -- "Locator.Audio?.PlayBgm / PlaySfx" --> DDOL
+    CAM -- "hears" --> DDOL
+```
+
+1. **Enable the `AudioListener` on `GameScene/Camera`.** This alone fixes the silence, whichever scene is played first.
+2. **Add an `AudioManager.prefab` instance to `LoadStart`**, next to `DataManager`, so audio exists from the first scene and stays loaded (`DontDestroyOnLoad`).
+3. **Keep the `GameScene` instance** as a fallback for playing `GameScene` directly in the Editor. When coming from `LoadStart`, the existing singleton guard in `AudioManager.Initialize` destroys the second instance, so there is never more than one.
+
+No code or package change. Only `LoadStart.unity` and `GameScene.unity` are edited.
+
+### Verification
+
+- Play from `LoadStart`: no "no audio listeners" log; exactly one `AudioManager` (in DontDestroyOnLoad); BGM `isPlaying` with volume 0.5; place/clear/lose SFX audible.
+- Play `GameScene` directly: same result.
+- Check: only one **enabled** `AudioListener` in each scene (`FindObjectsOfType<AudioListener>().Count(l => l.enabled)`).
