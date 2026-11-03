@@ -75,7 +75,7 @@ namespace UI
 
             void OnDoneGoldFly(Transform reward, int newAmount)
             {
-                Locator.Audio.PlaySfx(SFX_TYPE.COIN);
+                Locator.Audio?.PlaySfx(SFX_TYPE.COIN);
                 txtAmount.text = newAmount.ToString();
                 Destroy(reward.gameObject, 0.05f);
             }

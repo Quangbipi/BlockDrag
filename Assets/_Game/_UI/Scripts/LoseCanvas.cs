@@ -39,7 +39,7 @@ namespace UI
         public override void Open(object param)
         {
             base.Open(param);
-            //Locator.Audio.PlaySfx(SFX_TYPE.LOSE);
+            Locator.Audio?.PlaySfx(SFX_TYPE.LOSE);
             ShowScore();
         }
         protected override void OnClose()

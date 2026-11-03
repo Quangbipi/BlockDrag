@@ -60,7 +60,7 @@ namespace UI
             actions.Add(() =>
             {
                 background2Img.rectTransform.DOSizeDelta(bound * 135, 0.4f).SetEase(easeBg2);
-                Locator.Audio.PlaySfx(SFX_TYPE.POP);
+                Locator.Audio?.PlaySfx(SFX_TYPE.POP);
                 MOST_HapticFeedback.GenerateWithCooldown(MOST_HapticFeedback.HapticTypes.LightImpact, 0.1f);
             });
             times.Add(0.3f);
@@ -69,13 +69,13 @@ namespace UI
                 fxPerfectImg.rectTransform.sizeDelta = bound * 150 + Vector2.one * 150;
                 fxPerfectGO.SetActive(true);
                 MOST_HapticFeedback.GenerateWithCooldown(MOST_HapticFeedback.HapticTypes.LightImpact, 0.1f);
-                Locator.Audio.PlaySfx(SFX_TYPE.POP);
+                Locator.Audio?.PlaySfx(SFX_TYPE.POP);
             });
             times.Add(0.25f);
             actions.Add(() =>
             {
                 perfectTxtImg.rectTransform.DOScale(1f, 0.3f).SetEase(easePerfectTxtImg);
-                Locator.Audio.PlaySfx(SFX_TYPE.PERFECT);
+                Locator.Audio?.PlaySfx(SFX_TYPE.PERFECT);
                 MOST_HapticFeedback.GenerateWithCooldown(MOST_HapticFeedback.HapticTypes.MediumImpact, 0.3f);
             });
             times.Add(2.5f);
@@ -90,7 +90,7 @@ namespace UI
             fxPerfectGO.SetActive(false);
             perfectTxtImg.rectTransform.localScale = Vector3.zero;
             timer.Start(times, actions, null, STimer.CAL_TYPE.ADD);
-            Locator.Audio.PlaySfx(SFX_TYPE.WHOOSH);
+            Locator.Audio?.PlaySfx(SFX_TYPE.WHOOSH);
             camProjectileValue = (float)param;
         }
         protected override void OnDestroy()

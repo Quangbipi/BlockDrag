@@ -109,7 +109,7 @@ namespace UI
             void ShowStar(int sound)
             {
                 starList.Add();
-                Locator.Audio.PlaySfx((SFX_TYPE)sound);
+                Locator.Audio?.PlaySfx((SFX_TYPE)sound);
             }
         }
 
@@ -135,7 +135,7 @@ namespace UI
             BASE_GOLD = gameplayData.WinLevelGold * gameData.level.DeltaStar;
             currentReceiveGold = BASE_GOLD;
             base.Open(param);
-            Locator.Audio.PlaySfx(SFX_TYPE.WIN);
+            Locator.Audio?.PlaySfx(SFX_TYPE.WIN);
             int passedLevel = gameData.user.normalLevelIndex - 1;
             Locator.Analytics?.LevelTrackEvent(LEVEL_STATE.COMPLETE, passedLevel, gameData.level.Star, gameData.level.MarkPassed(passedLevel), false);
             // StartAmpliGold();

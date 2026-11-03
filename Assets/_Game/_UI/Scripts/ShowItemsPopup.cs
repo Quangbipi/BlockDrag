@@ -89,7 +89,7 @@ namespace UI
             void PlayAnim(int index, UIAnim.ANIM anim)
             {
                 uiItems[index].PlayAnim(anim);
-                Locator.Audio.PlaySfx(SFX_TYPE.POP);
+                Locator.Audio?.PlaySfx(SFX_TYPE.POP);
             }
         }
     }

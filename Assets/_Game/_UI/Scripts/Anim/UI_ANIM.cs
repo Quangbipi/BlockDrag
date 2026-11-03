@@ -19,7 +19,7 @@ namespace UI
                 unit.Parts[1].gameObject.SetActive(true);
                 unit.Parts[2].gameObject.SetActive(true);
                 unit.BreakingVfx?.Play();
-                Locator.Audio.PlaySfx(SFX_TYPE.HIT);
+                Locator.Audio?.PlaySfx(SFX_TYPE.HIT);
                 MOST_HapticFeedback.GenerateWithCooldown(MOST_HapticFeedback.HapticTypes.HeavyImpact, 0.1f);
                 }));
             unit.CurrentAnim.Append(unit.SkinTf.DOShakePosition(time * 0.3f, 12, 100, 90, randomnessMode: ShakeRandomnessMode.Harmonic));
