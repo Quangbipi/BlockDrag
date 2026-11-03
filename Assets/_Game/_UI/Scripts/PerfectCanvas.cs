@@ -54,21 +54,21 @@ namespace UI
             actions.Add(() =>
             {
                 background1Img.rectTransform.DOSizeDelta(Vector2.one * 5000, 0.5f).SetEase(easeBg1);
-                MOST_HapticFeedback.GenerateWithCooldown(MOST_HapticFeedback.HapticTypes.LightImpact, 0.1f);        
+                Haptics.Play(MOST_HapticFeedback.HapticTypes.LightImpact, 0.1f);        
             });
             times.Add(0.5f);
             actions.Add(() =>
             {
                 background2Img.rectTransform.DOSizeDelta(bound * 135, 0.4f).SetEase(easeBg2);
                 Locator.Audio?.PlaySfx(SFX_TYPE.POP);
-                MOST_HapticFeedback.GenerateWithCooldown(MOST_HapticFeedback.HapticTypes.LightImpact, 0.1f);
+                Haptics.Play(MOST_HapticFeedback.HapticTypes.LightImpact, 0.1f);
             });
             times.Add(0.3f);
             actions.Add(() =>
             {
                 fxPerfectImg.rectTransform.sizeDelta = bound * 150 + Vector2.one * 150;
                 fxPerfectGO.SetActive(true);
-                MOST_HapticFeedback.GenerateWithCooldown(MOST_HapticFeedback.HapticTypes.LightImpact, 0.1f);
+                Haptics.Play(MOST_HapticFeedback.HapticTypes.LightImpact, 0.1f);
                 Locator.Audio?.PlaySfx(SFX_TYPE.POP);
             });
             times.Add(0.25f);
@@ -76,7 +76,7 @@ namespace UI
             {
                 perfectTxtImg.rectTransform.DOScale(1f, 0.3f).SetEase(easePerfectTxtImg);
                 Locator.Audio?.PlaySfx(SFX_TYPE.PERFECT);
-                MOST_HapticFeedback.GenerateWithCooldown(MOST_HapticFeedback.HapticTypes.MediumImpact, 0.3f);
+                Haptics.Play(MOST_HapticFeedback.HapticTypes.MediumImpact, 0.3f);
             });
             times.Add(2.5f);
             actions.Add(Close);

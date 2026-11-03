@@ -1,5 +1,4 @@
 using DG.Tweening;
-using Quang.Base;
 using Solo.MOST_IN_ONE;
 using UnityEngine;
 
@@ -198,18 +197,7 @@ namespace Gameplay.BlockDrag
 
         private void PlayHaptic(int lineCount)
         {
-            if (IsHapticOff()) return;
-
-            MOST_HapticFeedback.GenerateWithCooldown(GetHapticType(lineCount, heavyHapticLineCount), hapticCooldown);
-        }
-
-        /// <summary>
-        /// Người chơi tắt rung trong Setting (thiếu Locator.Data thì coi như đang bật)
-        /// </summary>
-        private static bool IsHapticOff()
-        {
-            GameData data = Locator.Data?.GetData<GameData>();
-            return data?.setting != null && data.setting.hapticOff;
+            Haptics.Play(GetHapticType(lineCount, heavyHapticLineCount), hapticCooldown);
         }
 
         private void PlayGlow(int lineCount)

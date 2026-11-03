@@ -43,7 +43,7 @@ Foundation          Quang.DesignPattern, Quang.Utilities.*, Quang.Persistence
 
 - `BlockDrag` must never reference `BlockDrag.UI`.
 - Packages must never reference `BlockDrag` or `BlockDrag.UI`.
-- Third-party vendor assemblies with no dependencies (e.g. `MOST_HapticFeedback`) sit at the Foundation layer; both `BlockDrag` (line-clear haptic in `Effects/LineClearImpactEffect`) and `BlockDrag.UI` may reference them.
+- Third-party vendor assemblies with no dependencies (e.g. `MOST_HapticFeedback`) sit at the Foundation layer; both `BlockDrag` and `BlockDrag.UI` may reference them. Every device vibration goes through `Gameplay.BlockDrag.Haptics.Play` (`BlockDrag/Effects/Haptics`), which skips it when `GameData.setting.hapticOff` is set — never call `MOST_HapticFeedback.Generate*` directly.
 - `BlockDrag.UI` talks to gameplay through `Locator` contracts (below), not through concrete gameplay singletons.
 
 ## Extending Package Assemblies (asmref)

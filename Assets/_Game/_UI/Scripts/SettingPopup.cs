@@ -9,6 +9,8 @@ namespace UI
     using Quang.UI;
     using Quang.Common;
     using System;
+    using Gameplay.BlockDrag;
+    using Solo.MOST_IN_ONE;
 
     public class SettingPopup : BasePopup
     {
@@ -103,8 +105,14 @@ namespace UI
                     break;
                 case 2:
                     settingData.hapticOff = !settingData.hapticOff;
+                    if (!settingData.hapticOff)
+                    {
+                        // Rung nhẹ một nhát để người chơi biết đã bật lại rung
+                        Haptics.Play(MOST_HapticFeedback.HapticTypes.LightImpact, 0.1f);
+                    }
                     break;
             }
+            Locator.Data?.Save();
             UpdateUI();
         }
         protected void OnResumeButtonClick(int index)

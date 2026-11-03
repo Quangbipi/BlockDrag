@@ -1,3 +1,4 @@
+using Gameplay.BlockDrag;
 using Quang.Base;
 using DG.Tweening;
 using Solo.MOST_IN_ONE;
@@ -20,7 +21,7 @@ namespace UI
                 unit.Parts[2].gameObject.SetActive(true);
                 unit.BreakingVfx?.Play();
                 Locator.Audio?.PlaySfx(SFX_TYPE.HIT);
-                MOST_HapticFeedback.GenerateWithCooldown(MOST_HapticFeedback.HapticTypes.HeavyImpact, 0.1f);
+                Haptics.Play(MOST_HapticFeedback.HapticTypes.HeavyImpact, 0.1f);
                 }));
             unit.CurrentAnim.Append(unit.SkinTf.DOShakePosition(time * 0.3f, 12, 100, 90, randomnessMode: ShakeRandomnessMode.Harmonic));
             unit.CurrentAnim.Join(unit.Parts[1].transform.DOLocalMoveX(unit.Parts[1].transform.localPosition.x - 30, time * 0.3f));
