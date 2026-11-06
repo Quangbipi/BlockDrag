@@ -16,7 +16,8 @@ Shared framework code ships as local `com.quang.*` packages (see `Packages/manif
 | `Quang.Common` | package `com.quang.data/Common` | `GameEventManager` / `Dispatcher<EventID>` broadcasts |
 | `Quang.UI` | package `com.quang.ui` | `UIManager`, `UISCanvas`, UI components, `SafeAreaFitter` (notch-safe layout root, since 0.9.0) |
 | `Quang.Audio` | package `com.quang.audio` | `AudioManager` (`Singleton`, implements `IAudioService`, registers `Locator.Audio`; `AudioSourceData` channels `bgm`/`sfx` on child `BGM`/`SFX` sources, `ObjectContainer` SFX pool, DOTween fades, reads mute from `GameData`), `AudioData` (Odin dictionaries `BGM_TYPE`/`SFX_TYPE` → `Audio { clip, multiplier }`). Depends on `Quang.Base`, `Quang.Data`, `Quang.DesignPattern` |
-| `Quang.Ads`, `Quang.IAP`, `Quang.Analytics`, `Quang.LiveOps.*` | `com.quang.services.*`, `com.quang.liveops.*` | Feature services; register their contracts with `Locator` |
+| `Quang.Analytics`, `Quang.Analytics.Integration.Firebase` | package `com.quang.services.analytics` | Installed. `AnalyticsBootstrap` sets `Locator.Analytics`/`Locator.RevenueSink` at `BeforeSceneLoad` (no prefab). Only the Firebase backend is on (`QUANG_ANALYTICS_FIREBASE`, `Assets/Resources/QuangAnalyticsSettings.asset`); it requires Firebase Messaging and Remote Config, so never enable the define without those SDKs. Standard tracking rules send `ftu_open_app` on the first cold start and `open_app` afterwards, with state in save key `analytics-tracking` |
+| `Quang.Ads`, `Quang.IAP`, `Quang.LiveOps.*` | `com.quang.services.*`, `com.quang.liveops.*` | Feature services; register their contracts with `Locator` |
 | `BlockDrag` | `Assets/_Game/_BlockDrag` | Gameplay: board, shapes, spawner, score, combo timer, effects |
 | `BlockDrag.UI` | `Assets/_Game/_UI` | Game canvases, popups, combo text, score fly text (`ScoreFly/`), debug UI |
 | `EditModeTests` | `Assets/Tests/EditMode` | EditMode tests for gameplay and UI logic |
