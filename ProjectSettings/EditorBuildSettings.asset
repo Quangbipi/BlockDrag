@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/_Game/_Scenes/Game/CryptoLoader.unity
     guid: 4289ad8456d7074408ce148a05201853
   - enabled: 1
