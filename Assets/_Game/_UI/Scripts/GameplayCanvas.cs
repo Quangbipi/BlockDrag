@@ -133,7 +133,7 @@ namespace UI
         }
 
         /// <summary>
-        /// Lắng nghe Game Over từ ván chơi hiện tại (Locator.BoardSession) để mở LoseCanvas.
+        /// Lắng nghe hết nước đi / Game Over từ ván chơi hiện tại (Locator.BoardSession) để mở RevivePopup / LoseCanvas.
         /// Gọi với null khi service bị huỷ để gỡ đăng ký.
         /// </summary>
         private void BindSession(IBoardSessionService session)
@@ -144,6 +144,7 @@ namespace UI
             if (session == null) return;
 
             boundSession = session;
+            boundSession.OnOutOfMoves += HandleOutOfMoves;
             boundSession.OnGameOver += HandleGameOver;
             boundSession.OnGameRestarted += ResetBgColor;
             boundSession.OnGameRestarted += ResetScoreDisplay;
@@ -153,10 +154,28 @@ namespace UI
         {
             if (boundSession == null) return;
 
+            boundSession.OnOutOfMoves -= HandleOutOfMoves;
             boundSession.OnGameOver -= HandleGameOver;
             boundSession.OnGameRestarted -= ResetBgColor;
             boundSession.OnGameRestarted -= ResetScoreDisplay;
             boundSession = null;
+        }
+
+        /// <summary>
+        /// Hết nước đi: còn lượt hồi sinh thì mở RevivePopup, không thì thua hẳn (OnGameOver → LoseCanvas)
+        /// </summary>
+        private void HandleOutOfMoves()
+        {
+            if (boundSession == null) return;
+
+            if (boundSession.CanRevive)
+            {
+                UIManager.Ins.OpenUI<RevivePopup>();
+            }
+            else
+            {
+                boundSession.ConfirmGameOver();
+            }
         }
 
         private void HandleGameOver()

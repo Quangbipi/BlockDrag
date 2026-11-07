@@ -80,6 +80,72 @@ namespace Gameplay.BlockDrag
         }
 
         /// <summary>
+        /// Hand hồi sinh: khối đầu tiên bắt buộc hoàn thành ít nhất 1 hàng/cột (chọn vị trí điểm cao nhất),
+        /// các khối sau dựng tiếp theo chuỗi assist trên bàn đã phá. Trả list rỗng nếu không khối nào phá được hàng.
+        /// </summary>
+        public List<ShapeVariant> BuildRevive(BlockBoard board, int count)
+        {
+            List<ShapeVariant> result = new List<ShapeVariant>();
+            if (board == null || families == null || count <= 0) return result;
+
+            EnsureScratch(board);
+            sim.CopyFrom(board);
+            SyncSimCells();
+            used.Clear();
+
+            if (!TryFindBestClearingPlacement(out Candidate first)) return result;
+
+            PlaceOnSim(first.variant, first.position);
+            used.Add(first.family.key);
+            result.Add(first.variant);
+
+            for (int step = 1; step < count; step++)
+            {
+                CollectCandidates(0f, null);
+                if (candidates.Count == 0) break;
+
+                Candidate chosen = PickFromTop(0f);
+                PlaceOnSim(chosen.variant, chosen.position);
+                used.Add(chosen.family.key);
+                result.Add(chosen.variant);
+            }
+
+            return result;
+        }
+
+        private bool TryFindBestClearingPlacement(out Candidate best)
+        {
+            best = default;
+            bool found = false;
+            for (int f = 0; f < families.Count; f++)
+            {
+                ShapeFamily family = families[f];
+                for (int v = 0; v < family.variants.Count; v++)
+                {
+                    ShapeVariant variant = family.variants[v];
+                    int maxR = sim.Rows - variant.RowsCount;
+                    int maxC = sim.Columns - variant.ColumnsCount;
+                    for (int r = 0; r <= maxR; r++)
+                    {
+                        for (int c = 0; c <= maxC; c++)
+                        {
+                            Vector2Int pos = new Vector2Int(r, c);
+                            if (!sim.FindLinesCompletedBy(variant, pos).HasLines) continue;
+
+                            float score = Score(variant, pos);
+                            if (!found || score > best.score)
+                            {
+                                best = new Candidate { family = family, variant = variant, position = pos, score = score };
+                                found = true;
+                            }
+                        }
+                    }
+                }
+            }
+            return found;
+        }
+
+        /// <summary>
         /// Điểm "đẹp" của việc đặt variant tại position trên board (không thay đổi board)
         /// </summary>
         public float PlacementScore(BlockBoard board, ShapeVariant variant, Vector2Int position)

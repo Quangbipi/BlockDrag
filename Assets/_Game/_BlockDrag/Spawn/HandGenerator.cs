@@ -105,6 +105,35 @@ namespace Gameplay.BlockDrag
         private bool TryBuildAssistHand(BlockBoard board, int count, float difficulty, IReadOnlyList<ShapeVariant> inHand, List<ShapeVariant> result)
         {
             List<ShapeVariant> chain = assistBuilder.Build(board, count, difficulty, excludedFamilies, inHand);
+            return TryCompleteChain(board, count, difficulty, inHand, chain, result);
+        }
+
+        /// <summary>
+        /// Hand hồi sinh cho khay trống: khối đầu luôn phá được ít nhất 1 hàng/cột, cả hand đặt hết được.
+        /// Không có khối nào phá được hàng (gần như không xảy ra vì có khối 1x1) → assist hand thường.
+        /// </summary>
+        public List<ShapeVariant> GenerateRevive(BlockBoard board, int count)
+        {
+            List<ShapeVariant> result = new List<ShapeVariant>();
+            if (board == null || count <= 0 || families.Count == 0) return result;
+
+            excludedFamilies.Clear();
+            List<ShapeVariant> chain = assistBuilder.BuildRevive(board, count);
+            if (TryCompleteChain(board, count, 0f, null, chain, result))
+            {
+                return result;
+            }
+
+            Debug.LogWarning("[HandGenerator] Không tìm được khối hồi sinh phá được hàng, dùng assist hand thường.");
+            return Generate(board, count, 0f, null, true);
+        }
+
+        /// <summary>
+        /// Bù chain cho đủ count bằng khối random (khác hình) sao cho cả hand vẫn đặt hết được
+        /// </summary>
+        private bool TryCompleteChain(BlockBoard board, int count, float difficulty, IReadOnlyList<ShapeVariant> inHand,
+                                      List<ShapeVariant> chain, List<ShapeVariant> result)
+        {
             if (chain.Count == 0) return false;
 
             for (int attempt = 0; attempt < settings.maxAttempts; attempt++)

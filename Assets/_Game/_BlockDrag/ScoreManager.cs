@@ -182,6 +182,9 @@ namespace Gameplay.BlockDrag
                 blockSpawner.OnGameOver -= HandleGameOver;
                 blockSpawner.OnGameOver += HandleGameOver;
 
+                blockSpawner.OnOutOfMoves -= StopComboTimer;
+                blockSpawner.OnOutOfMoves += StopComboTimer;
+
                 blockSpawner.OnGameRestarted -= HandleGameRestarted;
                 blockSpawner.OnGameRestarted += HandleGameRestarted;
             }
@@ -199,6 +202,7 @@ namespace Gameplay.BlockDrag
             if (blockSpawner != null)
             {
                 blockSpawner.OnGameOver -= HandleGameOver;
+                blockSpawner.OnOutOfMoves -= StopComboTimer;
                 blockSpawner.OnGameRestarted -= HandleGameRestarted;
             }
         }

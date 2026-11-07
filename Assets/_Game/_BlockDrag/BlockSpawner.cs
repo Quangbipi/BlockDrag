@@ -53,13 +53,19 @@ namespace Gameplay.BlockDrag
         [SerializeField] private float gameOverDelay = 0.35f;
 
         // Events
+        public event System.Action OnOutOfMoves;
         public event System.Action OnGameOver;
+        public event System.Action OnRevived;
         public event System.Action OnGameRestarted;
 
         private const int SlotCount = 3;
         private Transform[] spawnSlots;
         private Vector2 touchAreaWorldSize;
         private bool isGameOver = false;
+        // Hết nước đi, đang chờ UI quyết định hồi sinh hay thua hẳn
+        private bool awaitingRevive;
+        // Mỗi ván chỉ hồi sinh 1 lần
+        private bool reviveUsed;
         private Coroutine gameOverRoutine;
         private BlockColorPaletteSO colorPalette;
         private bool paletteWarningLogged;
@@ -73,6 +79,7 @@ namespace Gameplay.BlockDrag
         private bool baselineCaptured;
 
         public bool IsGameOver => isGameOver;
+        public bool CanRevive => !reviveUsed;
 
         private SpawnSettings Settings
         {
@@ -244,7 +251,37 @@ namespace Gameplay.BlockDrag
         private System.Collections.IEnumerator TriggerGameOverDelayed(float delay)
         {
             yield return new WaitForSeconds(delay);
+            gameOverRoutine = null;
+            awaitingRevive = true;
+            OnOutOfMoves?.Invoke();
+        }
+
+        /// <summary>
+        /// Bỏ qua / hết giờ hồi sinh: thua hẳn ván, bắn OnGameOver đúng 1 lần
+        /// </summary>
+        public void ConfirmGameOver()
+        {
+            if (!awaitingRevive) return;
+            awaitingRevive = false;
             OnGameOver?.Invoke();
+        }
+
+        /// <summary>
+        /// Hồi sinh: thay khay bằng 3 khối mới đảm bảo phá được hàng/cột rồi chơi tiếp (giữ nguyên điểm)
+        /// </summary>
+        public void Revive()
+        {
+            if (!awaitingRevive || reviveUsed) return;
+
+            awaitingRevive = false;
+            reviveUsed = true;
+            isGameOver = false;
+
+            ClearHand();
+            SpawnHand(Generator.GenerateRevive(GetBoard(), SlotCount));
+
+            OnRevived?.Invoke();
+            CheckPlacementsAndGameOver();
         }
 
         /// <summary>
@@ -286,6 +323,8 @@ namespace Gameplay.BlockDrag
             }
 
             isGameOver = false;
+            awaitingRevive = false;
+            reviveUsed = false;
 
             if (blockGrid != null)
             {
@@ -345,6 +384,41 @@ namespace Gameplay.BlockDrag
         {
             if (spawnSlots == null) return;
 
+            // Khối còn trên tay tham gia chống trùng hình và kiểm tra đặt hết
+            List<ShapeVariant> inHand = new List<ShapeVariant>();
+            int emptyCount = 0;
+            for (int i = 0; i < spawnSlots.Length; i++)
+            {
+                BlockShape existing = spawnSlots[i].childCount > 0 ? spawnSlots[i].GetComponentInChildren<BlockShape>() : null;
+                if (spawnSlots[i].childCount == 0)
+                {
+                    emptyCount++;
+                }
+                else if (existing != null && existing.shapeData != null)
+                {
+                    inHand.Add(new ShapeVariant(existing.shapeData, existing.CurrentRotation));
+                }
+            }
+
+            if (emptyCount == 0) return;
+
+            EvaluateRunState(out float difficulty, out bool belowRecord);
+            List<ShapeVariant> hand = Generator.Generate(GetBoard(), emptyCount, difficulty, inHand, belowRecord);
+            if (hand.Count < emptyCount)
+            {
+                Debug.LogWarning("[BlockSpawner] availableShapes không đủ hình khác nhau để lấp khay.");
+            }
+
+            SpawnHand(hand);
+        }
+
+        /// <summary>
+        /// Đặt lần lượt các variant vào slot trống, chọn skin không trùng màu khối đang có trên tay
+        /// </summary>
+        private void SpawnHand(List<ShapeVariant> hand)
+        {
+            if (spawnSlots == null || hand == null) return;
+
             // Gom màu các khối còn trên tay để khối mới không trùng màu
             usedSkins.Clear();
             for (int i = 0; i < spawnSlots.Length; i++)
@@ -356,29 +430,13 @@ namespace Gameplay.BlockDrag
                 }
             }
 
-            // Khối còn trên tay tham gia chống trùng hình và kiểm tra đặt hết
             List<Transform> emptySlots = new List<Transform>();
-            List<ShapeVariant> inHand = new List<ShapeVariant>();
             for (int i = 0; i < spawnSlots.Length; i++)
             {
-                BlockShape existing = spawnSlots[i].childCount > 0 ? spawnSlots[i].GetComponentInChildren<BlockShape>() : null;
                 if (spawnSlots[i].childCount == 0)
                 {
                     emptySlots.Add(spawnSlots[i]);
                 }
-                else if (existing != null && existing.shapeData != null)
-                {
-                    inHand.Add(new ShapeVariant(existing.shapeData, existing.CurrentRotation));
-                }
-            }
-
-            if (emptySlots.Count == 0) return;
-
-            EvaluateRunState(out float difficulty, out bool belowRecord);
-            List<ShapeVariant> hand = Generator.Generate(GetBoard(), emptySlots.Count, difficulty, inHand, belowRecord);
-            if (hand.Count < emptySlots.Count)
-            {
-                Debug.LogWarning("[BlockSpawner] availableShapes không đủ hình khác nhau để lấp khay.");
             }
 
             for (int i = 0; i < emptySlots.Count && i < hand.Count; i++)

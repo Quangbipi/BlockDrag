@@ -22,8 +22,13 @@ namespace Tests.EditMode
         {
             public int RestartCount;
             public bool IsGameOver => false;
+            public bool CanRevive => false;
+            public event Action OnOutOfMoves { add { } remove { } }
             public event Action OnGameOver { add { } remove { } }
+            public event Action OnRevived { add { } remove { } }
             public event Action OnGameRestarted { add { } remove { } }
+            public void Revive() { }
+            public void ConfirmGameOver() { }
             public void RestartGame() => RestartCount++;
         }
 
