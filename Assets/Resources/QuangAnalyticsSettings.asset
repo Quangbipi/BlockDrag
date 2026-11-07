@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a2ae63f63aed714085ba4c6784639cc, type: 3}
   m_Name: QuangAnalyticsSettings
   m_EditorClassIdentifier: 
-  debugLog: 0
+  debugLog: 1
   backends:
   - id: firebase
     enabled: 1
