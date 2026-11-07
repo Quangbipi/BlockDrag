@@ -4722,6 +4722,7 @@ GameObject:
   - component: {fileID: 1500020728}
   - component: {fileID: 1500020727}
   - component: {fileID: 1500020729}
+  - component: {fileID: 1500020730}
   m_Layer: 0
   m_Name: BlockGrid
   m_TagString: Untagged
@@ -4855,6 +4856,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockGrid: {fileID: 1500020727}
   gameplayBgm: 2
+--- !u!114 &1500020730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1500020726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9acb8c0f111c4d809e7f62f517e06bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreManager: {fileID: 1157247108}
+  blockSpawner: {fileID: 1099586250}
 --- !u!1 &1501153145
 GameObject:
   m_ObjectHideFlags: 0
