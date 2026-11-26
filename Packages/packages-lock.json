@@ -108,6 +108,18 @@
       },
       "hash": "0be04a7e31763cc09a04d4746a3b6d6c1a9d5c8b"
     },
+    "com.quang.services.ads": {
+      "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.services.ads#release-2026.11.03.2",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.quang.designpattern": "0.4.5",
+        "com.quang.utilities": "0.2.2",
+        "com.quang.base": "0.26.0",
+        "com.quang.data": "0.12.6"
+      },
+      "hash": "0be04a7e31763cc09a04d4746a3b6d6c1a9d5c8b"
+    },
     "com.quang.services.analytics": {
       "version": "https://github.com/Quangbipi/Package_Release.git?path=Packages/com.quang.services.analytics#release-2026.11.03.2",
       "depth": 0,
