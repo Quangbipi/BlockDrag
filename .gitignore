@@ -110,3 +110,6 @@ InitTestScene*.unity*
 
 # Junction to .agents/skills (local, per machine)
 /.claude/skills
+
+# Local screenshots (Ultimate Screenshot Creator / MCP captures)
+/[Ss]creenshots/
